@@ -4,12 +4,14 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 
 export default function App() {
   const [count, setCount] = useState(0);
+  
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Your First React Native App!</Text>
-      <Text style={styles.counter}>You pressed the button {count} times</Text>
-      <Button title="Press Me" onPress={() => setCount(count + 1)} />
+      <Text style={styles.counter}>Count is {count}</Text>
+      <Button title="Increase Count" onPress={() => setCount(count + 1)} />
+      <Button title = "Reduce Count"  onPress={() => setCount(count - 1)} />
     </View>
   );
 }
