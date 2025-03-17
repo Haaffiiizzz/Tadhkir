@@ -14,7 +14,7 @@ async function getPrayerTimes(latitude, longitude) {
 
     const formattedToday = dd + '-' + mm + '-' + yyyy;
 
-    const apiUrl = `https://api.aladhan.com/v1/timings/${formattedToday}?latitude=${latitude}&longitude=${longitude}&method=2&shafaq=general&tune=5%2C3%2C5%2C7%2C9%2C-1%2C0%2C8%2C-6&timezonestring=UTC&calendarMethod=UAQ`;
+    const apiUrl = `https://api.aladhan.com/v1/timings/${formattedToday}?latitude=${latitude}&longitude=${longitude}&method=2&shafaq=general&tune=5%2C3%2C5%2C7%2C9%2C-1%2C0%2C8%2C-6&calendarMethod=UAQ`;
 
     try {
         const response = await fetch(apiUrl);
