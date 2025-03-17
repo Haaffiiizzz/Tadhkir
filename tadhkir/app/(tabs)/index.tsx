@@ -1,71 +1,13 @@
-// import React from 'react';
-// import { Text, View, StyleSheet, TextInput } from 'react-native';
-// import {Link} from 'expo-router';
-// import { Platform } from 'react-native';
-
-// import GetLocation from 'react-native-get-location'
-
-// GetLocation.getCurrentPosition({
-//     enableHighAccuracy: true,
-//     timeout: 60000,
-// })
-// .then(location => {
-//     console.log(location);
-// })
-// .catch(error => {
-//     const { code, message } = error;
-//     console.warn(code, message);
-// })
-
-// export default function Index() {
-
-//   const [name, setName] = React.useState("");
-//   const [submittedName, setSubmittedName] = React.useState("");
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.text}>Tadhkir</Text>
-//       <Link href="/(tabs)/about" style={styles.button}>
-//         Get Started
-//       </Link>
-//       <TextInput
-//         style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: 200, color: '#fff' }}
-//         onChangeText={text => setName(text)}
-//         onSubmitEditing={() => setSubmittedName(name)}
-//         value={name}
-//         placeholder='Enter your name to get started'
-//       />
-//       {submittedName !== "" && <Text style={{color: '#fff'}}>Hello, {submittedName}!</Text>}
-//     </View>
-//   ); 
-// }
-
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#25292e',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   text: {
-//     color: '#fff',
-//     fontSize: 35,
-//     fontFamily: Platform.OS === 'android' ? 'sans-serif-medium' : 'HelveticaNeue',
-//   },
-//   button: {
-//     fontSize: 20,
-//     textDecorationLine: 'underline',
-//     color: '#fff',
-//   }
-// });
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Alert } from 'react-native';
+import { View, Text, Button, Alert} from 'react-native';
 import * as Location from 'expo-location';
+import { Link } from 'expo-router';
+import getPrayerTimes from '../getLocation.js';
 
 const LocationComponent = () => {
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
 
     const requestLocation = async () => {
         try {
@@ -83,10 +25,17 @@ const LocationComponent = () => {
                 "Location Obtained",
                 `Latitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`
             );
+
+            let prayerTimes = await getPrayerTimes(location.coords.latitude, location.coords.longitude);
+            setPrayerTimes(prayerTimes);
+
+            
+            
         } catch (error: any) {
             Alert.alert("Error", error.message);
         }
     };
+
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -99,6 +48,18 @@ const LocationComponent = () => {
                     
                 </>
             )}
+
+
+            {prayerTimes && (
+                <>
+                    <Text>Fajr: {prayerTimes.timings["Fajr"]}</Text>
+                    <Text>Dhuhr: {prayerTimes.timings["Dhuhr"]}</Text>
+                    <Text>Asr: {prayerTimes.timings["Asr"]}</Text>
+                    <Text>Maghrib: {prayerTimes.timings["Maghrib"]}</Text>
+                    <Text>Isha: {prayerTimes.timings["Isha"]}</Text>
+                </>
+            )}
+            <Link href="/(tabs)/about">Continue</Link>
         </View>
     );
 };
