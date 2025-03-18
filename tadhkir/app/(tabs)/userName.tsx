@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Alert, TextInput} from 'react-native';
-import * as Location from 'expo-location';
-import { Link, useRouter } from 'expo-router';
-import getPrayerTimes from '../SetupFunctions.js';
+import { Link, useRouter } from 'expo-router';;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const userSetup = () => {
@@ -32,7 +30,7 @@ const userSetup = () => {
               title="Submit" 
               onPress={() => { 
                 storeName(firstName);
-                router.push('/(tabs)/about');
+                router.push('/(tabs)/userLocation');
               }} 
             />
         </View>
