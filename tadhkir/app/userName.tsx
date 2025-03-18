@@ -17,7 +17,6 @@ const userSetup = () => {
       };
 
 
-
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Tadhkir</Text>
@@ -30,7 +29,7 @@ const userSetup = () => {
               title="Submit" 
               onPress={() => { 
                 storeName(firstName);
-                router.push('/(tabs)/userLocation');
+                router.push('/userLocation');
               }} 
             />
         </View>

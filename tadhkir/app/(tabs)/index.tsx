@@ -15,7 +15,7 @@ const userSetup = () => {
     useEffect(() => {
         if (!firstName) {
             const timer = setTimeout(() => {
-                router.push('/(tabs)/userName');
+                router.push('../userName');
             }, 0);
             return () => clearTimeout(timer);
         }
@@ -25,7 +25,7 @@ const userSetup = () => {
     useEffect(() => {
         if (!latitude || !longitude || !prayerTimes) {
             const timer = setTimeout(() => {
-                router.push('/(tabs)/userLocation');
+                router.push('../userLocation');
             }, 0);
             return () => clearTimeout(timer);
         }
