@@ -25,11 +25,12 @@ const userSetup = () => {
             <TextInput onChangeText={setFirstName}
             value={firstName}
             placeholder='Please Enter first name!'/>
+            {firstName && console.log(firstName)}
             <Button 
               title="Submit" 
-              onPress={() => { 
-                storeName(firstName);
-                router.push('/userLocation');
+              onPress={ async () => { 
+                await storeName(firstName);
+                router.push('/others/userLocation');
               }} 
             />
         </View>

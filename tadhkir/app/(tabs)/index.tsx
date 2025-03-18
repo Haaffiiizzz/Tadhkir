@@ -6,37 +6,37 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const userSetup = () => {
     const router = useRouter();
-    const firstName = AsyncStorage.getItem('userName');
-    const latitude = AsyncStorage.getItem('latitude')
-    const longitude = AsyncStorage.getItem('longitude');
-    const prayerTimes = AsyncStorage.getItem('prayerTimes');
-
-    // Immediately navigate to the userName screen only if firstName is not set
+    const [firstName, setFirstName] = useState<string | null>(null);
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            const storedFirstName = await AsyncStorage.getItem('userName');
+            setFirstName(storedFirstName);
+        }
+        fetchData();
+    }
+    , []);
+            
     useEffect(() => {
         if (!firstName) {
             const timer = setTimeout(() => {
-                router.push('../userName');
+                router.push('/others/userName');
             }, 0);
             return () => clearTimeout(timer);
         }
     }, [firstName]);
 
-    // Navigate to userLocation screen if latitude, longitude, and prayerTimes are not set
-    useEffect(() => {
-        if (!latitude || !longitude || !prayerTimes) {
-            const timer = setTimeout(() => {
-                router.push('../userLocation');
-            }, 0);
-            return () => clearTimeout(timer);
-        }
-    }
-    , [latitude, longitude, prayerTimes]);
 
 
     return (
         <View style={styles.container}>
             
         <Text>Welcome back {firstName}</Text>
+
+        <Button title="Clear All Data" 
+              onPress= {()=> {AsyncStorage.clear()}}     
+        />
+
         </View>
     );
 };
