@@ -7,14 +7,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const userSetup = () => {
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);
-    const fetchData = async () => {
+    const getName = async () => {
         const storedFirstName = await AsyncStorage.getItem('userName');
         setFirstName(storedFirstName);
     };
 
     useFocusEffect(
         React.useCallback(() => {
-            fetchData();
+            getName();
         }, [])
     );
             

@@ -7,11 +7,12 @@ import getPrayerTimes from '../../SetupFunctions.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const userSetup = () => {
-    const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    // const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const router = useRouter();
-    const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
+    // const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
     const firstName = AsyncStorage.getItem('userName');
-     
+    let location = null;
+    const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
 
     const requestLocation = async () => {
         try {
@@ -24,21 +25,21 @@ const userSetup = () => {
 
             // Get the current location
             let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
             Alert.alert(
                 "Location Obtained",
                 `Latitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`
-            );         
+            );
+            return location;         
             
         } catch (error: any) {
             Alert.alert("Error", error.message);
         }
     };
 
-    const retrievePrayerTimes = async () => {
+    const retrievePrayerTimes = async (latitude, longitude) => {
         try {
-            let prayerTimes = await getPrayerTimes(location.coords.latitude, location.coords.longitude);
-            setPrayerTimes(prayerTimes);
+            let prayerTimes = await getPrayerTimes(latitude, longitude);
+            return prayerTimes;
         } catch (error: any) {
             Alert.alert("Error", error.message);
         }
@@ -72,15 +73,16 @@ const userSetup = () => {
                 <Button
                     title="Get Location"
                     onPress={async () => {
-                        await requestLocation();
+                        location = await requestLocation();
                         if (location) {
                             await storeLocation(
                                 location.coords.latitude.toString(),
                                 location.coords.longitude.toString()
                             );
-                            await retrievePrayerTimes();
-                            if (prayerTimes) {
-                                await storePrayerTimes(prayerTimes);
+                            const retrievedPrayerTimes = await retrievePrayerTimes(location.coords.latitude, location.coords.longitude);
+                            if (retrievedPrayerTimes) {
+                                setPrayerTimes(retrievedPrayerTimes);
+                                await storePrayerTimes(retrievedPrayerTimes);
                             }
                         }
                     }}
