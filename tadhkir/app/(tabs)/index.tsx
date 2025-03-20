@@ -1,21 +1,22 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Alert, TextInput} from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { View, Text, Button, StyleSheet } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const userSetup = () => {
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            const storedFirstName = await AsyncStorage.getItem('userName');
-            setFirstName(storedFirstName);
-        }
-        fetchData();
-    }
-    , []);
+    const fetchData = async () => {
+        const storedFirstName = await AsyncStorage.getItem('userName');
+        setFirstName(storedFirstName);
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchData();
+        }, [])
+    );
             
     useEffect(() => {
         if (!firstName) {
@@ -24,24 +25,24 @@ const userSetup = () => {
             }, 0);
             return () => clearTimeout(timer);
         }
-    }, [firstName]);
-
-
+    }, [firstName]); 
 
     return (
         <View style={styles.container}>
-            
-        <Text>Welcome back {firstName}</Text>
 
-        <Button title="Clear All Data" 
-              onPress= {()=> {AsyncStorage.clear()}}     
-        />
+            <>
+                <Text>Welcome back {firstName}</Text>
 
+                <Button title="Clear All Data" 
+                    onPress= {()=> {AsyncStorage.clear()}}     
+                />
+            </>
+        
         </View>
     );
 };
 
-const styles = {
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#25292e',
@@ -53,5 +54,5 @@ const styles = {
         fontSize: 40,
         FontFace: 'bold',
     }
-};
+});
 export default userSetup;
