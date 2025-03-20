@@ -26,7 +26,8 @@ const userSetup = () => {
             value={firstName}
             placeholder='Please Enter first name!'/>
             {firstName && console.log(firstName)}
-            <Button 
+            <Button
+              style={styles.button}
               title="Submit" 
               onPress={ async () => { 
                 await storeName(firstName);
@@ -38,17 +39,29 @@ const userSetup = () => {
 };
 
 const styles = {
-    container: {
-        flex: 1,
-        backgroundColor: '#25292e',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    header: {
-        color: '#fff',
-        fontSize: 40,
-        FontFace: 'bold',
-    }
+  container: {
+    flex: 1,
+    backgroundColor: '#25292e',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    color: '#fff',
+    fontSize: 40,
+    fontWeight: 'bold',
+  },
+  button: {
+    backgroundColor: '#009688',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+  },
 };
 export default userSetup;
 
