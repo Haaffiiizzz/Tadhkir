@@ -31,7 +31,7 @@ const userSetup = () => {
               title="Submit" 
               onPress={ async () => { 
                 await storeName(firstName);
-                router.push('/others/userLocation');
+                router.push('/userLocation');
               }} 
             />
         </View>
