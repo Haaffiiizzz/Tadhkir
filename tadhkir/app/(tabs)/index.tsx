@@ -58,18 +58,21 @@ const userSetup = () => {
 
     return (
         <View style={styles.container}>
-            <Text>Welcome back {firstName}</Text>
-            <Text>Prayer times for today:</Text>
+            <Text style={styles.header}>Welcome back {firstName}</Text>
+            {/* <Text style={styles.text}>Prayer times for today:</Text> */}
+            <View style={styles.salahView}>
             {prayerTimes?.timings &&
                 prayers.map(prayer => {
                     const time = prayerTimes.timings[prayer];
                     return time ? (
-                        <Text key={prayer}>
-                            {prayer}: {String(time)}
-                        </Text>
+                        <View key={prayer} style={styles.salahItem}>
+                            <Text style={styles.salahText}>{prayer} </Text>
+                            <Text style={styles.salahTime}>{String(time)}</Text>
+                        </View>
                     ) : null;
                 })
             }
+            </View>
             <Button
                 title="Clear All Data"
                 onPress={() => {
@@ -89,8 +92,45 @@ const styles = StyleSheet.create({
     },
     header: {
         color: '#fff',
-        fontSize: 40,
-        FontFace: 'bold',
-    }
+        fontSize: 35,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        top: -100,
+    },
+    text: {
+        color: '#F5F5F5',
+
+    },
+    salahView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+
+    },
+
+    salahItem: {
+        backgroundColor: '#50584e',
+        margin: 10,
+        height: 100,
+        width: 170,
+        borderRadius: 10,
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 22,
+        marginRight: 22,
+    },
+    salahText: {
+        color: '#fff',
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    salahTime: {
+        color: '#fff',
+        fontSize: 20,
+    },
+
+
 });
 export default userSetup;
