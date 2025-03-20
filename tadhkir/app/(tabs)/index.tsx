@@ -22,7 +22,11 @@ const userSetup = () => {
 
     const getPrayerTimes = async () => {
         const storedPrayerTimes = await AsyncStorage.getItem('prayerTimes');
-        setPrayerTimes(JSON.parse(storedPrayerTimes));
+        if (storedPrayerTimes !== null) {
+            setPrayerTimes(JSON.parse(storedPrayerTimes));
+        } else {
+            setPrayerTimes(null);
+        }
     };
 
     useFocusEffect(

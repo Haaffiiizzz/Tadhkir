@@ -3,14 +3,24 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Alert, TextInput} from 'react-native';
 import * as Location from 'expo-location';
 import { Link, useRouter } from 'expo-router';
-import getPrayerTimes from './SetupFunctions.js';
+import getPrayerTimes from '../utils/locationUtil.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const userSetup = () => {
-    // const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const router = useRouter();
-    // const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
-    const firstName = AsyncStorage.getItem('userName');
+    
+
+
+    const [firstName, setFirstName] = useState(null);
+
+    useEffect(() => {
+        const fetchUserName = async () => {
+            const name = await AsyncStorage.getItem('userName');
+            setFirstName(name);
+        };
+        fetchUserName();
+    }, []);
+
     let location = null;
     const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
 
@@ -107,7 +117,7 @@ const styles = {
     header: {
         color: '#fff',
         fontSize: 40,
-        FontFace: 'bold',
+        fontWeight: 'bold',
     }
 };
 export default userSetup;
