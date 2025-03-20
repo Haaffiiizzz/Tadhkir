@@ -22,14 +22,6 @@ async function getPrayerTimes(latitude, longitude) {
             throw new Error(`Response status: ${response.status}`);
         }
         const data = await response.json();
-        // let allDays = [];
-        // data["data"].forEach(element => {
-        //     let dayData = {
-        //         timings: element.timings,
-        //         date: element.date.readable
-        //     };
-        //     allDays.push(dayData);
-        // }); THIS IS FOR WHEN I WAS GETTING MULTIPLE DAYS (ONE MONTH)
 
         return data.data;
 

@@ -8,6 +8,7 @@ const userSetup = () => {
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);
     const [latitude, setLatitude] = useState<string | null>(null);
+    const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
 
     const getName = async () => {
         const storedFirstName = await AsyncStorage.getItem('userName');
@@ -19,10 +20,16 @@ const userSetup = () => {
         setLatitude(storedLatitude);
     };
 
+    const getPrayerTimes = async () => {
+        const storedPrayerTimes = await AsyncStorage.getItem('prayerTimes');
+        setPrayerTimes(JSON.parse(storedPrayerTimes));
+    };
+
     useFocusEffect(
         React.useCallback(() => {
             getName();
             getLatitude();
+            getPrayerTimes();
         }, [])
     );
 
@@ -40,9 +47,29 @@ const userSetup = () => {
         }
     }, [firstName, latitude]);
 
+    const prayers = [
+        'Fajr',
+        'Sunrise',
+        'Dhuhr',
+        'Asr',
+        'Maghrib',
+        'Isha'
+    ];
+
     return (
         <View style={styles.container}>
             <Text>Welcome back {firstName}</Text>
+            <Text>Prayer times for today:</Text>
+            {prayerTimes?.timings &&
+                prayers.map(prayer => {
+                    const time = prayerTimes.timings[prayer];
+                    return time ? (
+                        <Text key={prayer}>
+                            {prayer}: {String(time)}
+                        </Text>
+                    ) : null;
+                })
+            }
             <Button
                 title="Clear All Data"
                 onPress={() => {
