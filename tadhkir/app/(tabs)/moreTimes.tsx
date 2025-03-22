@@ -29,12 +29,12 @@ export default function MoreTimes() {
         {prayerTimes
           ? prayerTimes.map((day, dayIndex) => {
               return (
-                
                 <View style={styles.daysListsItem} key={dayIndex + 1}>
-                  <Link href={`../prayerDay?key=${dayIndex+1}`} >
+                  <Link href={`../prayerDay?key=${dayIndex+1}`} style={{width: '100%', textAlign: 'center'}}>
                     <Text style={styles.daysListsItemText}>{day.date.readable}</Text>
                   </Link>
                 </View>
+                
                 
               );
             })
@@ -76,13 +76,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#50584e',
     padding: 10,
     alignItems: 'center',
-    width: '75%',
+    width: '50%',
     alignSelf: 'center',
     borderRadius: 10,
+    color: '#fff',
+    fontSize: 16,
+    justifyContent: 'center',
+    display: 'flex',
   },
 
   daysListsItemText: {
     color: '#fff',
     fontSize: 16,
+    alignSelf: 'center',
   },
 });
