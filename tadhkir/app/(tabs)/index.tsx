@@ -5,6 +5,10 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const userSetup = () => {
+    // basically getting user name and location info and prayer times if stored. 
+    // if any missing, itll redirect to page to get that info 
+    // this homepage just displays the prayer times for current day
+    
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);
     const [latitude, setLatitude] = useState<string | null>(null);
@@ -66,11 +70,13 @@ const userSetup = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Welcome back {firstName}</Text>
-            {/* <Text style={styles.text}>Prayer times for today:</Text> */}
+            
             <View style={styles.salahView}>
+            {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
             {prayerTimes ? 
                 prayers.map(prayer => {
-                    const time = prayerTimes[day].timings[prayer].split(' ')[0];
+                    const time = prayerTimes[day].timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
+
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>
                             <Text style={styles.salahText}>{prayer} </Text>
