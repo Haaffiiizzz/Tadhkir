@@ -26,7 +26,7 @@ const userSetup = () => {
             onChangeText={setFirstName}
             value={firstName}
             placeholder='Please Enter first name!'/>
-            {firstName && console.log(firstName)}
+            
             <Button
               style={styles.button}
               title="Submit" 

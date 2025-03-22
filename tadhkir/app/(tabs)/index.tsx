@@ -87,12 +87,6 @@ const userSetup = () => {
                 })
             : null}
             </View>
-            <Button
-                title="Clear All Data"
-                onPress={() => {
-                    AsyncStorage.clear();
-                }}
-            />
         </View>
     );
 };
