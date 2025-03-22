@@ -60,14 +60,17 @@ const userSetup = () => {
         'Isha'
     ];
 
+    const today = new Date();
+    let day = today.getDate() - 1;
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Welcome back {firstName}</Text>
             {/* <Text style={styles.text}>Prayer times for today:</Text> */}
             <View style={styles.salahView}>
-            {prayerTimes?.timings &&
+            {prayerTimes ? 
                 prayers.map(prayer => {
-                    const time = prayerTimes.timings[prayer];
+                    const time = prayerTimes[day].timings[prayer].split(' ')[0];
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>
                             <Text style={styles.salahText}>{prayer} </Text>
@@ -75,7 +78,7 @@ const userSetup = () => {
                         </View>
                     ) : null;
                 })
-            }
+            : null}
             </View>
             <Button
                 title="Clear All Data"

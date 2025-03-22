@@ -20,9 +20,10 @@ const userSetup = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Tadhkir</Text>
-            <Text>First, we need to get some info</Text>
+            <Text style={styles.text}>First, we need to get some info</Text>
 
-            <TextInput onChangeText={setFirstName}
+            <TextInput style={styles.textInput}
+            onChangeText={setFirstName}
             value={firstName}
             placeholder='Please Enter first name!'/>
             {firstName && console.log(firstName)}
@@ -49,19 +50,28 @@ const styles = {
     color: '#fff',
     fontSize: 40,
     fontWeight: 'bold',
+    marginBottom: 50,
   },
-  button: {
-    backgroundColor: '#009688',
+
+  text: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+
+  textInput: {
+    backgroundColor: '#555',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginTop: 10,
+    width: 300,
+    color: 'white',
+    marginBottom: 20,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    textAlign: 'center',
-  },
+
+
+  
 };
 export default userSetup;
 

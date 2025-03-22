@@ -8,8 +8,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const userSetup = () => {
     const router = useRouter();
-    
-
 
     const [firstName, setFirstName] = useState(null);
 
@@ -78,7 +76,7 @@ const userSetup = () => {
     return (
         <View style={styles.container}>
             <>
-                <Text>Welcome {firstName}!</Text>
+                <Text style={styles.header}>Welcome {firstName}!</Text>
                 <Text>Next, we'll need permission to get your location!</Text>
                 <Button
                     title="Get Location"
@@ -99,7 +97,7 @@ const userSetup = () => {
                 />
                 {prayerTimes && 
                     <Button title='Continue'
-                        onPress={() => router.push('../')}
+                        onPress={() => router.push('/(tabs)')}
                     />
                 }
             </>

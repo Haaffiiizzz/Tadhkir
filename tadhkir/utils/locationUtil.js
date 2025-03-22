@@ -12,9 +12,11 @@ async function getPrayerTimes(latitude, longitude) {
     if (dd < 10) dd = '0' + dd;
     if (mm < 10) mm = '0' + mm;
 
-    const formattedToday = dd + '-' + mm + '-' + yyyy;
+    const formattedToday = yyyy + "/" + mm ;
 
-    const apiUrl = `https://api.aladhan.com/v1/timings/${formattedToday}?latitude=${latitude}&longitude=${longitude}&method=2&shafaq=general&tune=5%2C3%2C5%2C7%2C9%2C-1%2C0%2C8%2C-6&calendarMethod=UAQ`;
+    // new = "https://api.aladhan.com/v1/calendar/2025/1?latitude=51.5194682&longitude=-0.1360365&method=2&shafaq=general&calendarMethod=HJCoSA" 
+
+    const apiUrl = `https://api.aladhan.com/v1/calendar/${formattedToday}?latitude=${latitude}&longitude=${longitude}&method=2&shafaq=general&calendarMethod=HJCoSA`;
 
     try {
         const response = await fetch(apiUrl);
@@ -30,5 +32,7 @@ async function getPrayerTimes(latitude, longitude) {
     }
 }
 
-// getPrayerTimes(-15.82944, -65.89028);
-export default getPrayerTimes;
+(async () => {
+    console.log(await getPrayerTimes(-15.82944, -65.89028));
+})();
+// export default getPrayerTimes;
