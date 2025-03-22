@@ -8,7 +8,7 @@ const userSetup = () => {
     // basically getting user name and location info and prayer times if stored. 
     // if any missing, itll redirect to page to get that info 
     // this homepage just displays the prayer times for current day
-    
+
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);
     const [latitude, setLatitude] = useState<string | null>(null);
@@ -69,7 +69,8 @@ const userSetup = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Welcome back {firstName}</Text>
+            {/* <Text style={styles.header}>Welcome back {firstName}</Text> */}
+            <Text style={styles.smallHeader}>Prayer Times for Today</Text>
             
             <View style={styles.salahView}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
@@ -109,6 +110,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignSelf: 'center',
         top: -100,
+    },
+    smallHeader: {
+        color: '#fff',
+        fontSize: 25,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        top: -30,
     },
     text: {
         color: '#F5F5F5',

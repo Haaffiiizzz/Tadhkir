@@ -3,7 +3,7 @@ import { Link, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 
-export default function moreTimes() {
+export default function MoreTimes() {
   const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
 
 
@@ -29,9 +29,13 @@ export default function moreTimes() {
         {prayerTimes
           ? prayerTimes.map((day, dayIndex) => {
               return (
-                <View key={dayIndex + 1} style={styles.daysListsItem}>
-                  <Text style={styles.daysListsItemText}>{day.date.readable}</Text>
+                
+                <View style={styles.daysListsItem} key={dayIndex + 1}>
+                  <Link href={`../prayerDay?key=${dayIndex+1}`} >
+                    <Text style={styles.daysListsItemText}>{day.date.readable}</Text>
+                  </Link>
                 </View>
+                
               );
             })
           : null}

@@ -32,7 +32,7 @@ async function getPrayerTimes(latitude, longitude) {
     }
 }
 
-(async () => {
-    console.log(await getPrayerTimes(-15.82944, -65.89028));
-})();
-// export default getPrayerTimes;
+// (async () => {
+//     console.log(await getPrayerTimes(-15.82944, -65.89028));
+// })();
+export default getPrayerTimes;
