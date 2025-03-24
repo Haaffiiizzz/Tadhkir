@@ -13,6 +13,7 @@ const userSetup = () => {
     const [firstName, setFirstName] = useState<string | null>(null);
     const [latitude, setLatitude] = useState<string | null>(null);
     const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
+    const [timeFormat, setTimeFormat] = useState<string | null>(null);
 
     const getName = async () => {
         const storedFirstName = await AsyncStorage.getItem('userName');
@@ -33,11 +34,17 @@ const userSetup = () => {
         }
     };
 
+    const getTimeFormat = async () => {
+        const storedTimeFormat = await AsyncStorage.getItem('timeformat');
+        setTimeFormat(storedTimeFormat);
+    }
+
     useFocusEffect(
         React.useCallback(() => {
             getName();
             getLatitude();
             getPrayerTimes();
+            getTimeFormat();
         }, [])
     );
 
@@ -66,6 +73,8 @@ const userSetup = () => {
 
     const today = new Date();
     let day = today.getDate() - 1;
+    
+    
 
     return (
         <View style={styles.container}>
@@ -76,7 +85,20 @@ const userSetup = () => {
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
             {prayerTimes ? 
                 prayers.map(prayer => {
-                    const time = prayerTimes[day].timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
+                    let time = prayerTimes[day].timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
+                    
+                    if (timeFormat === '12h'){
+                        let timeHour = +time.split(':')[0];
+                        let timeMin = +time.split(':')[1];
+                        if (timeHour > 12) {
+                            timeHour = timeHour - 12;
+                            time = timeHour + ':' + timeMin + ' PM';
+                        } else {
+                            time = timeHour + ':' + timeMin + ' AM';
+                        }
+
+                    }
+                    
 
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>
