@@ -1,4 +1,4 @@
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Updates from 'expo-updates';
 import React, {useState, useEffect} from 'react';
@@ -56,6 +56,7 @@ export default function Settings() {
                 activeText={'12h'}
                 inActiveText={'24h'}
             />
+            <Text>Toggle to change time format!</Text>
         </View>
     );
 };
