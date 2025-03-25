@@ -32,7 +32,7 @@ export default function Settings() {
     }, []);
 
     const changeTimeFormat = async () => {
-        const newFormat = is24Hour ? "12h" : "24h";
+        const newFormat = is24Hour ? "24h" : "12h";
         await AsyncStorage.setItem('timeformat', newFormat);
         setIs24Hour(!is24Hour);
     };

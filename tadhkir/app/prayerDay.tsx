@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Checkbox from 'expo-checkbox';
 
 // this page basically mirrors the index page except it displays prayer time for the day selected in moreTimes page
+//thnere's a whole lot going on here but prayerDay is the json for the daily prayers and whether they have been prayed or not
+// the checkbox in each prayer is defaulted to false. when clicked, the value for that prayer changes to True and is saved back to storage.
+
 export default function PrayerDay() {
 
-    const { key } = useLocalSearchParams();
+    const { key, date } = useLocalSearchParams();
     const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
-    
+    const [prayerDay, setPrayerDay] = useState<Record<string, boolean> | null>(null); // this is the json of prayers and whether true or false if prayed or not    
 
     const getPrayerTimes = async () => {
         const storedPrayerTimes = await AsyncStorage.getItem('prayerTimes');
@@ -22,10 +26,32 @@ export default function PrayerDay() {
 
     useFocusEffect(
         React.useCallback(() => {
-            getPrayerTimes();
-        }, [])
+            async function fetchData() {
+                await getPrayerTimes();
+                const storedPrayerDay = await AsyncStorage.getItem(date);
+                console.log(storedPrayerDay);
+                setPrayerDay(JSON.parse(storedPrayerDay));
+            }
+            fetchData();
+        }, [date])
     );
 
+    const getPrayerValue = (prayer) => {
+        if (!prayerDay) return false;
+        return prayerDay[prayer] === true;
+    };
+
+    const changePrayerValue = async (prayer) => {
+        if (!prayerDay) return;
+    
+        const updatedPrayerDay = { ...prayerDay, [prayer]: !prayerDay[prayer] };
+    
+        setPrayerDay(updatedPrayerDay);
+    
+        await AsyncStorage.setItem(date, JSON.stringify(updatedPrayerDay));
+    };
+
+  
     const prayers = [
         'Fajr',
         'Sunrise',
@@ -34,6 +60,8 @@ export default function PrayerDay() {
         'Maghrib',
         'Isha'
     ];
+
+    
 
 
     return (
@@ -51,6 +79,9 @@ export default function PrayerDay() {
                         <View key={prayer} style={styles.salahItem}>
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
+                            <Checkbox 
+                            value={getPrayerValue(prayer)}
+                            onValueChange={() => changePrayerValue(prayer)}/>
                         </View>
                     ) : null;
                 })

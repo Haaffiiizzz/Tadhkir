@@ -28,9 +28,10 @@ export default function MoreTimes() {
       <ScrollView style={styles.scrollContainer}>
         {prayerTimes
           ? prayerTimes.map((day, dayIndex) => {
+              
               return (
-                <View style={styles.daysListsItem} key={dayIndex + 1}>
-                  <Link href={`../prayerDay?key=${dayIndex+1}`} style={{width: '100%', textAlign: 'center'}}>
+                <View style={styles.daysListsItem} key={day.date.gregorian.date}>
+                  <Link href={`../prayerDay?key=${dayIndex+1}&date=${day.date.gregorian.date}`} style={{width: '100%', textAlign: 'center'}}>
                     <Text style={styles.daysListsItemText}>{day.date.readable}</Text>
                   </Link>
                 </View>

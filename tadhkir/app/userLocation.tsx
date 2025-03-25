@@ -4,6 +4,7 @@ import { View, Text, Button, Alert, TextInput} from 'react-native';
 import * as Location from 'expo-location';
 import { Link, useRouter } from 'expo-router';
 import getPrayerTimes from '../utils/locationUtil.js';
+import setPrayerCount from '../utils/prayercount.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const userSetup = () => {
@@ -71,6 +72,15 @@ const userSetup = () => {
         }
     };
 
+    const storePrayerCount = async () => {
+        //for each day in prayerTimes, we'll set the prayer counts using function from prayercount.js
+        prayerTimes.map(async day => {
+            let dayString = day.date.gregorian.date;
+            await setPrayerCount(dayString);
+
+        })
+    }
+
     
 
     return (
@@ -95,9 +105,13 @@ const userSetup = () => {
                         }
                     }}
                 />
-                {prayerTimes && 
+
+                {prayerTimes &&
                     <Button title='Continue'
-                        onPress={() => router.push('/(tabs)')}
+                        onPress={() => {
+                            storePrayerCount();
+                            router.push('/(tabs)');
+                        }}
                     />
                 }
             </>
