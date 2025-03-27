@@ -73,12 +73,20 @@ const userSetup = () => {
     };
 
     const storePrayerCount = async () => {
-        //for each day in prayerTimes, we'll set the prayer counts using function from prayercount.js
+        //for each day in prayerTimes, we'll set the prayer counts(i.e true or false for each prayer) using function from prayercount.js
+        //we'll also store the streaks here i.e set the streaks to 0 for each day in prayerTimes
+        let streakDict: Record<string, number> = {}
         prayerTimes.map(async day => {
             let dayString = day.date.gregorian.date;
+            streakDict[dayString] = 0;
+            
             await setPrayerCount(dayString);
+            await AsyncStorage.setItem('streaks', JSON.stringify(streakDict));
 
         })
+
+
+
     }
 
     

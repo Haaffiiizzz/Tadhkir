@@ -5,7 +5,15 @@ import React, { useState, useEffect } from 'react';
 
 export default function MoreTimes() {
   const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
+  const [streaks, setStreaks] = useState<any | null>(null);
 
+  useEffect(() => {
+    (async () => {
+      const streaksRaw = await AsyncStorage.getItem('streaks');
+      setStreaks(streaksRaw ? JSON.parse(streaksRaw) : null);
+    })();
+  }, []);
+      
 
   const getPrayerTimes = async () => {
       const storedPrayerTimes = await AsyncStorage.getItem('prayerTimes');
@@ -32,7 +40,7 @@ export default function MoreTimes() {
               return (
                 <View style={styles.daysListsItem} key={day.date.gregorian.date}>
                   <Link href={`../prayerDay?key=${dayIndex+1}&date=${day.date.gregorian.date}`} style={{width: '100%', textAlign: 'center'}}>
-                    <Text style={styles.daysListsItemText}>{day.date.readable}</Text>
+                    <Text style={styles.daysListsItemText}>{day.date.readable} - {streaks[day.date.gregorian.date]}</Text>
                   </Link>
                 </View>
                 

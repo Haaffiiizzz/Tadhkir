@@ -86,7 +86,7 @@ const userSetup = () => {
             {prayerTimes ? 
                 prayers.map(prayer => {
                     let time = prayerTimes[day].timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
-                    
+
                     if (timeFormat === '12h'){
                         let timeHour = +time.split(':')[0];
                         let timeMin = +time.split(':')[1];
@@ -98,7 +98,6 @@ const userSetup = () => {
                         }
 
                     }
-                    
 
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>

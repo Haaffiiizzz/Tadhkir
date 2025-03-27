@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Checkbox from 'expo-checkbox';
 
-// this page basically mirrors the index page except it displays prayer time for the day selected in moreTimes page
+// this page basically mirrors the index page except it displays prayer time for the day selected in moreTimes page i.e shows prayers for a particular selected day. 
 //thnere's a whole lot going on here but prayerDay is the json for the daily prayers and whether they have been prayed or not
 // the checkbox in each prayer is defaulted to false. when clicked, the value for that prayer changes to True and is saved back to storage.
 
@@ -12,7 +12,16 @@ export default function PrayerDay() {
 
     const { key, date } = useLocalSearchParams();
     const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
-    const [prayerDay, setPrayerDay] = useState<Record<string, boolean> | null>(null); // this is the json of prayers and whether true or false if prayed or not    
+    const [prayerDay, setPrayerDay] = useState<Record<string, boolean> | null>(null); // this is the json of prayers and whether true or false if prayed or not  
+    const [streaks, setStreaks] = useState<any | null>(null);
+
+    useEffect(() => {
+        (async () => {
+        const streaksRaw = await AsyncStorage.getItem('streaks');
+        setStreaks(streaksRaw ? JSON.parse(streaksRaw) : null);
+        })();
+    }, []);
+        
 
     const getPrayerTimes = async () => {
         const storedPrayerTimes = await AsyncStorage.getItem('prayerTimes');
@@ -29,7 +38,6 @@ export default function PrayerDay() {
             async function fetchData() {
                 await getPrayerTimes();
                 const storedPrayerDay = await AsyncStorage.getItem(date);
-                console.log(storedPrayerDay);
                 setPrayerDay(JSON.parse(storedPrayerDay));
             }
             fetchData();
@@ -43,10 +51,19 @@ export default function PrayerDay() {
 
     const changePrayerValue = async (prayer) => {
         if (!prayerDay) return;
-    
+        
         const updatedPrayerDay = { ...prayerDay, [prayer]: !prayerDay[prayer] };
     
         setPrayerDay(updatedPrayerDay);
+        let oldStreak = streaks[date];
+        if (updatedPrayerDay[prayer] === true) {
+            oldStreak += 1;
+        }
+        else {
+            oldStreak -= 1;
+        }
+        setStreaks({...streaks, [date]: oldStreak});
+        await AsyncStorage.setItem('streaks', JSON.stringify(streaks));
     
         await AsyncStorage.setItem(date, JSON.stringify(updatedPrayerDay));
     };
@@ -81,7 +98,7 @@ export default function PrayerDay() {
                             <Text style={styles.salahTime}>{String(time)}</Text>
                             <Checkbox 
                             value={getPrayerValue(prayer)}
-                            onValueChange={() => changePrayerValue(prayer)}/>
+                            onValueChange={async () => await changePrayerValue(prayer)}/>
                         </View>
                     ) : null;
                 })
