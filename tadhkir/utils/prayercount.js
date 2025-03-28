@@ -8,4 +8,5 @@ async function setPrayerCount(prayerDay){
     
 }
 
+
 export default setPrayerCount;
