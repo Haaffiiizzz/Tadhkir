@@ -42,7 +42,7 @@ const GetUserInfo = () => {
               title="Submit" 
               onPress={ async () => { 
                 await storeName(firstName);
-                router.push('/Get User Location');
+                router.push('/GetUserLocation');
               }} 
             />
         </View>

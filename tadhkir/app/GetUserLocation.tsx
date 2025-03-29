@@ -1,13 +1,13 @@
-
-import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Alert, StyleSheet} from 'react-native';
 import * as Location from 'expo-location';
-import { Link, useRouter } from 'expo-router';
+import {useRouter } from 'expo-router';
 import prayerStorageMain from "../utils/setUpPrayerStorage"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from 'react';
 
 const userSetup = () => {
     const router = useRouter();
+    const [locationReady, setLocationReady] = useState(false)
 
     const requestLocation = async () => {
         try {
@@ -24,6 +24,8 @@ const userSetup = () => {
                 "Location Obtained",
                 `Latitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`
             );
+            await AsyncStorage.setItem("latitude", location.coords.latitude.toString())
+            await AsyncStorage.setItem("longitude", location.coords.longitude.toString())
             return [location.coords.latitude, location.coords.longitude];        
             
         } catch (error: any) {
@@ -42,17 +44,19 @@ const userSetup = () => {
                         const locationData = await requestLocation();
                         if (locationData) {
                             const [latitude, longitude] = locationData;
-                            await prayerStorageMain(latitude.toString(), longitude.toString())
+                            await prayerStorageMain(latitude.toString(), longitude.toString());
+                            setLocationReady(true);
                         }
                     }}
                 />
-                
-                <Button title='Continue'
-                    onPress={() => {
-                        router.push('/(tabs)');
-                    }}
-                />
-                
+                {locationReady && (
+                    <Button
+                        title="Continue"
+                        onPress={() => {
+                            router.push('/(tabs)');
+                        }}
+                    />
+                )}
             </>
         </View>
     );

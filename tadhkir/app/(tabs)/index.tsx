@@ -1,22 +1,32 @@
-
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+/**
+ * This is basically the index / home page. For now, it'll display user name and prayer times if these details are already stored.
+ * Else, it'll redirect to the required pages to get these data.
+ * 
+ */
+const HomePage = () => {
 
-const userSetup = () => {
-    // basically getting user name and location info and prayer times if stored. 
-    // if any missing, itll redirect to page to get that info 
-    // this homepage just displays the prayer times for current day
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const date = today.getDate();
+
+    const formattedDay = date < 10 ? `0${date}` : date;
+    const formattedMonth = month < 10 ? `0${month}` : month;
+    const todayDate = `${formattedDay}-${formattedMonth}-${year}`;
 
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);
     const [latitude, setLatitude] = useState<string | null>(null);
-    const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
     const [timeFormat, setTimeFormat] = useState<string | null>(null);
+    const [prayerData, setPrayerData] = useState< any | null>(null);
+   
 
     const getName = async () => {
-        const storedFirstName = await AsyncStorage.getItem('userName');
+        const storedFirstName = await AsyncStorage.getItem('User First Name');
         setFirstName(storedFirstName);
     };
 
@@ -25,38 +35,43 @@ const userSetup = () => {
         setLatitude(storedLatitude);
     };
 
-    const getPrayerTimes = async () => {
-        const storedPrayerTimes = await AsyncStorage.getItem('prayerTimes');
-        if (storedPrayerTimes !== null) {
-            setPrayerTimes(JSON.parse(storedPrayerTimes));
-        } else {
-            setPrayerTimes(null);
-        }
-    };
-
     const getTimeFormat = async () => {
         const storedTimeFormat = await AsyncStorage.getItem('timeformat');
         setTimeFormat(storedTimeFormat);
     }
 
+    const getPrayerData = async () => {
+        try {
+            let storedPrayerData = await AsyncStorage.getItem(todayDate);
+            
+            if (storedPrayerData) {
+                storedPrayerData = JSON.parse(storedPrayerData);
+                setPrayerData(storedPrayerData);
+            }
+        } catch (error) {
+            console.error('Error retrieving prayer data:', error);
+            setPrayerData(null);
+        }
+    };
+
     useFocusEffect(
         React.useCallback(() => {
             getName();
             getLatitude();
-            getPrayerTimes();
             getTimeFormat();
+            getPrayerData();
         }, [])
     );
 
     useEffect(() => {
         if (!firstName) {
             const timer = setTimeout(() => {
-                router.push('../Get User Info');
+                router.push('../GetUserInfo');
             }, 0);
             return () => clearTimeout(timer);
         } else if (firstName && !latitude) {
             const timer = setTimeout(() => {
-                router.push('../Get User Location');
+                router.push('../GetUserLocation');
             }, 0);
             return () => clearTimeout(timer);
         }
@@ -71,21 +86,19 @@ const userSetup = () => {
         'Isha'
     ];
 
-    const today = new Date();
-    let day = today.getDate() - 1;
     
     
 
     return (
         <View style={styles.container}>
-            {/* <Text style={styles.header}>Welcome back {firstName}</Text> */}
+            <Text style={styles.header}>Welcome back {firstName}</Text>
             <Text style={styles.smallHeader}>Prayer Times for Today</Text>
             
             <View style={styles.salahView}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
-            {prayerTimes ? 
+            {prayerData && prayerData.timings? 
                 prayers.map(prayer => {
-                    let time = prayerTimes[day].timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
+                    let time = prayerData['timings'][prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
 
                     if (timeFormat === '12h'){
                         let timeHour = +time.split(':')[0];
@@ -169,4 +182,4 @@ const styles = StyleSheet.create({
 
 
 });
-export default userSetup;
+export default HomePage;
