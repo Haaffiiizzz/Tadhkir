@@ -61,10 +61,10 @@ async function setUpPrayerStorage(monthPrayerData) {
 
 }
 
-async function main(latitude, longitude) {
+async function prayerStorageMain(latitude, longitude) {
     const monthPrayerData = await getPrayerTimes(latitude, longitude)
     await setUpPrayerStorage(monthPrayerData)
 
 }
 
-export default main;
+export default prayerStorageMain;

@@ -51,12 +51,12 @@ const userSetup = () => {
     useEffect(() => {
         if (!firstName) {
             const timer = setTimeout(() => {
-                router.push('../userName');
+                router.push('../Get User Info');
             }, 0);
             return () => clearTimeout(timer);
         } else if (firstName && !latitude) {
             const timer = setTimeout(() => {
-                router.push('../userLocation');
+                router.push('../Get User Location');
             }, 0);
             return () => clearTimeout(timer);
         }

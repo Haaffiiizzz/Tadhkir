@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Alert, TextInput} from 'react-native';
+import { View, Text, Button, Alert, TextInput, StyleSheet } from 'react-native';
 import { Link, useRouter } from 'expo-router';;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const userSetup = () => {
+/**
+ * This page will load up on first start of the app to store user info (just name for now)
+ * If later user data is cleared, this page will be loaded again
+ */
+const GetUserInfo = () => {
     const [firstName, setFirstName] = useState('');
     const router = useRouter();
 
-    // storing user name in async storage
-    const storeName = async (name) => {
+    // storing user's name in asyncstorage and adding a default name. 
+
+    const storeName = async (name: string) => {
         try {
-          await AsyncStorage.setItem('userName', name);
+          if (!name) {
+            await AsyncStorage.setItem('User First Name', "User");
+          } else{
+            await AsyncStorage.setItem('User First Name', name);
+          }
+          
         } catch (e) {
           console.log(e);
         }
@@ -23,23 +33,23 @@ const userSetup = () => {
             <Text style={styles.text}>First, we need to get some info</Text>
 
             <TextInput style={styles.textInput}
-            onChangeText={setFirstName}
-            value={firstName}
-            placeholder='Please Enter first name!'/>
+              onChangeText={setFirstName}
+              value={firstName}
+              placeholder='Please Enter first name!'
+            />
             
             <Button
-              style={styles.button}
               title="Submit" 
               onPress={ async () => { 
                 await storeName(firstName);
-                router.push('/userLocation');
+                router.push('/Get User Location');
               }} 
             />
         </View>
     );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#25292e',
@@ -69,9 +79,9 @@ const styles = {
     color: 'white',
     marginBottom: 20,
   },
+  button: {
 
-
-  
-};
-export default userSetup;
+  }
+});
+export default GetUserInfo;
 
