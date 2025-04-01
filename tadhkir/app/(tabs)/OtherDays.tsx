@@ -10,8 +10,6 @@ import React, { useState, useEffect } from 'react';
  */
 
 export default function MoreTimes() {
-  const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
-  const [streaks, setStreaks] = useState<any | null>(null);
 
   const today = new Date()
   const year = today.getFullYear()

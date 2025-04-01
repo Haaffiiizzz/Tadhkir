@@ -11,7 +11,10 @@ import Checkbox from 'expo-checkbox';
 export default function PrayerDay() {
 
     const { date } = useLocalSearchParams();
-    const [prayerData, setPrayerData] = useState< any | null>(null); // this is the json of prayers and whether true or false if prayed or not  
+    const [prayerData, setPrayerData] = useState< any | null>(null);
+    const [prayerStatus, setPrayerStatus] = useState< any | null >(null);
+    const [prayerCount, setPrayerCount] = useState< any | null>(null)
+
 
     const getPrayerData = async () => {
         try {
@@ -20,6 +23,10 @@ export default function PrayerDay() {
             if (storedPrayerData) {
                 storedPrayerData = JSON.parse(storedPrayerData);
                 setPrayerData(storedPrayerData);
+                if (storedPrayerData){
+                    setPrayerStatus(storedPrayerData.status)
+                    setPrayerCount(storedPrayerData.count)
+                }
             }
         } catch (error) {
             console.error('Error retrieving prayer data:', error);
@@ -31,7 +38,29 @@ export default function PrayerDay() {
         React.useCallback(() => {
             getPrayerData();
         }, [])
-        );
+    );
+
+    const handleValueChange = async (prayer: string) => { // to change the true or false value for a prayer when the checkbox is clicked and increase or decrease
+        // the number of saved prayers.
+        const newValue = !prayerStatus[prayer];  // true/false
+        const newPrayerStatus = { ...prayerStatus, [prayer]: newValue };
+        let newPrayerCount = prayerCount
+
+        if (newValue === true){// if it was false before and after clicking we changed to true, then increase the prayer count else decrease
+            newPrayerCount += 1
+        } else {
+            newPrayerCount -= 1
+        }
+
+        const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
+
+        await AsyncStorage.setItem(date, JSON.stringify(newPrayerData));
+        
+        setPrayerData(newPrayerData);
+        setPrayerStatus(newPrayerStatus);
+        setPrayerCount(newPrayerCount);
+    }
+    
 
     const prayers = [
         'Fajr',
@@ -42,27 +71,26 @@ export default function PrayerDay() {
         'Isha'
     ];
 
-    
-
-
     return (
         <View style={styles.container}>
             
             <Text style={styles.header}>{date.slice(0, 5)}</Text>
+            <Text> Total Prayed: {prayerCount}</Text>
 
             <View style={styles.salahView}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
             {prayerData ? 
-                prayers.map(prayer => {
+                prayers.map((prayer: string) => {
                     const time = prayerData.timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
 
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
-                            {/* <Checkbox 
-                            value={getPrayerValue(prayer)}
-                            onValueChange={async () => await changePrayerValue(prayer)}/> */}
+                            <Checkbox 
+                            value={prayerStatus[prayer]}
+                            onValueChange={async()=> await handleValueChange(prayer)}
+                            />
                         </View>
                     ) : null;
                 })
