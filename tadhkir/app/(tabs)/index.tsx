@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import main from "../../utils/setUpPrayerStorage"
 /**
  * This is basically the index / home page. For now, it'll display user name and prayer times if these details are already stored.
  * Else, it'll redirect to the required pages to get these data.
@@ -13,6 +14,20 @@ const HomePage = () => {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const date = today.getDate();
+
+    useEffect(() => {
+        // incase we get a new month, we need to get new month data from the api. 
+        //Notice this means having new dicts for new days i.e old data is still available.
+        const checkMonth = async () => {
+            const savedMonth = await AsyncStorage.getItem('month');
+            if (month.toString() !== savedMonth) {
+                const latitude = await AsyncStorage.getItem("latitude")
+                const longitude = await AsyncStorage.getItem("longitude")
+                await main(latitude, longitude)   
+            }
+        };
+        checkMonth();
+    }, [month]);
 
     const formattedDay = date < 10 ? `0${date}` : date;
     const formattedMonth = month < 10 ? `0${month}` : month;
@@ -64,7 +79,8 @@ const HomePage = () => {
     );
 
     useEffect(() => {
-        if (!firstName) {
+        if (firstName === "") {
+            console.log("not first name")
             const timer = setTimeout(() => {
                 router.push('../GetUserInfo');
             }, 0);
@@ -90,7 +106,7 @@ const HomePage = () => {
     
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
             <Text style={styles.header}>Welcome back {firstName}</Text>
             <Text style={styles.smallHeader}>Prayer Times for Today</Text>
             
@@ -121,47 +137,40 @@ const HomePage = () => {
                 })
             : null}
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#25292e',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: '#25292e'
     },
     header: {
         color: '#fff',
         fontSize: 35,
         fontWeight: 'bold',
-        alignSelf: 'center',
-        top: -100,
+        alignSelf: 'center',  
+        marginTop: 20  
     },
     smallHeader: {
         color: '#fff',
         fontSize: 25,
         fontWeight: 'bold',
         alignSelf: 'center',
-        top: -30,
+        marginTop: 20,
     },
-    text: {
-        color: '#F5F5F5',
-
-    },
+    
     salahView: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-
+        flexDirection: 'column',
+        marginTop: 60,
     },
 
     salahItem: {
         backgroundColor: '#50584e',
         margin: 10,
-        height: 100,
-        width: 170,
+        height: 70,
+        width: 350,
         borderRadius: 10,
         padding: 10,
         justifyContent: 'center',
