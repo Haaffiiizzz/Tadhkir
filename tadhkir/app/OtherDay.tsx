@@ -10,65 +10,29 @@ import Checkbox from 'expo-checkbox';
 
 export default function PrayerDay() {
 
-    const { key, date } = useLocalSearchParams();
-    const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
-    const [prayerDay, setPrayerDay] = useState<Record<string, boolean> | null>(null); // this is the json of prayers and whether true or false if prayed or not  
-    const [streaks, setStreaks] = useState<any | null>(null);
+    const { date } = useLocalSearchParams();
+    const [prayerData, setPrayerData] = useState< any | null>(null); // this is the json of prayers and whether true or false if prayed or not  
 
-    useEffect(() => {
-        (async () => {
-        const streaksRaw = await AsyncStorage.getItem('streaks');
-        setStreaks(streaksRaw ? JSON.parse(streaksRaw) : null);
-        })();
-    }, []);
-        
-
-    const getPrayerTimes = async () => {
-        const storedPrayerTimes = await AsyncStorage.getItem('prayerTimes');
-        if (storedPrayerTimes !== null) {
-            setPrayerTimes(JSON.parse(storedPrayerTimes));
-        } else {
-            console.log("here")
-            setPrayerTimes(null);
+    const getPrayerData = async () => {
+        try {
+            let storedPrayerData = await AsyncStorage.getItem(date);
+            
+            if (storedPrayerData) {
+                storedPrayerData = JSON.parse(storedPrayerData);
+                setPrayerData(storedPrayerData);
+            }
+        } catch (error) {
+            console.error('Error retrieving prayer data:', error);
+            setPrayerData(null);
         }
     };
 
     useFocusEffect(
         React.useCallback(() => {
-            async function fetchData() {
-                await getPrayerTimes();
-                const storedPrayerDay = await AsyncStorage.getItem(date);
-                setPrayerDay(JSON.parse(storedPrayerDay));
-            }
-            fetchData();
-        }, [date])
-    );
+            getPrayerData();
+        }, [])
+        );
 
-    const getPrayerValue = (prayer) => {
-        if (!prayerDay) return false;
-        return prayerDay[prayer] === true;
-    };
-
-    const changePrayerValue = async (prayer) => {
-        if (!prayerDay) return;
-        
-        const updatedPrayerDay = { ...prayerDay, [prayer]: !prayerDay[prayer] };
-    
-        setPrayerDay(updatedPrayerDay);
-        let oldStreak = streaks[date];
-        if (updatedPrayerDay[prayer] === true) {
-            oldStreak += 1;
-        }
-        else {
-            oldStreak -= 1;
-        }
-        setStreaks({...streaks, [date]: oldStreak});
-        await AsyncStorage.setItem('streaks', JSON.stringify(streaks));
-    
-        await AsyncStorage.setItem(date, JSON.stringify(updatedPrayerDay));
-    };
-
-  
     const prayers = [
         'Fajr',
         'Sunrise',
@@ -84,21 +48,21 @@ export default function PrayerDay() {
     return (
         <View style={styles.container}>
             
-            <Text style={styles.header}>{prayerTimes ? prayerTimes[+key-1].date.readable : "Loading..."}</Text>
+            <Text style={styles.header}>{date.slice(0, 5)}</Text>
 
             <View style={styles.salahView}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
-            {prayerTimes ? 
+            {prayerData ? 
                 prayers.map(prayer => {
-                    const time = prayerTimes[+key-1].timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
+                    const time = prayerData.timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
 
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
-                            <Checkbox 
+                            {/* <Checkbox 
                             value={getPrayerValue(prayer)}
-                            onValueChange={async () => await changePrayerValue(prayer)}/>
+                            onValueChange={async () => await changePrayerValue(prayer)}/> */}
                         </View>
                     ) : null;
                 })

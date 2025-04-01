@@ -3,51 +3,65 @@ import { Link, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 
+/**
+ * In this page, there will be a link to each day in the month and each link will lead to a
+ * page that looks like the landing page except its going to be showing data for the linked date.
+ * 
+ */
+
 export default function MoreTimes() {
   const [prayerTimes, setPrayerTimes] = useState<any | null>(null);
   const [streaks, setStreaks] = useState<any | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      const streaksRaw = await AsyncStorage.getItem('streaks');
-      setStreaks(streaksRaw ? JSON.parse(streaksRaw) : null);
-    })();
-  }, []);
-      
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = today.getMonth() + 1
 
-  const getPrayerTimes = async () => {
-      const storedPrayerTimes = await AsyncStorage.getItem('prayerTimes');
-      if (storedPrayerTimes !== null) {
-          setPrayerTimes(JSON.parse(storedPrayerTimes));
-      } else {
-          setPrayerTimes(null);
-      }
+
+  const getDaysList = function() {
+    // creating the dates list here which will be mapped to display the links
+    // number of days will depend on current month
+    const thirty = [9, 4, 6, 11] //sept, april, jun, nov
+    let limit = 32 // i want to start indexing at one
+    if (month === 2){
+      limit = 29
+    } else if (thirty.includes(month)) {
+      limit = 31
+    }
+
+    let daysList = []
+
+    for (let i = 1; i < limit; i++){
+      const formattedDay = i < 10 ? `0${i}` : i;
+      const formattedMonth = month < 10 ? `0${month}` : month;
+      const date = `${formattedDay}-${formattedMonth}-${year}`;
+      daysList.push(date)
+    }
+
+    return daysList
   };
 
-  useFocusEffect(
-          React.useCallback(() => {
-              getPrayerTimes();
-          }, [])
-      );
+  const daysList = getDaysList();
+
 
   return (
     <View style={styles.container}>
       {/* <Text style={styles.text}>More Times</Text> */}
       <ScrollView style={styles.scrollContainer}>
-        {prayerTimes
-          ? prayerTimes.map((day, dayIndex) => {
+        <Text style={styles.text}>{month}</Text>
+        {daysList.map((day, dayIndex: number) => {
               
               return (
-                <View style={styles.daysListsItem} key={day.date.gregorian.date}>
-                  <Link href={`../prayerDay?key=${dayIndex+1}&date=${day.date.gregorian.date}`} style={{width: '100%', textAlign: 'center'}}>
-                    <Text style={styles.daysListsItemText}>{day.date.readable} - {streaks[day.date.gregorian.date]}</Text>
+                <View style={styles.daysListsItem} key={day}>
+                  <Link href={`../OtherDay?key=${dayIndex+1}&date=${day}`} style={{width: '100%', textAlign: 'center'}}>
+                    <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
                   </Link>
                 </View>
                 
                 
               );
             })
-          : null}
+          }
       </ScrollView>
     </View>
   );
@@ -71,6 +85,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 24,
     marginVertical: 20,
+    alignSelf: 'center',
   },
 
   button: {
