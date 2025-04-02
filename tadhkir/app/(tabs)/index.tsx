@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useState, useRef} from 'react';
+import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import main from "../../utils/setUpPrayerStorage"
@@ -130,15 +130,25 @@ const HomePage = () => {
         'Isha'
     ];
 
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+        }).start();
+    }, []);
+
     
     
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={styles.header}>Welcome back {firstName}</Text>
-            <Text style={styles.smallHeader}>Prayer Times for Today</Text>
+            <Animated.Text style={[styles.header, {opacity: fadeAnim}]}>Welcome back {firstName}</Animated.Text>
+            <Animated.Text style={[styles.smallHeader, {opacity: fadeAnim}]}>Prayer Times for {today.toLocaleString('default', {weekday: 'long'})}, {today.toLocaleString('default', {month: 'long'})} {date}</Animated.Text>
             
-            <View style={styles.salahView}>
+            <Animated.View style={[styles.salahView, {opacity: fadeAnim}]}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
             {prayerData && prayerData.timings? 
                 prayers.map(prayer => {
@@ -172,7 +182,7 @@ const HomePage = () => {
                     ) : null;
                 })
             : null}
-            </View>
+            </Animated.View>
         </ScrollView>
     );
 };
