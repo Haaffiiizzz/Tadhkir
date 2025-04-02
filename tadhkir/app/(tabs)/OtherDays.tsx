@@ -39,7 +39,34 @@ export default function MoreTimes() {
     return daysList
   };
 
+  
   const daysList = getDaysList();
+  const [daysCounts, setDaysCounts] = useState<number[] | null>(null);
+
+  const getDayCounts = async (daysList: string[]) => {
+    //loop through the daysList and get the stored count for each day
+    const countsArray = await Promise.all(
+      daysList.map(async (day) => {
+        let dayData = await AsyncStorage.getItem(day);
+        dayData = dayData ? JSON.parse(dayData) : null;
+        return dayData ? dayData.count : 0;
+      })
+    );
+
+    setDaysCounts(countsArray);
+  };
+
+  useEffect(() => {
+    getDayCounts(daysList);
+  }, [daysList]);
+
+  const colorDict: Record<number, string> = {
+    1: "#f00",
+    2: "#bf4000",
+    3: "#7f7f00",
+    4: "#40bf00",
+    5: "#0f0"
+  } //colors from red to green to show prayer statuses
 
 
   return (
@@ -47,16 +74,19 @@ export default function MoreTimes() {
       {/* <Text style={styles.text}>More Times</Text> */}
       <ScrollView style={styles.scrollContainer}>
         <Text style={styles.text}>{month}</Text>
-        {daysList.map((day, dayIndex: number) => {
-              
+
+        {daysList && daysCounts && daysList.map((day, dayIndex: number) => {
+          
+              const dayCount = daysCounts[dayIndex] ?? 0; 
+              const backgroundColor = colorDict[dayCount] || "#ccc"; 
+
               return (
-                <View style={styles.daysListsItem} key={day}>
+                <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
                   <Link href={`../OtherDay?key=${dayIndex+1}&date=${day}`} style={{width: '100%', textAlign: 'center'}}>
                     <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
                   </Link>
                 </View>
-                
-                
+                  
               );
             })
           }

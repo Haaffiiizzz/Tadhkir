@@ -75,7 +75,7 @@ export default function PrayerDay() {
         <View style={styles.container}>
             
             <Text style={styles.header}>{date.slice(0, 5)}</Text>
-            <Text> Total Prayed: {prayerCount}</Text>
+            <Text style={styles.countText}> Total Prayed: {prayerCount}</Text>
 
             <View style={styles.salahView}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
@@ -87,10 +87,14 @@ export default function PrayerDay() {
                         <View key={prayer} style={styles.salahItem}>
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
-                            <Checkbox 
-                            value={prayerStatus[prayer]}
-                            onValueChange={async()=> await handleValueChange(prayer)}
-                            />
+                            
+                            {prayer !== "Sunrise" && /**So theres no checkbox for Sunrise */
+                                <Checkbox 
+                                value={prayerStatus[prayer]}
+                                onValueChange={async()=> await handleValueChange(prayer)}
+                                />
+                            } 
+                            
                         </View>
                     ) : null;
                 })
@@ -121,6 +125,13 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexWrap: 'wrap',
 
+    },
+    countText: {
+        color: '#fff',
+        fontSize: 25,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        top: -50,
     },
 
     salahItem: {
