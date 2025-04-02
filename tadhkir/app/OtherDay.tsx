@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Checkbox from 'expo-checkbox';
@@ -72,7 +72,7 @@ export default function PrayerDay() {
     ];
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
             
             <Text style={styles.header}>{date.slice(0, 5)}</Text>
             <Text style={styles.countText}> Total Prayed: {prayerCount}</Text>
@@ -100,7 +100,7 @@ export default function PrayerDay() {
                 })
             : null}
             </View>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -108,8 +108,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#25292e',
-        justifyContent: 'center',
-        alignItems: 'center',
+        
     },
 
     header: {
@@ -117,28 +116,29 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         alignSelf: 'center',
-        top: -100,
+        marginTop: 20
     },
 
     salahView: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-between',
-        flexWrap: 'wrap',
+        marginTop: 60
 
     },
+
     countText: {
         color: '#fff',
         fontSize: 25,
         fontWeight: 'bold',
         alignSelf: 'center',
-        top: -50,
+        marginTop: 20,
     },
 
     salahItem: {
         backgroundColor: '#50584e',
         margin: 10,
-        height: 100,
-        width: 170,
+        height: 85,
+        width: 350,
         borderRadius: 10,
         padding: 10,
         justifyContent: 'center',

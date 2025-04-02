@@ -73,10 +73,10 @@ export default function MoreTimes() {
     <View style={styles.container}>
       {/* <Text style={styles.text}>More Times</Text> */}
       <ScrollView style={styles.scrollContainer}>
-        <Text style={styles.text}>{month}</Text>
+        <Text style={styles.text}>{today.toLocaleString('default', {month: 'long'})}</Text>
 
         {daysList && daysCounts && daysList.map((day, dayIndex: number) => {
-          
+
               const dayCount = daysCounts[dayIndex] ?? 0; 
               const backgroundColor = colorDict[dayCount] || "#ccc"; 
 
