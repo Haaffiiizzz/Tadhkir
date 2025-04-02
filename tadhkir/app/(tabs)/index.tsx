@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import main from "../../utils/setUpPrayerStorage"
+import Checkbox from 'expo-checkbox';
 /**
  * This is basically the index / home page. For now, it'll display user name and prayer times if these details are already stored.
  * Else, it'll redirect to the required pages to get these data.
@@ -16,7 +17,7 @@ const HomePage = () => {
     const date = today.getDate();
 
     useEffect(() => {
-        // incase we get a new month, we need to get new month data from the api. 
+        // incase we enter a new month, we need to get new month data from the api. 
         //Notice this means having new dicts for new days i.e old data is still available.
         const checkMonth = async () => {
             const savedMonth = await AsyncStorage.getItem('month');
@@ -38,6 +39,8 @@ const HomePage = () => {
     const [latitude, setLatitude] = useState<string | null>(null);
     const [timeFormat, setTimeFormat] = useState<string | null>(null);
     const [prayerData, setPrayerData] = useState< any | null>(null);
+    const [prayerStatus, setPrayerStatus] = useState< any | null >(null);
+    const [prayerCount, setPrayerCount] = useState< any | null>(null)
    
 
     const getName = async () => {
@@ -62,6 +65,10 @@ const HomePage = () => {
             if (storedPrayerData) {
                 storedPrayerData = JSON.parse(storedPrayerData);
                 setPrayerData(storedPrayerData);
+                if (storedPrayerData){
+                    setPrayerStatus(storedPrayerData.status)
+                    setPrayerCount(storedPrayerData.count)
+                }
             }
         } catch (error) {
             console.error('Error retrieving prayer data:', error);
@@ -92,6 +99,27 @@ const HomePage = () => {
             return () => clearTimeout(timer);
         }
     }, [firstName, latitude]);
+
+    const handleValueChange = async (prayer: string) => { // to change the true or false value for a prayer when the checkbox is clicked and increase or decrease
+        // the number of saved prayers.
+        const newValue = !prayerStatus[prayer];  // true/false
+        const newPrayerStatus = { ...prayerStatus, [prayer]: newValue };
+        let newPrayerCount = prayerCount
+
+        if (newValue === true){// if it was false before and after clicking we changed to true, then increase the prayer count else decrease
+            newPrayerCount += 1
+        } else {
+            newPrayerCount -= 1
+        }
+
+        const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
+
+        await AsyncStorage.setItem(todayDate, JSON.stringify(newPrayerData));
+        
+        setPrayerData(newPrayerData);
+        setPrayerStatus(newPrayerStatus);
+        setPrayerCount(newPrayerCount);
+    }
 
     const prayers = [
         'Fajr',
@@ -132,6 +160,14 @@ const HomePage = () => {
                         <View key={prayer} style={styles.salahItem}>
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
+                            
+                            {prayer !== "Sunrise" && /**So theres no checkbox for Sunrise */
+                                <Checkbox 
+                                value={prayerStatus[prayer]}
+                                onValueChange={async()=> await handleValueChange(prayer)}
+                                />
+                            } 
+                            
                         </View>
                     ) : null;
                 })
@@ -169,7 +205,7 @@ const styles = StyleSheet.create({
     salahItem: {
         backgroundColor: '#50584e',
         margin: 10,
-        height: 70,
+        height: 85,
         width: 350,
         borderRadius: 10,
         padding: 10,
