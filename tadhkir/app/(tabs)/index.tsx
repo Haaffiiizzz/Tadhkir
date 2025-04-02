@@ -86,8 +86,7 @@ const HomePage = () => {
     );
 
     useEffect(() => {
-        if (firstName === "") {
-            console.log("not first name")
+        if (!firstName) {
             const timer = setTimeout(() => {
                 router.push('../GetUserInfo');
             }, 0);
