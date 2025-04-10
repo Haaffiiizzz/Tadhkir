@@ -63,7 +63,7 @@ const HomePage = () => {
             let storedPrayerData = await AsyncStorage.getItem(todayDate);
             
             if (storedPrayerData) {
-                storedPrayerData = JSON.parse(storedPrayerData);
+                storedPrayerData = JSON.parse(storedPrayerData)
                 setPrayerData(storedPrayerData);
                 if (storedPrayerData){
                     setPrayerStatus(storedPrayerData.status)
@@ -97,7 +97,7 @@ const HomePage = () => {
             }, 0);
             return () => clearTimeout(timer);
         }
-    }, [firstName, latitude]);
+    }, [firstName, latitude]); 
 
     const handleValueChange = async (prayer: string) => { // to change the true or false value for a prayer when the checkbox is clicked and increase or decrease
         // the number of saved prayers.
@@ -237,3 +237,4 @@ const styles = StyleSheet.create({
 
 });
 export default HomePage;
+//continue with styling
