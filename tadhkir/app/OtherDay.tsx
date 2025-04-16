@@ -14,7 +14,27 @@ export default function PrayerDay() {
     const [prayerData, setPrayerData] = useState< any | null>(null);
     const [prayerStatus, setPrayerStatus] = useState< any | null >(null);
     const [prayerCount, setPrayerCount] = useState< any | null>(null)
+    const [timeFormat, setTimeFormat] = useState<string | null>(null);
+  
+    const getTimeFormat = async () => {
+        const storedTimeFormat = await AsyncStorage.getItem('timeformat');
+        setTimeFormat(storedTimeFormat);
+    };
 
+    const getTimeString = (time: string) => {
+        if (timeFormat === '12h'){
+            let timeHour = +time.split(':')[0];
+            let timeMin = time.split(':')[1];
+            if (timeHour > 12) {
+                timeHour = timeHour - 12;
+                time = timeHour + ':' + timeMin + ' PM';
+            } else {
+                time = timeHour + ':' + timeMin + ' AM';
+            }
+
+        }
+        return time
+    }
 
     const getPrayerData = async () => {
         try {
@@ -37,6 +57,7 @@ export default function PrayerDay() {
     useFocusEffect(
         React.useCallback(() => {
             getPrayerData();
+            getTimeFormat();
         }, [])
     );
 
@@ -61,7 +82,6 @@ export default function PrayerDay() {
         setPrayerCount(newPrayerCount);
     }
     
-
     const prayers = [
         'Fajr',
         'Sunrise',
@@ -81,8 +101,8 @@ export default function PrayerDay() {
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
             {prayerData ? 
                 prayers.map((prayer: string) => {
-                    const time = prayerData.timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
-
+                    let time = prayerData.timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
+                    time = getTimeString(time)
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>
                             <Text style={styles.salahText}>{prayer} </Text>
