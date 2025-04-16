@@ -22,16 +22,14 @@ export default function PrayerDay() {
     };
 
     const getTimeString = (time: string) => {
-        if (timeFormat === '12h'){
-            let timeHour = +time.split(':')[0];
-            let timeMin = time.split(':')[1];
-            if (timeHour > 12) {
-                timeHour = timeHour - 12;
-                time = timeHour + ':' + timeMin + ' PM';
-            } else {
-                time = timeHour + ':' + timeMin + ' AM';
-            }
-
+        //lil function to convert original time string from 24 hours to 12 hours
+        let timeHour = +time.split(':')[0];
+        let timeMin = time.split(':')[1];
+        if (timeHour > 12) {
+            timeHour = timeHour - 12;
+            time = timeHour + ':' + timeMin + ' PM';
+        } else {
+            time = timeHour + ':' + timeMin + ' AM';
         }
         return time
     }
@@ -102,7 +100,8 @@ export default function PrayerDay() {
             {prayerData ? 
                 prayers.map((prayer: string) => {
                     let time = prayerData.timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
-                    time = getTimeString(time)
+                    if (timeFormat == "12h")
+                        time = getTimeString(time)
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>
                             <Text style={styles.salahText}>{prayer} </Text>

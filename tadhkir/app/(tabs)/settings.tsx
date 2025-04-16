@@ -4,8 +4,6 @@ import * as Updates from 'expo-updates';
 import React, {useState, useEffect} from 'react';
 import { Switch } from 'react-native-switch';
 
-
-
 export default function Settings() {
     const restartApp = async () => {
         try {

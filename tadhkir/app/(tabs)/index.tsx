@@ -77,16 +77,13 @@ const HomePage = () => {
     };
 
     const getTimeString = (time: string) => {
-        if (timeFormat === '12h'){
-            let timeHour = +time.split(':')[0];
-            let timeMin = time.split(':')[1];
-            if (timeHour > 12) {
-                timeHour = timeHour - 12;
-                time = timeHour + ':' + timeMin + ' PM';
-            } else {
-                time = timeHour + ':' + timeMin + ' AM';
-            }
-
+        let timeHour = +time.split(':')[0];
+        let timeMin = time.split(':')[1];
+        if (timeHour > 12) {
+            timeHour = timeHour - 12;
+            time = timeHour + ':' + timeMin + ' PM';
+        } else {
+            time = timeHour + ':' + timeMin + ' AM';
         }
         return time
     }
@@ -167,7 +164,8 @@ const HomePage = () => {
             {prayerData && prayerData.timings? 
                 prayers.map(prayer => {
                     let time = prayerData['timings'][prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
-                    time = getTimeString(time)
+                    if (timeFormat == "12h")
+                        time = getTimeString(time) //only call the function if we need to convert
 
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>
