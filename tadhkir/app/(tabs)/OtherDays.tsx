@@ -10,6 +10,12 @@ import React, { useState, useEffect } from 'react';
  */
 
 export default function MoreTimes() {
+  const [timeFormat, setTimeFormat] = useState<string | null>(null);
+  
+  const getTimeFormat = async () => {
+    const storedTimeFormat = await AsyncStorage.getItem('timeformat');
+    setTimeFormat(storedTimeFormat);
+  };
 
   const today = new Date()
   const year = today.getFullYear()

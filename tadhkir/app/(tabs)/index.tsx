@@ -76,6 +76,21 @@ const HomePage = () => {
         }
     };
 
+    const getTimeString = (time: string) => {
+        if (timeFormat === '12h'){
+            let timeHour = +time.split(':')[0];
+            let timeMin = time.split(':')[1];
+            if (timeHour > 12) {
+                timeHour = timeHour - 12;
+                time = timeHour + ':' + timeMin + ' PM';
+            } else {
+                time = timeHour + ':' + timeMin + ' AM';
+            }
+
+        }
+        return time
+    }
+
     useFocusEffect(
         React.useCallback(() => {
             getName();
@@ -152,18 +167,7 @@ const HomePage = () => {
             {prayerData && prayerData.timings? 
                 prayers.map(prayer => {
                     let time = prayerData['timings'][prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
-
-                    if (timeFormat === '12h'){
-                        let timeHour = +time.split(':')[0];
-                        let timeMin = +time.split(':')[1];
-                        if (timeHour > 12) {
-                            timeHour = timeHour - 12;
-                            time = timeHour + ':' + timeMin + ' PM';
-                        } else {
-                            time = timeHour + ':' + timeMin + ' AM';
-                        }
-
-                    }
+                    time = getTimeString(time)
 
                     return time ? (
                         <View key={prayer} style={styles.salahItem}>
@@ -189,7 +193,7 @@ const HomePage = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#25292e'
+        backgroundColor: '#25292e',
     },
     header: {
         color: '#fff',
@@ -204,11 +208,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignSelf: 'center',
         marginTop: 20,
+        padding: 10,
+        textAlign:'center'
+        
     },
     
     salahView: {
         flexDirection: 'column',
         marginTop: 60,
+        marginBottom: 50
     },
 
     salahItem: {
