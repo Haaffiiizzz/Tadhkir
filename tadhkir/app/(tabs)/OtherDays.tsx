@@ -67,7 +67,7 @@ export default function MoreTimes() {
   }, [daysList]);
 
   const colorDict: Record<number, string> = {
-    1: "#f00",
+    1: "#ff3333",
     2: "#bf4000",
     3: "#7f7f00",
     4: "#40bf00",
