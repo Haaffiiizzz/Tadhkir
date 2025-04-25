@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     width: '100%',
     flex: 1,
-
   },
 
   text: {
@@ -141,6 +140,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     justifyContent: 'center',
     display: 'flex',
+    // Added drop shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 
   daysListsItemText: {
