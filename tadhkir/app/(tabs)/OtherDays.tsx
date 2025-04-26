@@ -77,25 +77,25 @@ export default function MoreTimes() {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.text}>More Times</Text> */}
       <ScrollView style={styles.scrollContainer}>
         <Text style={styles.text}>{today.toLocaleString('default', {month: 'long'})}</Text>
 
-        {daysList && daysCounts && daysList.map((day, dayIndex: number) => {
+        {daysList && daysCounts ? (
+          daysList.map((day, dayIndex: number) => {
+            const dayCount = daysCounts[dayIndex] ?? 0;
+            const backgroundColor = colorDict[dayCount] || "#ccc";
 
-              const dayCount = daysCounts[dayIndex] ?? 0; 
-              const backgroundColor = colorDict[dayCount] || "#ccc"; 
-
-              return (
-                <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
-                  <Link href={`../OtherDay?key=${dayIndex+1}&date=${day}`} style={{width: '100%', textAlign: 'center'}}>
-                    <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
-                  </Link>
-                </View>
-                  
-              );
-            })
-          }
+            return (
+              <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
+                <Link href={`../OtherDay?key=${dayIndex + 1}&date=${day}`} style={{ width: '100%', textAlign: 'center' }}>
+                  <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
+                </Link>
+              </View>
+            );
+          })
+        ) : (
+          <Text style={styles.text}>Loading...</Text>
+        )}
       </ScrollView>
     </View>
   );
