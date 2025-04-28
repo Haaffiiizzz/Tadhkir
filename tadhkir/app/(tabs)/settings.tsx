@@ -1,22 +1,21 @@
-import { View, Button, StyleSheet, Text } from 'react-native';
+import { View, Button, StyleSheet, Text, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Updates from 'expo-updates';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Switch } from 'react-native-switch';
 
 export default function Settings() {
     const restartApp = async () => {
         try {
-          await Updates.reloadAsync();
+            await Updates.reloadAsync();
         } catch (e) {
-          console.error(e);
+            console.error(e);
         }
-      };
+    };
 
     const [is24Hour, setIs24Hour] = useState(false);
 
     useEffect(() => {
-        
         const loadTimeFormat = async () => {
             const storedFormat = await AsyncStorage.getItem('timeformat');
             if (storedFormat === "24h") {
@@ -35,18 +34,35 @@ export default function Settings() {
         setIs24Hour(!is24Hour);
     };
 
+    const confirmClearData = () => {
+        Alert.alert(
+            "Confirm",
+            "Are you sure you want to clear all data?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Yes",
+                    onPress: async () => {
+                        await AsyncStorage.clear();
+                        restartApp();
+                    }
+                }
+            ]
+        );
+    };
+
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Button
                 title="Clear All Data"
-                onPress={() => {
-                    AsyncStorage.clear();
-                    restartApp();
-                }}
+                onPress={confirmClearData}
             />
 
             <Switch
-                trackColor={{false: '#767577', true: '#81b0ff'}}
+                trackColor={{ false: '#767577', true: '#81b0ff' }}
                 thumbColor={is24Hour ? '#f5dd4b' : '#f4f3f4'}
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={changeTimeFormat}
@@ -55,15 +71,16 @@ export default function Settings() {
                 inActiveText={'24h'}
             />
             <Text>Toggle to change time format!</Text>
+            <Text style={{ marginTop: 10 }}>Current Time Format: {is24Hour ? '24h' : '12h'}</Text>
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#25292e',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
+    container: {
+        flex: 1,
+        backgroundColor: '#25292e',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 });
