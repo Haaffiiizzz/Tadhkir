@@ -11,11 +11,12 @@ import Checkbox from 'expo-checkbox';
 export default function PrayerDay() {
 
     const { date } = useLocalSearchParams();
-    const [prayerData, setPrayerData] = useState< any | null>(null);
-    const [prayerStatus, setPrayerStatus] = useState< any | null >(null);
-    const [prayerCount, setPrayerCount] = useState< any | null>(null)
+    const [prayerData, setPrayerData] = useState<any | null>(null);
+    const [prayerStatus, setPrayerStatus] = useState<any | null>(null);
+    const [prayerCount, setPrayerCount] = useState<any | null>(null);
     const [timeFormat, setTimeFormat] = useState<string | null>(null);
-  
+    const [currentPrayer, setCurrentPrayer] = useState<string | null>(null); // New state for current prayer
+
     const getTimeFormat = async () => {
         const storedTimeFormat = await AsyncStorage.getItem('timeformat');
         setTimeFormat(storedTimeFormat);
@@ -31,8 +32,8 @@ export default function PrayerDay() {
         } else {
             time = timeHour + ':' + timeMin + ' AM';
         }
-        return time
-    }
+        return time;
+    };
 
     const getPrayerData = async () => {
         try {
@@ -42,8 +43,8 @@ export default function PrayerDay() {
                 storedPrayerData = JSON.parse(storedPrayerData);
                 setPrayerData(storedPrayerData);
                 if (storedPrayerData){
-                    setPrayerStatus(storedPrayerData.status)
-                    setPrayerCount(storedPrayerData.count)
+                    setPrayerStatus(storedPrayerData.status);
+                    setPrayerCount(storedPrayerData.count);
                 }
             }
         } catch (error) {
@@ -51,6 +52,32 @@ export default function PrayerDay() {
             setPrayerData(null);
         }
     };
+
+    const determineCurrentPrayer = () => {
+        if (!prayerData) return;
+
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
+
+        let lastPrayer = null;
+        for (const prayer of prayers) {
+            const time = prayerData.timings[prayer].split(' ')[0];
+            const [hour, minute] = time.split(':').map(Number);
+            const prayerTime = hour * 60 + minute;
+
+            if (currentTime >= prayerTime) {
+                lastPrayer = prayer;
+            } else {
+                break;
+            }
+        }
+
+        setCurrentPrayer(lastPrayer);
+    };
+
+    useEffect(() => {
+        determineCurrentPrayer();
+    }, [prayerData]);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -63,12 +90,12 @@ export default function PrayerDay() {
         // the number of saved prayers.
         const newValue = !prayerStatus[prayer];  // true/false
         const newPrayerStatus = { ...prayerStatus, [prayer]: newValue };
-        let newPrayerCount = prayerCount
+        let newPrayerCount = prayerCount;
 
         if (newValue === true){// if it was false before and after clicking we changed to true, then increase the prayer count else decrease
-            newPrayerCount += 1
+            newPrayerCount += 1;
         } else {
-            newPrayerCount -= 1
+            newPrayerCount -= 1;
         }
 
         const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
@@ -78,7 +105,7 @@ export default function PrayerDay() {
         setPrayerData(newPrayerData);
         setPrayerStatus(newPrayerStatus);
         setPrayerCount(newPrayerCount);
-    }
+    };
     
     const prayers = [
         'Fajr',
@@ -101,9 +128,17 @@ export default function PrayerDay() {
                 prayers.map((prayer: string) => {
                     let time = prayerData.timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
                     if (timeFormat == "12h")
-                        time = getTimeString(time)
+                        time = getTimeString(time);
+
+                    const isCurrentPrayer = prayer === currentPrayer; // Check if this is the current prayer
                     return time ? (
-                        <View key={prayer} style={styles.salahItem}>
+                        <View
+                            key={prayer}
+                            style={[
+                                styles.salahItem,
+                                isCurrentPrayer && styles.currentPrayerHighlight, // Highlight current prayer
+                            ]}
+                        >
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
                             
@@ -174,5 +209,8 @@ const styles = StyleSheet.create({
     salahTime: {
         color: '#fff',
         fontSize: 20,
+    },
+    currentPrayerHighlight: {
+        backgroundColor: '#40bf00', // Highlight color for the current prayer
     },
 });
