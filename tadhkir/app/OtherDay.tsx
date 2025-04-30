@@ -123,7 +123,7 @@ export default function PrayerDay() {
             <Text style={styles.countText}> Total Prayed: {prayerCount}</Text>
 
             <View style={styles.salahView}>
-            {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
+            {/* code down is to map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
             {prayerData ? 
                 prayers.map((prayer: string) => {
                     let time = prayerData.timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
