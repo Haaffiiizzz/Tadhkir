@@ -1,33 +1,27 @@
 {
   "expo": {
-    "name": "tadhkir",
-    "slug": "tadhkir",
+    "name": "tadhkir-fixed",
+    "slug": "tadhkir-fixed",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "tadhkirfixed",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to provide location-based services.",
-        "ITSAppUsesNonExemptEncryption": false
-      },
-      "bundleIdentifier": "com.haaffiiizzz.tadhkir"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
-      ],
-      "package": "com.haaffiiizzz.tadhkir"
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "bundler": "metro",
@@ -35,27 +29,10 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "32a5cfd8-1dc9-4dee-958f-16f93dce371a"
-      }
     }
   }
 }
