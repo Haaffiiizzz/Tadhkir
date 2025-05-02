@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback 
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import main from "../../utils/setUpPrayerStorage"
-import Checkbox from 'expo-checkbox';
 /**
  * This is basically the index / home page. For now, it'll display user name and prayer times if these details are already stored.
  * Else, it'll redirect to the required pages to get these data.
@@ -219,7 +218,7 @@ const HomePage = () => {
 
                     // Otherwise, wrap it in a Touchable
                     return (
-                        <TouchableWithoutFeedback key={prayer} onPress={async () => await handleValueChange(prayer)}>
+                        <TouchableWithoutFeedback key={prayer} onPress={async () => await handleValueChange(prayer)} delayLongPress={500}>
                             {prayerView}
                         </TouchableWithoutFeedback>
                     );
@@ -275,28 +274,25 @@ const styles = StyleSheet.create({
         marginRight: 22,
     },
     salahText: {
-        color: '#fff',
+        color: '#e0eaff',
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 5,
     },
     salahTime: {
-        color: '#fff',
+        color: '#e0eaff',
         fontSize: 20,
     },
 
+    // Highlight for the current prayer (if not yet marked as done)
     currentPrayerHighlight: {
-        backgroundColor: '#00f', // Highlight color for the current prayer
+        borderWidth: 4,
+        borderColor: '#fff',
     },
-
     donePrayer: {
-        backgroundColor: "#0f0" // to mark done prayer
-    }, 
-    currentAndDone: {
-        backgroundColor: "#0ff"
-    }
-
-
+        backgroundColor: "#06d6a0" // lght green
+    },
+   
 });
 export default HomePage;
 

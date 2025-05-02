@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Checkbox from 'expo-checkbox';
 
 // this page basically mirrors the index page except it displays prayer time for the day selected in moreTimes page i.e shows prayers for a particular selected day. 
 //thnere's a whole lot going on here but prayerDay is the json for the daily prayers and whether they have been prayed or not
@@ -100,30 +99,38 @@ export default function PrayerDay() {
 
             <View style={styles.salahView}>
             {/* code down is to map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
-            {prayerData ? 
-                prayers.map((prayer: string) => {
-                    let time = prayerData.timings[prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
+            {prayerData && prayerData.timings ? 
+                prayers.map(prayer => {
+                    let time = prayerData['timings'][prayer].split(' ')[0]; // Remove timezone if attached
                     if (timeFormat == "12h")
                         time = getTimeString(time);
 
-                    
-                    return time ? (
-                        <View
+                    const isSunrise = prayer === "Sunrise";
+
+                    const prayerView = (
+                        <View 
                             key={prayer}
-                            style={styles.salahItem}
+                            style={[
+                                styles.salahItem,
+                                prayerStatus[prayer] && styles.donePrayer
+                            ]}
                         >
-                            <Text style={styles.salahText}>{prayer} </Text>
+                            <Text style={styles.salahText}>{prayer}</Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
-                            
-                            {prayer !== "Sunrise" && /**So theres no checkbox for Sunrise */
-                                <Checkbox 
-                                value={prayerStatus[prayer]}
-                                onValueChange={async()=> await handleValueChange(prayer)}
-                                />
-                            } 
-                            
                         </View>
-                    ) : null;
+                    );
+
+                    // If it's sunrise, just show the view normally
+                    if (isSunrise) {
+                        return prayerView;
+                    }
+
+                    // Otherwise, wrap it in a Touchable
+                    return (
+                        <TouchableWithoutFeedback key={prayer} onPress={async () => await handleValueChange(prayer)} delayLongPress={500}>
+                            {prayerView}
+                        </TouchableWithoutFeedback>
+                    );
                 })
             : null}
             </View>
@@ -182,5 +189,9 @@ const styles = StyleSheet.create({
     salahTime: {
         color: '#fff',
         fontSize: 20,
+    },
+
+    donePrayer: {
+        backgroundColor: "#06d6a0" // light green
     }
 });
