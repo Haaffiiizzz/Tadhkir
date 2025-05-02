@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef} from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import main from "../../utils/setUpPrayerStorage"
@@ -181,9 +181,6 @@ const HomePage = () => {
 
 
 
-    
-    
-
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
             <Animated.Text style={[styles.header, {opacity: fadeAnim}]}>Welcome back {firstName}</Animated.Text>
@@ -200,6 +197,8 @@ const HomePage = () => {
                     const isCurrentPrayer = prayer === currentPrayer; // Check if this is the current prayer
 
                     return time ? (
+
+                        <TouchableWithoutFeedback onPress={async()=> await handleValueChange(prayer)}>
                         <View key={prayer} style={[styles.salahItem, isCurrentPrayer && styles.currentPrayerHighlight]}>
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
@@ -212,6 +211,7 @@ const HomePage = () => {
                             } 
                             
                         </View>
+                        </TouchableWithoutFeedback>
                     ) : null;
                 })
             : null}
