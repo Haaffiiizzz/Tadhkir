@@ -110,7 +110,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#25292e',
     justifyContent: 'center',
     alignItems: 'center',
-    alignContent: "center"
+    alignContent: "center",
+    flexDirection: "row"
   },
 
   scrollContainer: {

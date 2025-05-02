@@ -21,6 +21,7 @@ export default function TabLayout() {
         name="index" 
         options={{ 
           title: 'Home',
+          headerShown: false,
           tabBarIcon: ({color, focused}) => (
             <Ionicons name= {focused ? 'home-sharp': 'home-outline'} color={color} size={24} />
           ),
@@ -31,6 +32,7 @@ export default function TabLayout() {
         name="OtherDays" 
         options={{ 
           title: 'Other Days',
+          headerShown: false,
           tabBarIcon: ({color, focused}) => (
             <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} color = {color} size= {24} />
           ) 
@@ -41,6 +43,7 @@ export default function TabLayout() {
         name="settings" 
         options={{ 
           title: 'Settings',
+          headerShown: false,
           tabBarIcon: ({color, focused}) => (
             <Ionicons name={focused ? 'settings' : 'settings-outline'} color = {color} size= {24} />
           ) 
