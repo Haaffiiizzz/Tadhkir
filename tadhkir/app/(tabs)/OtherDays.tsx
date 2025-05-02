@@ -77,25 +77,28 @@ export default function MoreTimes() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollContainer}>
+      <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
         <Text style={styles.text}>{today.toLocaleString('default', {month: 'long'})}</Text>
 
-        {daysList && daysCounts ? (
-          daysList.map((day, dayIndex: number) => {
-            const dayCount = daysCounts[dayIndex] ?? 0;
-            const backgroundColor = colorDict[dayCount] || "#ccc";
+        <View style = {styles.daysContainer}>
+            {daysList && daysCounts ? (
+              daysList.map((day, dayIndex: number) => {
+                const dayCount = daysCounts[dayIndex] ?? 0;
+                const backgroundColor = colorDict[dayCount] || "#ccc";
 
-            return (
-              <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
-                <Link href={`../OtherDay?key=${dayIndex + 1}&date=${day}`} style={{ width: '100%', textAlign: 'center' }}>
-                  <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
-                </Link>
-              </View>
-            );
-          })
-        ) : (
-          <Text style={styles.text}>Loading...</Text>
-        )}
+                return (
+                  <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
+                    <Link href={`../OtherDay?key=${dayIndex + 1}&date=${day}`} style={{ width: '100%', textAlign: 'center' }}>
+                      <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
+                    </Link>
+                  </View>
+                );
+              })
+            ) : (
+              <Text style={styles.text}>Loading...</Text>
+            )}
+        </View>
+        
       </ScrollView>
     </View>
   );
@@ -107,11 +110,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#25292e',
     justifyContent: 'center',
     alignItems: 'center',
+    alignContent: "center"
   },
 
   scrollContainer: {
-    width: '100%',
     flex: 1,
+    width: '100%',
+    
+  },
+
+  daysContainer: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    rowGap: 15,
+    columnGap: 10,
+    padding: 10,
+    // borderColor: "blue",
+    // borderWidth: 2, // Added visible border for the days container as well
+    justifyContent: "center",
+    width: "90%"
   },
 
   text: {
@@ -129,17 +147,14 @@ const styles = StyleSheet.create({
 
   daysListsItem: {
     fontWeight: 'bold',
-    marginBottom: 20,
     backgroundColor: '#50584e',
     padding: 10,
     alignItems: 'center',
-    width: '50%',
-    alignSelf: 'center',
+    width: 50,
     borderRadius: 10,
     color: '#fff',
     fontSize: 16,
     justifyContent: 'center',
-    display: 'flex',
     // Added drop shadow
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

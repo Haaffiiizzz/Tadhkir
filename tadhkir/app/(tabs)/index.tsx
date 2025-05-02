@@ -104,7 +104,7 @@ const HomePage = () => {
                 router.push('../GetUserInfo');
             }, 0);
             return () => clearTimeout(timer);
-        } else if (firstName && !latitude) {
+        } else if (!latitude) {
             const timer = setTimeout(() => {
                 router.push('../GetUserLocation');
             }, 0);
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     
     salahView: {
         flexDirection: 'column',
-        marginTop: 60,
+        marginTop: 50,
         marginBottom: 50
     },
 
