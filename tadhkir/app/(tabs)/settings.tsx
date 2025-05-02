@@ -55,7 +55,7 @@ export default function Settings() {
     };
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.container}>
             <Button
                 title="Clear All Data"
                 onPress={confirmClearData}
@@ -70,8 +70,7 @@ export default function Settings() {
                 activeText={'12h'}
                 inActiveText={'24h'}
             />
-            <Text>Toggle to change time format!</Text>
-            <Text style={{ marginTop: 10 }}>Current Time Format: {is24Hour ? '24h' : '12h'}</Text>
+            <Text style={styles.text}>Toggle to change time format!</Text>
         </View>
     );
 }
@@ -82,5 +81,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#25292e',
         justifyContent: 'center',
         alignItems: 'center',
+    }, 
+
+    text: {
+        margin: 10,
+        fontSize: 20
     }
 });
