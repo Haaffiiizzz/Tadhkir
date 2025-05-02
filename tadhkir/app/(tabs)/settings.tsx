@@ -56,21 +56,23 @@ export default function Settings() {
 
     return (
         <View style={styles.container}>
+            <Switch
+                onValueChange={changeTimeFormat}
+                value={is24Hour}
+                activeText={'12h'}
+                inActiveText={'24h'}
+                circleSize={40}
+                switchLeftPx={8}
+                switchRightPx={8}
+            />
+            <Text style={styles.text}>Toggle to change time format!</Text>
+            
             <Button
                 title="Clear All Data"
                 onPress={confirmClearData}
             />
 
-            <Switch
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={is24Hour ? '#f5dd4b' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={changeTimeFormat}
-                value={is24Hour}
-                activeText={'12h'}
-                inActiveText={'24h'}
-            />
-            <Text style={styles.text}>Toggle to change time format!</Text>
+            
         </View>
     );
 }
