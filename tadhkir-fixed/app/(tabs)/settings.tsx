@@ -33,7 +33,7 @@ export default function Settings() {
         await AsyncStorage.setItem('timeformat', newFormat);
         setIs24Hour(!is24Hour);
     };
-
+ 
     const confirmClearData = () => {
         Alert.alert(
             "Confirm",

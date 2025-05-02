@@ -203,12 +203,14 @@ const HomePage = () => {
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
                             
-                            {prayer !== "Sunrise" && /**So theres no checkbox for Sunrise */
-                                <Checkbox 
-                                value={prayerStatus[prayer]}
-                                onValueChange={async()=> await handleValueChange(prayer)}
-                                /> 
-                            } 
+                            {/*
+                                {prayer !== "Sunrise" && // So theres no checkbox for Sunrise
+                                    <Checkbox 
+                                        value={prayerStatus[prayer]}
+                                        onValueChange={async()=> await handleValueChange(prayer)}
+                                    /> 
+                                }
+                            */}
                             
                         </View>
                         </TouchableWithoutFeedback>
