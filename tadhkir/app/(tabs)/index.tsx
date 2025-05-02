@@ -188,35 +188,44 @@ const HomePage = () => {
             
             <Animated.View style={[styles.salahView, {opacity: fadeAnim}]}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
-            {prayerData && prayerData.timings? 
+            {prayerData && prayerData.timings ? 
                 prayers.map(prayer => {
-                    let time = prayerData['timings'][prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
+                    let time = prayerData['timings'][prayer].split(' ')[0]; // Remove timezone if attached
                     if (timeFormat == "12h")
-                        time = getTimeString(time) //only call the function if we need to convert
-                    
-                    const isCurrentPrayer = prayer === currentPrayer; // Check if this is the current prayer
+                        time = getTimeString(time);
 
-                    return time ? (
+                    const isCurrentPrayer = prayer === currentPrayer;
+                    const isSunrise = prayer === "Sunrise";
 
-                        <TouchableWithoutFeedback onPress={async()=> await handleValueChange(prayer)}>
-                        <View key={prayer} style={[styles.salahItem, isCurrentPrayer && styles.currentPrayerHighlight]}>
-                            <Text style={styles.salahText}>{prayer} </Text>
+                    const prayerView = (
+                        <View 
+                            key={prayer}
+                            style={[
+                                styles.salahItem,
+                                isCurrentPrayer && styles.currentPrayerHighlight,
+                                prayerStatus[prayer] && styles.donePrayer, 
+                                isCurrentPrayer && prayerStatus[prayer] && styles.currentAndDone
+                            ]}
+                        >
+                            <Text style={styles.salahText}>{prayer}</Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
-                            
-                            {/*
-                                {prayer !== "Sunrise" && // So theres no checkbox for Sunrise
-                                    <Checkbox 
-                                        value={prayerStatus[prayer]}
-                                        onValueChange={async()=> await handleValueChange(prayer)}
-                                    /> 
-                                }
-                            */}
-                            
                         </View>
+                    );
+
+                    // If it's sunrise, just show the view normally
+                    if (isSunrise) {
+                        return prayerView;
+                    }
+
+                    // Otherwise, wrap it in a Touchable
+                    return (
+                        <TouchableWithoutFeedback key={prayer} onPress={async () => await handleValueChange(prayer)}>
+                            {prayerView}
                         </TouchableWithoutFeedback>
-                    ) : null;
+                    );
                 })
             : null}
+
             </Animated.View>
         </ScrollView>
     );
@@ -277,8 +286,15 @@ const styles = StyleSheet.create({
     },
 
     currentPrayerHighlight: {
-        backgroundColor: '#40bf00', // Highlight color for the current prayer
+        backgroundColor: '#00f', // Highlight color for the current prayer
     },
+
+    donePrayer: {
+        backgroundColor: "#0f0" // to mark done prayer
+    }, 
+    currentAndDone: {
+        backgroundColor: "#0ff"
+    }
 
 
 });
