@@ -15,7 +15,7 @@ export default function PrayerDay() {
     const [prayerStatus, setPrayerStatus] = useState<any | null>(null);
     const [prayerCount, setPrayerCount] = useState<any | null>(null);
     const [timeFormat, setTimeFormat] = useState<string | null>(null);
-    const [currentPrayer, setCurrentPrayer] = useState<string | null>(null); // New state for current prayer
+     // New state for current prayer
 
     const getTimeFormat = async () => {
         const storedTimeFormat = await AsyncStorage.getItem('timeformat');
@@ -53,31 +53,7 @@ export default function PrayerDay() {
         }
     };
 
-    const determineCurrentPrayer = () => {
-        if (!prayerData) return;
-
-        const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
-
-        let lastPrayer = null;
-        for (const prayer of prayers) {
-            const time = prayerData.timings[prayer].split(' ')[0];
-            const [hour, minute] = time.split(':').map(Number);
-            const prayerTime = hour * 60 + minute;
-
-            if (currentTime >= prayerTime) {
-                lastPrayer = prayer;
-            } else {
-                break;
-            }
-        }
-
-        setCurrentPrayer(lastPrayer);
-    };
-
-    useEffect(() => {
-        determineCurrentPrayer();
-    }, [prayerData]);
+    
 
     useFocusEffect(
         React.useCallback(() => {
@@ -130,14 +106,11 @@ export default function PrayerDay() {
                     if (timeFormat == "12h")
                         time = getTimeString(time);
 
-                    const isCurrentPrayer = prayer === currentPrayer; // Check if this is the current prayer
+                    
                     return time ? (
                         <View
                             key={prayer}
-                            style={[
-                                styles.salahItem,
-                                isCurrentPrayer && styles.currentPrayerHighlight, // Highlight current prayer
-                            ]}
+                            style={styles.salahItem}
                         >
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
@@ -209,8 +182,5 @@ const styles = StyleSheet.create({
     salahTime: {
         color: '#fff',
         fontSize: 20,
-    },
-    currentPrayerHighlight: {
-        backgroundColor: '#40bf00', // Highlight color for the current prayer
-    },
+    }
 });

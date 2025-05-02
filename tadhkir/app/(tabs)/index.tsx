@@ -41,6 +41,7 @@ const HomePage = () => {
     const [prayerData, setPrayerData] = useState< any | null>(null);
     const [prayerStatus, setPrayerStatus] = useState< any | null >(null);
     const [prayerCount, setPrayerCount] = useState< any | null>(null)
+    const [currentPrayer, setCurrentPrayer] = useState<string | null>(null);
    
 
     const getName = async () => {
@@ -132,6 +133,33 @@ const HomePage = () => {
         setPrayerCount(newPrayerCount);
     }
 
+    const determineCurrentPrayer = () => {
+            if (!prayerData) return;
+    
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
+    
+            let lastPrayer = null;
+            for (const prayer of prayers) {
+                const time = prayerData.timings[prayer].split(' ')[0];
+                const [hour, minute] = time.split(':').map(Number);
+                const prayerTime = hour * 60 + minute;
+    
+                if (currentTime >= prayerTime) {
+                    lastPrayer = prayer;
+                } else {
+                    break;
+                }
+            }
+    
+            setCurrentPrayer(lastPrayer);
+        };
+    
+    
+    useEffect(() => {
+        determineCurrentPrayer();
+    }, [prayerData]);
+
     const prayers = [
         'Fajr',
         'Sunrise',
@@ -151,6 +179,8 @@ const HomePage = () => {
         }).start();
     }, []);
 
+
+
     
     
 
@@ -166,9 +196,11 @@ const HomePage = () => {
                     let time = prayerData['timings'][prayer].split(' ')[0]; // since timezone not added to api call, it adds timezone to time so need to split
                     if (timeFormat == "12h")
                         time = getTimeString(time) //only call the function if we need to convert
+                    
+                    const isCurrentPrayer = prayer === currentPrayer; // Check if this is the current prayer
 
                     return time ? (
-                        <View key={prayer} style={styles.salahItem}>
+                        <View key={prayer} style={[styles.salahItem, isCurrentPrayer && styles.currentPrayerHighlight]}>
                             <Text style={styles.salahText}>{prayer} </Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
                             
@@ -176,7 +208,7 @@ const HomePage = () => {
                                 <Checkbox 
                                 value={prayerStatus[prayer]}
                                 onValueChange={async()=> await handleValueChange(prayer)}
-                                />
+                                /> 
                             } 
                             
                         </View>
@@ -238,6 +270,10 @@ const styles = StyleSheet.create({
     salahTime: {
         color: '#fff',
         fontSize: 20,
+    },
+
+    currentPrayerHighlight: {
+        backgroundColor: '#40bf00', // Highlight color for the current prayer
     },
 
 
