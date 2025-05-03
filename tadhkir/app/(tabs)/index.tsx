@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef} from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback, Alert } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import main from "../../utils/setUpPrayerStorage"
@@ -111,26 +111,68 @@ const HomePage = () => {
         }
     }, [firstName, latitude]); 
 
-    const handleValueChange = async (prayer: string) => { // to change the true or false value for a prayer when the checkbox is clicked and increase or decrease
+
+    const handleValueChange = async (prayer: string) => { 
+        // to change the true or false value for a prayer when the checkbox is clicked and increase or decrease
         // the number of saved prayers.
+    
+        // first we need to check if a prayer time has reached. if it hasn't, we want to display an 
+        //are you sure to mark the prayer as prayed. we can always unmark a prayer regardless of time.
+    
+        const confirmMarking = () => {
+            return new Promise<boolean>((resolve) => {
+                Alert.alert(
+                    "Confirm",
+                    "Are you sure you want to mark prayer as done? It's not yet the prayer time!",
+                    [
+                        {
+                            text: "Yes",
+                            onPress: () => resolve(true)
+                        },
+                        {
+                            text: "No",
+                            onPress: () => resolve(false)
+                        }
+                    ]
+                );
+            });
+        };
+    
+        if (!prayerStatus[prayer]){ //if it was unmarked we need to check if time has reached
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
+    
+            const time = prayerData.timings[prayer].split(' ')[0];
+            const [hour, minute] = time.split(':').map(Number);
+            const prayerTime = hour * 60 + minute;
+    
+            if (currentTime < prayerTime){ // time hasnt reached prayer time
+                const userConfirmed = await confirmMarking();
+                if (!userConfirmed) {
+                    return;
+                }
+            }
+        }
+    
         const newValue = !prayerStatus[prayer];  // true/false
         const newPrayerStatus = { ...prayerStatus, [prayer]: newValue };
         let newPrayerCount = prayerCount
-
+    
         if (newValue === true){// if it was false before and after clicking we changed to true, then increase the prayer count else decrease
             newPrayerCount += 1
         } else {
             newPrayerCount -= 1
         }
-
+    
         const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
-
+    
         await AsyncStorage.setItem(todayDate, JSON.stringify(newPrayerData));
         
         setPrayerData(newPrayerData);
         setPrayerStatus(newPrayerStatus);
         setPrayerCount(newPrayerCount);
-    }
+    };   
+    
 
     const determineCurrentPrayer = () => {
             if (!prayerData) return;
