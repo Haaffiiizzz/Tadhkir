@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef} from 'react';
 import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback, Alert } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import main from "../../utils/setUpPrayerStorage"
+import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
 /**
  * This is basically the index / home page. For now, it'll display user name and prayer times if these details are already stored.
  * Else, it'll redirect to the required pages to get these data.
@@ -23,7 +23,8 @@ const HomePage = () => {
             if (month.toString() !== savedMonth) {
                 const latitude = await AsyncStorage.getItem("latitude")
                 const longitude = await AsyncStorage.getItem("longitude")
-                await main(latitude, longitude)   
+                await prayerStorageMain(latitude, longitude)
+                await addMonthToMonths(month)   
             }
         };
         checkMonth();
@@ -98,18 +99,26 @@ const HomePage = () => {
     );
 
     useEffect(() => {
-        if (!firstName) {
-            const timer = setTimeout(() => {
-                router.push('../GetUserInfo');
-            }, 0);
-            return () => clearTimeout(timer);
-        } else if (!latitude) {
-            const timer = setTimeout(() => {
-                router.push('../GetUserLocation');
-            }, 0);
-            return () => clearTimeout(timer);
-        }
-    }, [firstName, latitude]); 
+        let timer: ReturnType<typeof setTimeout>;
+        (async () => {
+            if (!firstName) {
+                await initializeMonthStorage();
+                timer = setTimeout(() => {
+                    router.push('../GetUserInfo');
+                }, 0);
+            } else if (!latitude) {
+                await initializeMonthStorage();
+                timer = setTimeout(() => {
+                    router.push('../GetUserLocation');
+                }, 0);
+            }
+        })();
+        return () => {
+            if (timer) {
+                clearTimeout(timer);
+            }
+        };
+    }, [firstName, latitude]);
 
 
     const handleValueChange = async (prayer: string) => { 
@@ -337,4 +346,3 @@ const styles = StyleSheet.create({
    
 });
 export default HomePage;
-

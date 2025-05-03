@@ -12,12 +12,6 @@ import React, { useState, useEffect } from 'react';
 // need to add other months feature next
 
 export default function MoreTimes() {
-  const [timeFormat, setTimeFormat] = useState<string | null>(null);
-  
-  const getTimeFormat = async () => {
-    const storedTimeFormat = await AsyncStorage.getItem('timeformat');
-    setTimeFormat(storedTimeFormat);
-  };
 
   const today = new Date()
   const year = today.getFullYear()
@@ -77,11 +71,25 @@ export default function MoreTimes() {
     5: "#0f0"
   } //colors from red to green to show prayer statuses
 
+  const [monthStorage, setMonthStorage] = useState<Array<any> | null>([]);
+ 
+
+  useEffect(() => {
+    const fetchStorage = async () => {
+      const storedValue = await AsyncStorage.getItem("monthStorage")
+      if (storedValue) {
+        const storage = JSON.parse(storedValue)
+        setMonthStorage(storage)
+      }
+    }
+    fetchStorage()
+  }, [])
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
         <Text style={styles.text}>{today.toLocaleString('default', {month: 'long'})}</Text>
+        <Text>Months so far {monthStorage ? monthStorage.length : 0}{monthStorage ? monthStorage.toString() : ''}</Text>
 
         <View style = {styles.daysContainer}>
             {daysList && daysCounts ? (
