@@ -20,7 +20,7 @@ const HomePage = () => {
         //Notice this means having new dicts for new days i.e old data is still available.
         const checkMonth = async () => {
             const savedMonth = await AsyncStorage.getItem('month');
-            if (month.toString() !== savedMonth) {
+            if (month.toString() && month.toString()!== savedMonth) {
                 const latitude = await AsyncStorage.getItem("latitude")
                 const longitude = await AsyncStorage.getItem("longitude")
                 await prayerStorageMain(latitude, longitude)
@@ -102,7 +102,7 @@ const HomePage = () => {
         let timer: ReturnType<typeof setTimeout>;
         (async () => {
             if (!firstName) {
-                await initializeMonthStorage();
+                await initializeMonthStorage(month);
                 timer = setTimeout(() => {
                     router.push('../GetUserInfo');
                 }, 0);

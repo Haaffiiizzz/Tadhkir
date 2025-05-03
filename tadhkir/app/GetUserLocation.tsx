@@ -1,7 +1,7 @@
 import { View, Text, Button, Alert, StyleSheet} from 'react-native';
 import * as Location from 'expo-location';
 import {useRouter } from 'expo-router';
-import prayerStorageMain from "../utils/setUpPrayerStorage"
+import {prayerStorageMain} from "../utils/setUpPrayerStorage"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from 'react';
 

@@ -89,7 +89,7 @@ export default function MoreTimes() {
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
         <Text style={styles.text}>{today.toLocaleString('default', {month: 'long'})}</Text>
-        <Text>Months so far {monthStorage ? monthStorage.length : 0}{monthStorage ? monthStorage.toString() : ''}</Text>
+        <Text>Months so far {monthStorage ? monthStorage.length : 0} {monthStorage ? monthStorage: ''}</Text>
 
         <View style = {styles.daysContainer}>
             {daysList && daysCounts ? (

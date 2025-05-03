@@ -10,23 +10,26 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export async function initializeMonthStorage (){ //function to set a new storage for all the months we've had so far 
+export async function initializeMonthStorage (month){ //function to set a new storage for all the months we've had so far 
     //it is called from index at the first start of the app or after clearing data. 
-    let newMonthStorage = [];
+
+    let newMonthStorage = [month];
     await AsyncStorage.setItem("monthStorage", JSON.stringify(newMonthStorage))
 }
 
 export async function addMonthToMonths(month){ //function to add a new month to the month storage list. It is called from index
     //once a new month is detected
     let monthStorage = await AsyncStorage.getItem("monthStorage")
+    
     monthStorage = JSON.parse(monthStorage)
     monthStorage.push(month)
     
-    await AsyncStorage.setItem("monthStorage". JSON.stringify(monthStorage))
+    await AsyncStorage.setItem("monthStorage", JSON.stringify(monthStorage))
 }
 
-async function getPrayerTimes(latitude, longitude) {
+export async function getPrayerTimes(latitude, longitude) {
     //first I'll construct the date format Aladhan API uses. To get a month's data, I need to pass in the year/month.  
+
     const today = new Date()
     const year = today.getFullYear()
     const month = today.getMonth() + 1 // month is indexed starting at 0.
@@ -34,6 +37,7 @@ async function getPrayerTimes(latitude, longitude) {
     await AsyncStorage.setItem('year', year.toString())
     await AsyncStorage.setItem('month', month.toString()) // store year and month so we can check in index page if month changed so we get new day
     await addMonthToMonths(month) // we wanna keep track of how many months data we have so far
+    
     const formattedDate = year + "/" + month
 
     // next I'll construct the api url to make the call to using date, inputted latitude and longitude. All queries used can be found on Aladhan documentation.
@@ -44,9 +48,11 @@ async function getPrayerTimes(latitude, longitude) {
 
         if (!response.ok){
             const defaultResult = require('./defaultResult.json');
+            
             return defaultResult.data  // this is fall back data I'm using in case something goes wrong with the api connection.
             //with time, I'll make this another call to a different api instead!
         }
+
         const resultJSON = await response.json()
         const monthPrayerData = resultJSON.data
         return monthPrayerData
@@ -55,11 +61,12 @@ async function getPrayerTimes(latitude, longitude) {
         const defaultResult = require('./defaultResult.json');
         return defaultResult.data
     }
+    
 }
 
-async function setUpPrayerStorage(monthPrayerData) {
+export async function setUpPrayerStorage(monthPrayerData) {
     // we are going to loop through each day in the prayer data, create an object for it and store in asyncstorage. 
-    
+
     monthPrayerData.forEach(async dayObject => {
         let newDayObject = {} // this is the object that will be stored in asyncstorage following the format stated earlier. 
         let date = dayObject.date.gregorian.date // the date in DD-MM-YYYY format which will serve as key directly in asyncstorage to get the day's object. 
@@ -81,9 +88,9 @@ async function setUpPrayerStorage(monthPrayerData) {
 }
 
 export async function prayerStorageMain(latitude, longitude) {
+
     const monthPrayerData = await getPrayerTimes(latitude, longitude)
     await setUpPrayerStorage(monthPrayerData)
-
 }
 
 // export default prayerStorageMain; initializeMonthStorage;
