@@ -22,6 +22,7 @@ export default function MoreTimes() {
   const today = new Date()
   const year = today.getFullYear()
   const month = today.getMonth() + 1
+  const todaysDate = today.getDate()
 
 
   const getDaysList = function() {
@@ -87,10 +88,13 @@ export default function MoreTimes() {
               daysList.map((day, dayIndex: number) => {
                 const dayCount = daysCounts[dayIndex] ?? 0;
                 const backgroundColor = colorDict[dayCount] || "#ccc";
+                const date =  +day.slice(0, 2) // day is a string of an actuyal date month year so need to slice to get just the day
+                let link = (date !== todaysDate) ? `../OtherDay?key=${dayIndex + 1}&date=${day}` : "(tabs)/"
+
 
                 return (
                   <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
-                    <Link href={`../OtherDay?key=${dayIndex + 1}&date=${day}`} style={{ width: '100%', textAlign: 'center' }}>
+                    <Link href={link} style={{ width: '100%', textAlign: 'center' }}>
                       <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
                     </Link>
                   </View>
