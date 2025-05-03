@@ -40,7 +40,7 @@ const HomePage = () => {
     const [prayerData, setPrayerData] = useState< any | null>(null);
     const [prayerStatus, setPrayerStatus] = useState< any | null >(null);
     const [prayerCount, setPrayerCount] = useState< any | null>(null)
-    const [currentPrayer, setCurrentPrayer] = useState<string | null>(null);
+    const [nextPrayer, setCurrentPrayer] = useState<string | null>(null);
    
 
     const getName = async () => {
@@ -180,20 +180,21 @@ const HomePage = () => {
             const now = new Date();
             const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
     
-            let lastPrayer = null;
+            let nextPrayer = null;
             for (const prayer of prayers) {
                 const time = prayerData.timings[prayer].split(' ')[0];
                 const [hour, minute] = time.split(':').map(Number);
                 const prayerTime = hour * 60 + minute;
     
-                if (currentTime >= prayerTime) {
-                    lastPrayer = prayer;
-                } else {
-                    break;
-                }
+                if (currentTime <= prayerTime) {
+                    if (prayer !== "Sunrise"){
+                        nextPrayer = prayer;
+                        break
+                    }
+                } 
             }
     
-            setCurrentPrayer(lastPrayer);
+            setCurrentPrayer(nextPrayer);
         };
     
     
@@ -224,8 +225,8 @@ const HomePage = () => {
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-            <Animated.Text style={[styles.header, {opacity: fadeAnim}]}>Welcome back {firstName}</Animated.Text>
-            <Animated.Text style={[styles.smallHeader, {opacity: fadeAnim}]}>Prayer Times for {today.toLocaleString('default', {weekday: 'long'})}, {today.toLocaleString('default', {month: 'long'})} {date}</Animated.Text>
+
+            <Animated.Text style={[styles.smallHeader, {opacity: fadeAnim}]}>{today.toLocaleString('default', {weekday: 'long'})}, {today.toLocaleString('default', {month: 'long'})} {date}</Animated.Text>
             
             <Animated.View style={[styles.salahView, {opacity: fadeAnim}]}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
@@ -235,7 +236,7 @@ const HomePage = () => {
                     if (timeFormat == "12h")
                         time = getTimeString(time);
 
-                    const isCurrentPrayer = prayer === currentPrayer;
+                    const isCurrentPrayer = prayer === nextPrayer;
                     const isSunrise = prayer === "Sunrise";
 
                     const prayerView = (
@@ -243,9 +244,8 @@ const HomePage = () => {
                             key={prayer}
                             style={[
                                 styles.salahItem,
-                                isCurrentPrayer && styles.currentPrayerHighlight,
-                                prayerStatus[prayer] && styles.donePrayer, 
-                                isCurrentPrayer && prayerStatus[prayer] && styles.currentAndDone
+                                isCurrentPrayer && styles.nextPrayerHighlight,
+                                prayerStatus[prayer] && styles.donePrayer
                             ]}
                         >
                             <Text style={styles.salahText}>{prayer}</Text>
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     },
 
     // Highlight for the current prayer (if not yet marked as done)
-    currentPrayerHighlight: {
+    nextPrayerHighlight: {
         borderWidth: 4,
         borderColor: '#fff',
     },

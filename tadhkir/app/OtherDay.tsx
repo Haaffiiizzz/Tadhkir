@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // this page basically mirrors the index page except it displays prayer time for the day selected in moreTimes page i.e shows prayers for a particular selected day. 
 //thnere's a whole lot going on here but prayerDay is the json for the daily prayers and whether they have been prayed or not
-// the checkbox in each prayer is defaulted to false. when clicked, the value for that prayer changes to True and is saved back to storage.
+ 
 
 export default function PrayerDay() {
 
