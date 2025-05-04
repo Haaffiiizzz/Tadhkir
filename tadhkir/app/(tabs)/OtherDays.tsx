@@ -10,20 +10,33 @@ import React, { useState, useEffect } from 'react';
  */
 
 // need to add other months feature next
+///need to add year to month storage
 
 export default function MoreTimes() {
-
   const today = new Date()
   const year = today.getFullYear()
   const month = today.getMonth() + 1
   const todaysDate = today.getDate()
 
+  const [monthStorage, setMonthStorage] = useState<Array<any> | null>([]); // list for months data has been gotten for. 
+ 
 
-  const getDaysList = function() {
+  useEffect(() => {
+    const fetchStorage = async () => {
+      const storedValue = await AsyncStorage.getItem("monthStorage")
+      if (storedValue) {
+        const storage = JSON.parse(storedValue)
+        setMonthStorage(storage)
+      }
+    }
+    fetchStorage()
+  }, [])
+
+  const getDaysList = function(month: number) {
     // creating the dates list here which will be mapped to display the links
     // number of days will depend on current month
     const thirty = [9, 4, 6, 11] //sept, april, jun, nov
-    let limit = 32 // i want to start indexing at one
+    let limit = 32 // i want to start indexing at one                                                                                  
     if (month === 2){
       limit = 29
     } else if (thirty.includes(month)) {
@@ -42,26 +55,50 @@ export default function MoreTimes() {
     return daysList
   };
 
-  
-  const daysList = getDaysList();
-  const [daysCounts, setDaysCounts] = useState<number[] | null>(null);
+  const [daysPerMonth, setDaysPerMonth] = useState<Record<number, string[]>>({});
+  const [countPerMonth, setCountPerMonth] = useState<Record<number, number[]>>({});
 
-  const getDayCounts = async (daysList: string[]) => {
-    //loop through the daysList and get the stored count for each day
-    const countsArray = await Promise.all(
-      daysList.map(async (day) => {
-        let dayData = await AsyncStorage.getItem(day);
-        dayData = dayData ? JSON.parse(dayData) : null;
-        return dayData ? dayData.count : 0;
+  useEffect(() => {
+    if (monthStorage?.length) {
+      const newDaysPerMonth: Record<number, string[]> = {};
+      monthStorage.forEach((month: number) => {
+        const monthList = getDaysList(month);
+        newDaysPerMonth[month] = monthList;
+      });
+      setDaysPerMonth(newDaysPerMonth);
+    }
+  }, [monthStorage]);
+
+  const getCounts = async (days: Record<number, string[]>) => {
+    const newCountPerMonth: Record<number, number[]> = {};
+    await Promise.all(
+      Object.keys(days).map(async (monthKey) => {
+        const month = Number(monthKey);
+        const monthList = days[month];
+        const countsArray = await Promise.all(
+          monthList.map(async (day: string) => {
+            let dayData = await AsyncStorage.getItem(day);
+            dayData = dayData ? JSON.parse(dayData) : null;
+            return dayData && typeof dayData === 'object' && 'count' in dayData
+              ? (dayData as { count: number }).count
+              : 0;
+          })
+        );
+        newCountPerMonth[month] = countsArray;
       })
     );
-
-    setDaysCounts(countsArray);
+    setCountPerMonth(newCountPerMonth);
   };
 
   useEffect(() => {
-    getDayCounts(daysList);
-  }, [daysList]);
+    getCounts(daysPerMonth);
+  }, [daysPerMonth]);
+
+  useEffect(() => {
+    getCounts(daysPerMonth);
+  }, [daysPerMonth]);
+
+  console.log(countPerMonth)
 
   const colorDict: Record<number, string> = {
     1: "#ff3333",
@@ -71,47 +108,40 @@ export default function MoreTimes() {
     5: "#0f0"
   } //colors from red to green to show prayer statuses
 
-  const [monthStorage, setMonthStorage] = useState<Array<any> | null>([]);
- 
-
-  useEffect(() => {
-    const fetchStorage = async () => {
-      const storedValue = await AsyncStorage.getItem("monthStorage")
-      if (storedValue) {
-        const storage = JSON.parse(storedValue)
-        setMonthStorage(storage)
-      }
-    }
-    fetchStorage()
-  }, [])
-
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
         <Text style={styles.text}>{today.toLocaleString('default', {month: 'long'})}</Text>
-        <Text>Months so far {monthStorage ? monthStorage.length : 0} {monthStorage ? monthStorage: ''}</Text>
+        <Text>Months so far {monthStorage ? monthStorage.length : 0}</Text>
 
-        <View style = {styles.daysContainer}>
-            {daysList && daysCounts ? (
-              daysList.map((day, dayIndex: number) => {
-                const dayCount = daysCounts[dayIndex] ?? 0;
-                const backgroundColor = colorDict[dayCount] || "#ccc";
-                const date =  +day.slice(0, 2) // day is a string of an actuyal date month year so need to slice to get just the day
-                let link = (date !== todaysDate) ? `../OtherDay?key=${dayIndex + 1}&date=${day}` : "(tabs)/"
-
-
-                return (
-                  <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
-                    <Link href={link} style={{ width: '100%', textAlign: 'center' }}>
-                      <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
-                    </Link>
-                  </View>
-                );
-              })
-            ) : (
-              <Text style={styles.text}>Loading...</Text>
-            )}
-        </View>
+        {
+          Object.keys(countPerMonth).map((month) => {
+            const daysList = daysPerMonth[month];
+            const daysCounts = countPerMonth[month];
+            return (
+              <View style={styles.daysContainer} key={month}>
+                {daysList && daysCounts ? (
+                  daysList.map((day, dayIndex: number) => {
+                    const dayCount = daysCounts[dayIndex] ?? 0;
+                    const backgroundColor = colorDict[dayCount] || "#ccc";
+                    const date =  +day.slice(0, 2) // day is a string of an actuyal date month year so need to slice to get just the day
+                    let link = (date !== todaysDate) ? `../OtherDay?key=${dayIndex + 1}&date=${day}` : "(tabs)/"
+      
+                    return (
+                      <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
+                        <Link href={link} style={{ width: '100%', textAlign: 'center' }}>
+                          <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
+                        </Link>
+                      </View>
+                    );
+                  })
+                ) : (
+                  <Text style={styles.text}>Loading...</Text>
+                )}
+              </View>
+            );
+          })
+        }
         
       </ScrollView>
     </View>
