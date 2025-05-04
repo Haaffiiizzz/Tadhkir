@@ -23,8 +23,10 @@ const HomePage = () => {
             if (month.toString() && month.toString()!== savedMonth) {
                 const latitude = await AsyncStorage.getItem("latitude")
                 const longitude = await AsyncStorage.getItem("longitude")
+                await addMonthToMonths(month) 
+                await AsyncStorage.setItem('month', month.toString());
                 await prayerStorageMain(latitude, longitude)
-                await addMonthToMonths(month)   
+                  
             }
         };
         checkMonth();

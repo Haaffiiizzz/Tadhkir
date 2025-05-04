@@ -94,11 +94,6 @@ export default function MoreTimes() {
     getCounts(daysPerMonth);
   }, [daysPerMonth]);
 
-  useEffect(() => {
-    getCounts(daysPerMonth);
-  }, [daysPerMonth]);
-
-  console.log(countPerMonth)
 
   const colorDict: Record<number, string> = {
     1: "#ff3333",
