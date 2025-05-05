@@ -1,1 +1,2 @@
+[![wakatime](https://wakatime.com/badge/github/Haaffiiizzz/Tadhkir.svg)](https://wakatime.com/badge/github/Haaffiiizzz/Tadhkir)    
 Tadhkir is a powerful Prayer Reminder & Tracker designed to help you maintain your daily prayer routine with ease. Enjoy timely notifications delivered just minutes before each prayer, ensuring you never miss your Salah. With precise, location-based prayer times and an intuitive, modern interface, Tadhkir not only tracks your progress but also inspires consistency along your spiritual journey.
