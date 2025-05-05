@@ -90,9 +90,9 @@ export default function MoreTimes() {
     setCountPerMonth(newCountPerMonth);
   };
 
-  useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     getCounts(daysPerMonth);
-  }, [daysPerMonth]);
+  }, [daysPerMonth]));
 
 
   const colorDict: Record<number, string> = {
@@ -107,7 +107,7 @@ export default function MoreTimes() {
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
         <Text style={styles.text}>{today.toLocaleString('default', {month: 'long'})}</Text>
-        <Text>Months so far {monthStorage ? monthStorage.length : 0}</Text>
+        <Text>Months so far {monthStorage ? monthStorage.length : 0} PRint: --{monthStorage}--</Text>
 
         {
           Object.keys(countPerMonth).map((month) => {

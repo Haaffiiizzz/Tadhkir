@@ -103,13 +103,16 @@ const HomePage = () => {
     useEffect(() => {
         let timer: ReturnType<typeof setTimeout>;
         (async () => {
+            const monthStorage = await AsyncStorage.getItem('monthStorage');
+
             if (!firstName) {
-                await initializeMonthStorage(month);
+                if (!monthStorage) { 
+                    await initializeMonthStorage(month);
+                }
                 timer = setTimeout(() => {
                     router.push('../GetUserInfo');
                 }, 0);
             } else if (!latitude) {
-                await initializeMonthStorage();
                 timer = setTimeout(() => {
                     router.push('../GetUserLocation');
                 }, 0);

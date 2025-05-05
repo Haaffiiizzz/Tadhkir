@@ -14,17 +14,19 @@ export async function initializeMonthStorage (month){ //function to set a new st
     //it is called from index at the first start of the app or after clearing data. 
 
     let newMonthStorage = [month];
+    console.log("new month init", newMonthStorage)
     await AsyncStorage.setItem("monthStorage", JSON.stringify(newMonthStorage))
 }
 
 export async function addMonthToMonths(month){ //function to add a new month to the month storage list. It is called from index
     //once a new month is detected
-    let monthStorage = await AsyncStorage.getItem("monthStorage")
-    
-    monthStorage = JSON.parse(monthStorage)
-    monthStorage.push(month)
-    
-    await AsyncStorage.setItem("monthStorage", JSON.stringify(monthStorage))
+    let monthStorage = await AsyncStorage.getItem("monthStorage");
+    monthStorage = monthStorage ? JSON.parse(monthStorage) : [];
+
+    if (!monthStorage.includes(month)) { 
+        monthStorage.push(month);
+    } 
+    await AsyncStorage.setItem("monthStorage", JSON.stringify(monthStorage));
 }
 
 export async function getPrayerTimes(latitude, longitude) {
@@ -36,7 +38,7 @@ export async function getPrayerTimes(latitude, longitude) {
 
     await AsyncStorage.setItem('year', year.toString())
     await AsyncStorage.setItem('month', month.toString()) // store year and month so we can check in index page if month changed so we get new day
-    await addMonthToMonths(month) // we wanna keep track of how many months data we have so far
+    console.log("Saved the month from start")
     
     const formattedDate = year + "/" + month
 
