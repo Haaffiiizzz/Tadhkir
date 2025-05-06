@@ -74,7 +74,7 @@ export async function setUpPrayerStorage(monthPrayerData) {
 
     monthPrayerData.forEach(async dayObject => {
         let newDayObject = {} // this is the object that will be stored in asyncstorage following the format stated earlier. 
-        let date = dayObject.date.gregorian.date // the date in DD-MM-YYYY format which will serve as key directly in asyncstorage to get the day's object. 
+        let date = dayObject.date.gregorian.date // the date in DD-MM-YYYY format which will serve as key directly in asyncstorage to get the day's data object. 
 
         let prayerTimings = dayObject.timings;
         let dayStatus = {'Fajr': false, 'Dhuhr': false, 'Asr': false, 'Maghrib': false, 'Isha': false} // default for each day

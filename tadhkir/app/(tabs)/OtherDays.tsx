@@ -59,7 +59,7 @@ export default function MoreTimes() {
   const [countPerMonth, setCountPerMonth] = useState<Record<number, number[]>>({});
 
   useEffect(() => {
-    if (monthStorage?.length) {
+    if (monthStorage?.length) { // creating a new dict to store the day number for each month. looks like {1: [1, 2, 3.., 31], 2:[1, 2, 3..., 28]}
       const newDaysPerMonth: Record<number, string[]> = {};
       monthStorage.forEach((month: number) => {
         const monthList = getDaysList(month);
@@ -69,7 +69,8 @@ export default function MoreTimes() {
     }
   }, [monthStorage]);
 
-  const getCounts = async (days: Record<number, string[]>) => {
+  const getCounts = async (days: Record<number, string[]>) => { //creating a new dict of month number as key, and list of days counts as values.
+  //  note each days count is a dict of prayer and true of false to repr prayed or not
     const newCountPerMonth: Record<number, number[]> = {};
     await Promise.all(
       Object.keys(days).map(async (monthKey) => {
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     rowGap: 15,
     columnGap: 10,
     padding: 10,
-    // borderColor: "blue",
+    // borderColor: "blue", 
     // borderWidth: 2, // Added visible border for the days container as well
     justifyContent: "center",
     width: "90%"
