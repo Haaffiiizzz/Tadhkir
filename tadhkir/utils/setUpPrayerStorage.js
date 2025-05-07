@@ -85,8 +85,6 @@ export async function setUpPrayerStorage(monthPrayerData) {
         newDayObject['count'] = count
 
         newDayObject = JSON.stringify(newDayObject)
-        console.log(newDayObject, "\n\n")
-
         await AsyncStorage.setItem(date, newDayObject)
         
     });
@@ -94,7 +92,6 @@ export async function setUpPrayerStorage(monthPrayerData) {
 
 export async function prayerStorageMain(latitude, longitude) {
     const monthPrayerData = await getPrayerTimes(latitude, longitude)
-    console.log(monthPrayerData)
     await setUpPrayerStorage(monthPrayerData)
 }
 
