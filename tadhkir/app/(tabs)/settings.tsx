@@ -2,8 +2,16 @@ import { View, Button, StyleSheet, Text, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Updates from 'expo-updates';
 import React, { useState, useEffect } from 'react';
-import { Switch } from 'react-native-switch';
+import { Switch} from 'react-native-switch';
+import * as Notifications from "expo-notifications"
 
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowBanner: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+    }),
+    });
 export default function Settings() {
     const restartApp = async () => {
         try {
@@ -47,12 +55,23 @@ export default function Settings() {
                     text: "Yes",
                     onPress: async () => {
                         await AsyncStorage.clear();
+                        sendNotif("Data Cleared")
                         restartApp();
                     }
                 }
             ]
         );
     };
+
+    const sendNotif = (text: string) => {
+        Notifications.scheduleNotificationAsync({
+            content: {
+                title: 'Tadhkir',
+                body: text,
+            },
+            trigger: null
+            });
+    }
 
     return (
         <View style={styles.container}>
@@ -71,6 +90,14 @@ export default function Settings() {
                 title="Clear All Data"
                 onPress={confirmClearData}
             />
+
+            <Button
+                title="Test Notification"
+                onPress={ () => {sendNotif("Testing Notifications!")}}
+            />
+
+             
+            
 
             
         </View>

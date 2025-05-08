@@ -15,30 +15,8 @@ import * as Notifications from "expo-notifications";
  * Else, it'll redirect to the required pages to get these data.
  * 
  */
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-    }),
-    });
-
-// Second, call scheduleNotificationAsync()
-    
-
 const HomePage = () => {
     
-    Notifications.scheduleNotificationAsync({
-        content: {
-            title: 'Look at that notification',
-            body: "I'm so proud of myself!",
-        },
-        trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-            seconds: 2,
-          },
-        });
-
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);
     const [latitude, setLatitude] = useState<string | null>(null);
