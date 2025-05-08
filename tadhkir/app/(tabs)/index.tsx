@@ -3,10 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback,
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
-import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import Constants from "expo-constants"
-import {usePushNotifications } from "./testnot"
 
 
 /**
@@ -18,11 +15,29 @@ import {usePushNotifications } from "./testnot"
  * Else, it'll redirect to the required pages to get these data.
  * 
  */
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+    }),
+    });
+
+// Second, call scheduleNotificationAsync()
+    
 
 const HomePage = () => {
-    const {expoPushToken, notification} = usePushNotifications();
-
-    const data = JSON.stringify(notification, undefined, 2)
+    
+    Notifications.scheduleNotificationAsync({
+        content: {
+            title: 'Look at that notification',
+            body: "I'm so proud of myself!",
+        },
+        trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            seconds: 2,
+          },
+        });
 
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);

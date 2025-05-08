@@ -40,7 +40,8 @@
     "react-native-switch": "^1.5.1",
     "react-native-web": "~0.20.0",
     "expo-device": "~7.1.4",
-    "expo-constants": "~17.1.6"
+    "expo-constants": "~17.1.6",
+    "expo-task-manager": "~13.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

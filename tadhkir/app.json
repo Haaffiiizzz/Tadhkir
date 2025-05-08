@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "tadhkir-fixed",
-    "slug": "tadhkir-fixed",
+    "name": "tadhkir",
+    "slug": "tadhkir",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "tadhkirfixed",
+    "scheme": "tadhkir",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.haaffiiizzz.tadhkirfixed",
+      "bundleIdentifier": "com.haaffiiizzz.tadhkir",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
