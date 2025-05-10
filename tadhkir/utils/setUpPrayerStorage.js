@@ -32,7 +32,6 @@ export async function addMonthToMonths(month){ //function to add a new month to 
 export async function getPrayerTimes(latitude, longitude) {
     //first I'll construct the date format Aladhan API uses. To get a month's data, I need to pass in the year/month.  
 
-    
     const today = new Date()
     const year = today.getFullYear()
     const month = today.getMonth() + 1 // month is indexed starting at 0.
@@ -59,9 +58,8 @@ export async function getPrayerTimes(latitude, longitude) {
         return defaultResult.data  // this is fall back data I'm using in case something goes wrong with the api connection.
         //with time, I'll make this another call to a different api instead!
     }
-    console.log(response)
+
     const resultJSON = await response.json()
-    console.log(resultJSON)
     const monthPrayerData = resultJSON.data
     return monthPrayerData
 
