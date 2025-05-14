@@ -81,6 +81,10 @@ export default function PrayerDay() {
         setPrayerStatus(newPrayerStatus);
         setPrayerCount(newPrayerCount);
     };
+
+    const completedAllAlert = () => {
+        //function to display an alert if all prayers are completed for the day.
+    }
     
     const prayers = [
         'Fajr',
