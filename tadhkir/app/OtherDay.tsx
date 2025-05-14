@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Alert } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -52,7 +52,6 @@ export default function PrayerDay() {
         }
     };
 
-    
 
     useFocusEffect(
         React.useCallback(() => {
@@ -60,6 +59,17 @@ export default function PrayerDay() {
             getTimeFormat();
         }, [])
     );
+
+    const completedAllAlert = () => {
+        //function to display an alert if all prayers are completed for the day.
+        Alert.alert('Alert Title', 'Congrats! You commpleted all prayers!!', [
+            {
+              text: 'Continue',
+              style: 'cancel',
+            },
+          ]);
+      
+    }
 
     const handleValueChange = async (prayer: string) => { // to change the true or false value for a prayer when the checkbox is clicked and increase or decrease
         // the number of saved prayers.
@@ -73,6 +83,10 @@ export default function PrayerDay() {
             newPrayerCount -= 1;
         }
 
+        if (newPrayerCount === 5){
+            completedAllAlert()
+        }
+
         const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
 
         await AsyncStorage.setItem(date, JSON.stringify(newPrayerData));
@@ -82,9 +96,7 @@ export default function PrayerDay() {
         setPrayerCount(newPrayerCount);
     };
 
-    const completedAllAlert = () => {
-        //function to display an alert if all prayers are completed for the day.
-    }
+    
     
     const prayers = [
         'Fajr',

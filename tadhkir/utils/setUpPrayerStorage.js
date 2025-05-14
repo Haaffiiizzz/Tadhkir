@@ -9,6 +9,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 
 export async function initializeMonthStorage (month){ //function to set a new storage for all the months we've had so far 
     //it is called from index at the first start of the app or after clearing data. 
@@ -62,8 +63,6 @@ export async function getPrayerTimes(latitude, longitude) {
     const resultJSON = await response.json()
     const monthPrayerData = resultJSON.data
     return monthPrayerData
-
-    
     
 }
 
@@ -88,8 +87,24 @@ export async function setUpPrayerStorage(monthPrayerData) {
     });
 }
 
+export async function getAndStoreLocationName(latitude, longitude){
+    // function to get the human understandabl location info using latitude and longitude
+    const addressArray = await Location.reverseGeocodeAsync({ latitude: Number(latitude), longitude: Number(longitude) });
+    await AsyncStorage.setItem("Address", JSON.stringify(addressArray))
+
+    if (addressArray.length > 0) {
+      const address = addressArray[0];
+      const city = address.city || address.subregion || 'Unknown city';
+      const region = address.region || '';
+      await AsyncStorage.setItem("city", city)
+      await AsyncStorage.setItem("region", region)
+    } 
+    
+}
+
 export async function prayerStorageMain(latitude, longitude) {
     const monthPrayerData = await getPrayerTimes(latitude, longitude)
+    await getAndStoreLocationName(latitude, longitude)
     await setUpPrayerStorage(monthPrayerData)
 }
 
