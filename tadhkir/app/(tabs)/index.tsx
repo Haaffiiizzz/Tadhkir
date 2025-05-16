@@ -27,9 +27,10 @@ const HomePage = () => {
     const [prayerStatus, setPrayerStatus] = useState< any | null >(null);
     const [prayerCount, setPrayerCount] = useState< any | null>(null)
     const [nextPrayer, setCurrentPrayer] = useState<string | null>(null);
-    const [loaded, error] = useFonts({
-        'DS-DIGII': require('../../assets/fonts/DS-DIGII.TTF'),
-      });
+    // const [loaded, error] = useFonts({
+    //     'DS-DIGII': require('../../assets/fonts/DS-DIGII.TTF'),
+    //   });
+    const [dataLoaded, setDataLoaded] = useState(false);
 
     const getName = async () => {
         const storedFirstName = await AsyncStorage.getItem('User First Name');
@@ -77,42 +78,50 @@ const HomePage = () => {
     // first we try to get data we need. Name, location, timeformat, prayerData (We try to get these from storage)
     useFocusEffect(
         React.useCallback(() => {
-            getName();
-            getCity();
-            getRegion();
-            getLatitude();
-            getTimeFormat();
-            getPrayerData();
+          const loadAllData = async () => {
+            await getName();
+            await getCity();
+            await getRegion();
+            await getLatitude();
+            await getTimeFormat();
+            await getPrayerData();
+            setDataLoaded(true);  // now safe to evaluate redirect
+          };
+          loadAllData();
         }, [])
-    );
+      );
+      
     
     // here I am checking if name or location has not been stored.
     //if they haven't, then we redirect to the neccessary pages to get those info
 
     useEffect(() => {
         let timer: ReturnType<typeof setTimeout>;
+      
+        if (!dataLoaded) return;
+      
         (async () => {
-            const monthStorage = await AsyncStorage.getItem('monthStorage');
-
-            if (!firstName) {
-                if (!monthStorage) { 
-                    await initializeMonthStorage(month);
-                }
-                timer = setTimeout(() => {
-                    router.push('../GetUserInfo');
-                }, 0);
-            } else if (!latitude) {
-                timer = setTimeout(() => {
-                    router.push('../GetUserLocation');
-                }, 0);
+          const monthStorage = await AsyncStorage.getItem('monthStorage');
+      
+          if (!firstName) {
+            if (!monthStorage) {
+              await initializeMonthStorage(month);
             }
+            timer = setTimeout(() => {
+              router.push('../GetUserInfo');
+            }, 0);
+          } else if (!latitude) {
+            timer = setTimeout(() => {
+              router.push('../GetUserLocation');
+            }, 0);
+          }
         })();
+      
         return () => {
-            if (timer) {
-                clearTimeout(timer);
-            }
+          if (timer) clearTimeout(timer);
         };
-    }, [firstName, latitude]);
+      }, [dataLoaded, firstName, latitude]);
+      
 
     const today = new Date();
     const year = today.getFullYear();
