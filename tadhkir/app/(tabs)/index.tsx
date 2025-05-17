@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback,
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
-import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+
 
 /**
  * This is basically the index / home page. In this page, the current day is shown and the prayers for the day are displayed.
@@ -15,6 +15,7 @@ import * as SplashScreen from 'expo-splash-screen';
  * Else, it'll redirect to the required pages to get these data.
  * 
  */
+
 const HomePage = () => {
 
     const router = useRouter();
@@ -27,9 +28,6 @@ const HomePage = () => {
     const [prayerStatus, setPrayerStatus] = useState< any | null >(null);
     const [prayerCount, setPrayerCount] = useState< any | null>(null)
     const [nextPrayer, setCurrentPrayer] = useState<string | null>(null);
-    // const [loaded, error] = useFonts({
-    //     'DS-DIGII': require('../../assets/fonts/DS-DIGII.TTF'),
-    //   });
     const [dataLoaded, setDataLoaded] = useState(false);
 
     const getName = async () => {
@@ -293,7 +291,7 @@ const HomePage = () => {
 
             <Animated.Text style={[styles.smallHeader, {opacity: fadeAnim}]}> 👋🏼 Hello, {firstName}</Animated.Text>
             <Animated.Text style={[styles.smallHeader, {opacity: fadeAnim}]}> 📍 {city}, {region}</Animated.Text>
-            <Animated.Text style={[styles.smallHeader, {opacity: fadeAnim, fontFamily: 'Orbitron_700Bold'}]}> 🗓️ {today.toLocaleString('default', {weekday: 'long'})}, {today.toLocaleString('default', {month: 'long'})} {date}, {year}</Animated.Text>
+            <Animated.Text style={[styles.smallHeader]}> 🗓️ {today.toLocaleString('default', {weekday: 'long'})}, {today.toLocaleString('default', {month: 'long'})} {date}, {year}</Animated.Text>
             
             <Animated.View style={[styles.salahView, {opacity: fadeAnim}]}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
@@ -359,7 +357,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignSelf: 'center',
         marginTop: 20,
-        textAlign:'center'
+        textAlign:'center',
+        fontFamily: 'DS-DIGII',
+        
     },
     
     salahView: {
