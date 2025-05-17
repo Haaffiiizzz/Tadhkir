@@ -4,6 +4,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
 import * as SplashScreen from 'expo-splash-screen';
+import {useFonts} from 'expo-font'
 
 
 /**
@@ -17,7 +18,9 @@ import * as SplashScreen from 'expo-splash-screen';
  */
 
 const HomePage = () => {
-
+    const [fontsLoaded, fontError] = useFonts({
+        "DiplomataSC-Regular" : require('../../assets/fonts/digi.ttf')
+    })
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);
     const [city, setCity] = useState<string | null>(null);
@@ -358,7 +361,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginTop: 20,
         textAlign:'center',
-        fontFamily: 'DS-DIGII',
+        fontFamily: 'DiplomataSC-Regular',
         
     },
     
