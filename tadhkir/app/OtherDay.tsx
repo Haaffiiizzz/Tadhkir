@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  
 
 export default function PrayerDay() {
-
+    
     const { date } = useLocalSearchParams();
     const [prayerData, setPrayerData] = useState<any | null>(null);
     const [prayerStatus, setPrayerStatus] = useState<any | null>(null);
@@ -204,7 +204,8 @@ const styles = StyleSheet.create({
     },
     salahTime: {
         color: '#fff',
-        fontSize: 20,
+        fontSize: 35,
+        fontFamily: 'DS-DIGII',
     },
 
     donePrayer: {

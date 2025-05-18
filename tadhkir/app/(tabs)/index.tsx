@@ -19,7 +19,7 @@ import {useFonts} from 'expo-font'
 
 const HomePage = () => {
     const [fontsLoaded, fontError] = useFonts({
-        "DiplomataSC-Regular" : require('../../assets/fonts/digi.ttf')
+        "DS-DIGII" : require('../../assets/fonts/DS-DIGIB.ttf')
     })
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>(null);
@@ -360,9 +360,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignSelf: 'center',
         marginTop: 20,
-        textAlign:'center',
-        fontFamily: 'DiplomataSC-Regular',
-        
+        textAlign:'center',        
     },
     
     salahView: {
@@ -374,7 +372,7 @@ const styles = StyleSheet.create({
     salahItem: {
         backgroundColor: '#50584e',
         margin: 10,
-        height: 85,
+        height: 100,
         width: 350,
         borderRadius: 10,
         padding: 10,
@@ -385,13 +383,14 @@ const styles = StyleSheet.create({
     },
     salahText: {
         color: '#e0eaff',
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: 'bold',
         marginBottom: 5,
     },
     salahTime: {
         color: '#e0eaff',
-        fontSize: 20,
+        fontSize: 35,
+        fontFamily: 'DS-DIGII',
     },
 
     // Highlight for the current prayer (if not yet marked as done)
