@@ -2,7 +2,6 @@ import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import { Link, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-
 /**
  * In this page, there will be a link to each day in the month and each link will lead to a
  * page that looks like the landing page except its going to be showing data for the linked date.

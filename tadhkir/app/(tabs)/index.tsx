@@ -5,6 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
 import * as SplashScreen from 'expo-splash-screen';
 import {useFonts} from 'expo-font'
+import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
+
 
 
 /**
@@ -164,7 +166,7 @@ const HomePage = () => {
 
     const completedAllAlert = () => {
            //function to display an alert if all prayers are completed for the day.
-           Alert.alert('Alert Title', 'Congrats! 🎉 You completed all prayers!! 🥳', [
+           Alert.alert('MashaAllah', 'Congrats! 🎉 You completed all prayers!! 🥳', [
                {
                  text: 'Continue',
                  style: 'cancel',
@@ -286,26 +288,32 @@ const HomePage = () => {
         useNativeDriver: true,
         }).start();
     }, []);
+    
+    const prayerIcons = [Sunrise, Sun, SunMedium, Clock, Sunset, Moon];
+    const prayerColors = ["#38bdf8", "#f97316", "#facc15", "#fb923c", "#f43f5e", "#6366f1"];
 
 
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-
-            <Animated.Text style={[styles.smallHeader, {opacity: fadeAnim}]}> 👋🏼 Hello, {firstName}</Animated.Text>
-            <Animated.Text style={[styles.smallHeader, {opacity: fadeAnim}]}> 📍 {city}, {region}</Animated.Text>
-            <Animated.Text style={[styles.smallHeader]}> 🗓️ {today.toLocaleString('default', {weekday: 'long'})}, {today.toLocaleString('default', {month: 'long'})} {date}, {year}</Animated.Text>
+            <Animated.View style={[styles.infoView, {opacity: fadeAnim}]}>
+                <Text style={styles.smallHeader}> 👋🏼 Hello, {firstName}</Text>
+                <Text style={styles.smallHeader}> 📍 {city}, {region}</Text>
+                <Text style={[styles.smallHeader]}> 🗓️ {today.toLocaleString('default', {weekday: 'long'})}, {today.toLocaleString('default', {month: 'long'})} {date}, {year}</Text>
+            </Animated.View>
+            
             
             <Animated.View style={[styles.salahView, {opacity: fadeAnim}]}>
             {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
             {prayerData && prayerData.timings ? 
-                prayers.map(prayer => {
+                prayers.map((prayer, prayerIndex) => {
                     let time = prayerData['timings'][prayer].split(' ')[0]; // Remove timezone if attached
                     if (timeFormat == "12h")
                         time = getTimeString(time);
 
                     const isCurrentPrayer = prayer === nextPrayer;
                     const isSunrise = prayer === "Sunrise";
+                    const PrayerIcon = prayerIcons[prayerIndex]
 
                     const prayerView = (
                         <View 
@@ -316,6 +324,8 @@ const HomePage = () => {
                                 prayerStatus[prayer] && styles.donePrayer
                             ]}
                         >
+                            <View style={styles.iconWrapper}> <PrayerIcon color={prayerColors[prayerIndex]}/> </View>
+                            
                             <Text style={styles.salahText}>{prayer}</Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
                         </View>
@@ -353,6 +363,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignSelf: 'center',  
         marginTop: 20  
+    },
+    infoView: {
+        
     },
     smallHeader: {
         color: '#fff',
@@ -401,6 +414,11 @@ const styles = StyleSheet.create({
     donePrayer: {
         backgroundColor: "#06d6a0" // lght green
     },
+    iconWrapper: {
+        borderRadius: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+  },
    
 });
 export default HomePage;
