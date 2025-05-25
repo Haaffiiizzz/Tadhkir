@@ -298,8 +298,11 @@ const HomePage = () => {
             const alreadyScheduled = await AsyncStorage.getItem('NotificationScheduled');
 
             if (alreadyScheduled !== todayDate) {
+              console.log("Scheduling")
                 await scheduleAllNotifications(todayDate, prayerData);
-            }            
+            } else {
+              console.log("already scheduled ")
+            }
         })();
     }, [])
 

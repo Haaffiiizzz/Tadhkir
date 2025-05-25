@@ -102,9 +102,30 @@ export async function getAndStoreLocationName(latitude, longitude){
     
 }
 
+export async function storeTimeOffset(){
+    /**
+     * Function to store default offset for notifications in minutes
+     */
+    const prayers = [
+        'Fajr',
+        'Dhuhr',
+        'Asr',
+        'Maghrib',
+        'Isha'
+    ];
+    const defaultOffset = 5;
+
+    prayers.map(async (prayer) => {
+        const storageKey = `${prayer}Offset`;
+        await AsyncStorage.setItem(storageKey, defaultOffset.toString())
+    })
+
+}
+
 export async function prayerStorageMain(latitude, longitude) {
     const monthPrayerData = await getPrayerTimes(latitude, longitude)
     await getAndStoreLocationName(latitude, longitude)
+    await storeTimeOffset()
     await setUpPrayerStorage(monthPrayerData)
 }
 

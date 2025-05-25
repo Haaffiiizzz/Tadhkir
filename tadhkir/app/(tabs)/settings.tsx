@@ -3,7 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Updates from 'expo-updates';
 import React, { useState, useEffect } from 'react';
 import { Switch} from 'react-native-switch';
-import * as Notifications from "expo-notifications"
+import * as Notifications from "expo-notifications";
+import { Dropdown } from 'react-native-element-dropdown';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -55,7 +56,9 @@ export default function Settings() {
                     text: "Yes",
                     onPress: async () => {
                         await AsyncStorage.clear();
-                        sendNotif("Data Cleared")
+                        sendNotif("Data Cleared");
+                        await Notifications.cancelAllScheduledNotificationsAsync();
+                        await AsyncStorage.setItem('NotificationScheduled', "");
                         restartApp();
                     }
                 }
@@ -73,6 +76,25 @@ export default function Settings() {
             });
     }
 
+    const prayers = [
+        'Fajr',
+        'Dhuhr',
+        'Asr',
+        'Maghrib',
+        'Isha'
+    ];
+
+    const data = [
+    { label: '1 minute', value: '1' },
+    { label: '2 minutes', value: '2' },
+    { label: '3 minutes', value: '3' },
+    { label: '5 minutes', value: '5' },
+    { label: '10 minutes', value: '10' },
+    { label: '15 minutes', value: '15' },
+    ];
+    
+
+
     return (
         <View style={styles.container}>
             <Switch
@@ -86,6 +108,33 @@ export default function Settings() {
             />
             <Text style={styles.text}>Toggle to change time format!</Text>
             
+             {prayers.map((prayer) => {
+
+                return <View>
+                            <Text style={[styles.label, { color: 'blue' }]}>
+                                {prayer}
+                            </Text>
+
+                            <Dropdown
+                            key={prayer}
+                            style={styles.dropdown}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            data={data}
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={prayer}
+                            value={5}
+                            onChange={() => {
+                                
+                            }}
+                            
+                        />
+                    
+                    </View>
+            })}
+
             <Button
                 title="Clear All Data"
                 onPress={confirmClearData}
@@ -95,10 +144,6 @@ export default function Settings() {
                 title="Test Notification"
                 onPress={ () => {sendNotif("Testing Notifications!")}}
             />
-
-             
-            
-
             
         </View>
     );
@@ -115,5 +160,33 @@ const styles = StyleSheet.create({
     text: {
         margin: 10,
         fontSize: 20
-    }
+    },
+    dropdown: {
+      margin: 16,
+      height: 50,
+      width: 150,
+      borderBottomColor: 'gray',
+      borderBottomWidth: 0.5,
+    },
+    placeholderStyle: {
+      fontSize: 16,
+    },
+    selectedTextStyle: {
+      fontSize: 16,
+    },
+    iconStyle: {
+      width: 20,
+      height: 20,
+    },
+    label: {
+      position: 'absolute',
+      backgroundColor: 'white',
+      left: 22,
+      top: 8,
+      zIndex: 999,
+      paddingHorizontal: 8,
+      fontSize: 14,
+    },
+
+    
 });
