@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback,
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
-import scheduleNotification from "../../utils/NotificationsManager"
+import scheduleAllNotifications from "../../utils/NotificationsManager"
 import * as SplashScreen from 'expo-splash-screen';
 import {useFonts} from 'expo-font'
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
@@ -293,63 +293,83 @@ const HomePage = () => {
     const prayerIcons = [Sunrise, Sun, SunMedium, Clock, Sunset, Moon];
     const prayerColors = ["#38bdf8", "#f97316", "#facc15", "#fb923c", "#f43f5e", "#6366f1"];
 
-    scheduleNotification("Fajr", "02:19", 5)
+    useEffect(() => {
+        (async () => {
+            await scheduleAllNotifications(todayDate, prayerData);
+        })();
+    }, [])
 
 
-    return (
-        <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-            <Animated.View style={[styles.infoView, {opacity: fadeAnim}]}>
-                <Text style={styles.smallHeader}> 👋🏼 Hello, {firstName}</Text>
-                <Text style={styles.smallHeader}> 📍 {city}, {region}</Text>
-                <Text style={[styles.smallHeader]}> 🗓️ {today.toLocaleString('default', {weekday: 'long'})}, {today.toLocaleString('default', {month: 'long'})} {date}, {year}</Text>
-            </Animated.View>
-            
-            
-            <Animated.View style={[styles.salahView, {opacity: fadeAnim}]}>
-            {/* code down is to get map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
-            {prayerData && prayerData.timings ? 
-                prayers.map((prayer, prayerIndex) => {
-                    let time = prayerData['timings'][prayer].split(' ')[0]; // Remove timezone if attached
-                    if (timeFormat == "12h")
-                        time = getTimeString(time);
+return (
+  <ScrollView
+    style={styles.container}
+    contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
+  >
+    <Animated.View style={[styles.infoView, { opacity: fadeAnim }]}>
+      {firstName && (
+        <Text style={styles.smallHeader}>👋🏼 Hello, {firstName}</Text>
+      )}
 
-                    const isCurrentPrayer = prayer === nextPrayer;
-                    const isSunrise = prayer === "Sunrise";
-                    const PrayerIcon = prayerIcons[prayerIndex]
+      {city && region && (
+        <Text style={styles.smallHeader}>📍 {city}, {region}</Text>
+      )}
 
-                    const prayerView = (
-                        <View 
-                            key={prayer}
-                            style={[
-                                styles.salahItem,
-                                isCurrentPrayer && styles.nextPrayerHighlight,
-                                prayerStatus[prayer] && styles.donePrayer
-                            ]}
-                        >
-                            <View style={styles.iconWrapper}> <PrayerIcon color={prayerColors[prayerIndex]}/> </View>
-                            
-                            <Text style={styles.salahText}>{prayer}</Text>
-                            <Text style={styles.salahTime}>{String(time)}</Text>
-                        </View>
-                    );
+      {today && (
+        <Text style={[styles.smallHeader]}>
+          🗓️ {today.toLocaleString('default', { weekday: 'long' })},{" "}
+          {today.toLocaleString('default', { month: 'long' })} {date}, {year}
+        </Text>
+      )}
+    </Animated.View>
 
-                    // If it's sunrise, just show the view normally
-                    if (isSunrise) {
-                        return prayerView;
-                    }
+    <Animated.View style={[styles.salahView, { opacity: fadeAnim }]}>
+      {prayerData && prayerData.timings
+        ? prayers.map((prayer, prayerIndex) => {
+            let time = prayerData['timings'][prayer].split(' ')[0]; // Remove timezone if attached
+            if (timeFormat == '12h') time = getTimeString(time);
 
-                    // Otherwise, wrap it in a Touchable
-                    return (
-                        <TouchableWithoutFeedback key={prayer} onPress={async () => await handleValueChange(prayer)} delayLongPress={500}>
-                            {prayerView}
-                        </TouchableWithoutFeedback>
-                    );
-                })
-            : null}
+            const isCurrentPrayer = prayer === nextPrayer;
+            const isSunrise = prayer === 'Sunrise';
+            const PrayerIcon = prayerIcons[prayerIndex];
 
-            </Animated.View>
-        </ScrollView>
-    );
+            // 🔒 Safety check
+            if (!PrayerIcon) return null;
+
+            const prayerView = (
+              <View
+                key={prayer}
+                style={[
+                  styles.salahItem,
+                  isCurrentPrayer && styles.nextPrayerHighlight,
+                  prayerStatus[prayer] && styles.donePrayer,
+                ]}
+              >
+                <View style={styles.iconWrapper}>
+                  <PrayerIcon color={prayerColors[prayerIndex]} />
+                </View>
+
+                <Text style={styles.salahText}>{prayer}</Text>
+                <Text style={styles.salahTime}>{String(time)}</Text>
+              </View>
+            );
+
+            // If it's sunrise, show without clickability
+            if (isSunrise) return prayerView;
+
+            return (
+              <TouchableWithoutFeedback
+                key={prayer}
+                onPress={async () => await handleValueChange(prayer)}
+                delayLongPress={500}
+              >
+                {prayerView}
+              </TouchableWithoutFeedback>
+            );
+          })
+        : null}
+    </Animated.View>
+  </ScrollView>
+);
 };
 
 const styles = StyleSheet.create({
