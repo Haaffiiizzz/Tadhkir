@@ -295,7 +295,11 @@ const HomePage = () => {
 
     useEffect(() => {
         (async () => {
-            await scheduleAllNotifications(todayDate, prayerData);
+            const alreadyScheduled = await AsyncStorage.getItem('NotificationScheduled');
+
+            if (alreadyScheduled !== todayDate) {
+                await scheduleAllNotifications(todayDate, prayerData);
+            }            
         })();
     }, [])
 

@@ -13,7 +13,6 @@ async function scheduleAllNotifications(todayDate: string, todayData: { timings:
      * For each prayer in todays data, we will create a notification for it. 
      */
     const prayerTimings = todayData.timings
-
     prayers.map(prayer => {
         let timeString = prayerTimings[prayer].split(" ")[0]
         console.log("prayer", prayer, "time", timeString)
@@ -34,7 +33,7 @@ async function scheduleNotification(prayer: string, time: string, offset: number
         content: {
         title: `${prayer}`,
         body: `${prayer} is in ${offset} minutes`,
-        data: { data: 'goes here', test: { test1: 'more data' } },
+        sound: true,
         },
         trigger: { 
             type: Notifications.SchedulableTriggerInputTypes.DATE,
