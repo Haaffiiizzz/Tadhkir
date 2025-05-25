@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback,
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
+import scheduleNotification from "../../utils/NotificationsManager"
 import * as SplashScreen from 'expo-splash-screen';
 import {useFonts} from 'expo-font'
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
@@ -292,6 +293,7 @@ const HomePage = () => {
     const prayerIcons = [Sunrise, Sun, SunMedium, Clock, Sunset, Moon];
     const prayerColors = ["#38bdf8", "#f97316", "#facc15", "#fb923c", "#f43f5e", "#6366f1"];
 
+    scheduleNotification("Fajr", "02:19", 5)
 
 
     return (
