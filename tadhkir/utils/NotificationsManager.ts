@@ -10,7 +10,7 @@ const prayers = [
         'Isha'
 ];
 
-async function scheduleNotification(prayer: string, time: string, offset: number) {
+export async function scheduleNotification(prayer: string, time: string, offset: number) {
     /**
      * Function to shedule notification for a particular prayer given its name, time and offset(minutes before prayer to send notif)
      */
@@ -59,7 +59,7 @@ async function scheduleAllNotifications(todayDate: string, todayData: { timings:
     const prayerTimings = todayData.timings
     prayers.map(async (prayer) => {
 
-        let timeString = prayerTimings[prayer].split(" ")[0] // 02:23
+        let timeString = prayerTimings[prayer].split(" ")[0] // 02:23 i.e taking off cdt or whatver time zone
         console.log("prayer", prayer, "time", timeString)
         const storageKey = `${prayer}Offset`;
         const offsetString = await AsyncStorage.getItem(storageKey)

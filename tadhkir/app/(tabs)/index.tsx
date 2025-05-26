@@ -7,6 +7,7 @@ import scheduleAllNotifications from "../../utils/NotificationsManager"
 import * as SplashScreen from 'expo-splash-screen';
 import {useFonts} from 'expo-font'
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
+import GetDateFormat from '@/utils/GetDateFormat';
 
 
 
@@ -128,9 +129,7 @@ const HomePage = () => {
       
 
     const today = new Date();
-    const year = today.getFullYear();
     const month = today.getMonth() + 1;
-    const date = today.getDate();
 
     useEffect(() => {
         // incase we enter a new month, we need to get new month data from the api. 
@@ -147,10 +146,8 @@ const HomePage = () => {
         };
         checkMonth();
     }, [month]);
-
-    const formattedDay = date < 10 ? `0${date}` : date;
-    const formattedMonth = month < 10 ? `0${month}` : month;
-    const todayDate = `${formattedDay}-${formattedMonth}-${year}`; //basically getting the string format for the current day. this serves as the key to get data for the particular day from aysncstorage.
+    
+    const todayDate = GetDateFormat()
     
     const getTimeString = (time: string) => {
         // this function takes in a time string in 24hour format 22:04 and returns the time in a 12 hour format.
@@ -325,7 +322,7 @@ return (
       {today && (
         <Text style={[styles.smallHeader]}>
           🗓️ {today.toLocaleString('default', { weekday: 'long' })},{" "}
-          {today.toLocaleString('default', { month: 'long' })} {date}, {year}
+          {today.toLocaleString('default', { month: 'long' })} {todayDate.split("-")[0]}, {todayDate.split("-")[2]}
         </Text>
       )}
     </Animated.View>

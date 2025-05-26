@@ -5,6 +5,8 @@ import React, { useState, useEffect } from 'react';
 import { Switch} from 'react-native-switch';
 import * as Notifications from "expo-notifications";
 import { Dropdown } from 'react-native-element-dropdown';
+import {scheduleNotification} from '@/utils/NotificationsManager';
+import GetDateFormat from '@/utils/GetDateFormat';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -41,7 +43,7 @@ export default function Settings() {
         loadTimeFormat();
     }, []);
 
-    useEffect(() => {
+    useEffect(() => { //load already saved offsets for each prayer so they can be used as values in the dropdown
     const loadOffsets = async () => {
         const loadedOffsets: Record<string, string> = {};
         for (const prayer of prayers) {
@@ -120,6 +122,18 @@ export default function Settings() {
         await AsyncStorage.setItem(storageKey, newOffset.toString())
         setOffsets(prev => ({ ...prev, [prayer]: newOffset.toString() }));
         console.log("changed offset for", prayer, "to", newOffset)
+        //after changing offset, itd also make sense to reschedule the notification for that prayer
+
+        await rescheduleNotification(prayer, newOffset)
+
+        
+    }
+
+    const rescheduleNotification = async (prayer: string, newOffset: number) => {
+        const todayData = JSON.stringify(await AsyncStorage.getItem(GetDateFormat()))
+        const todayTime = todayData.timings[prayer].split(" ")[0]
+        await scheduleNotification(prayer, todayTime, newOffset)
+
     }
 
 
