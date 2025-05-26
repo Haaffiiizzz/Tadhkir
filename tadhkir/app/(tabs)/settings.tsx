@@ -13,6 +13,8 @@ Notifications.setNotificationHandler({
         shouldSetBadge: false,
     }),
     });
+
+
 export default function Settings() {
     const restartApp = async () => {
         try {
@@ -23,6 +25,8 @@ export default function Settings() {
     };
 
     const [is24Hour, setIs24Hour] = useState(false);
+    const [offsets, setOffsets] = useState<Record<string, string>>({});
+
 
     useEffect(() => {
         const loadTimeFormat = async () => {
@@ -36,6 +40,21 @@ export default function Settings() {
 
         loadTimeFormat();
     }, []);
+
+    useEffect(() => {
+    const loadOffsets = async () => {
+        const loadedOffsets: Record<string, string> = {};
+        for (const prayer of prayers) {
+            const key = `${prayer}Offset`;
+            const stored = await AsyncStorage.getItem(key);
+            loadedOffsets[prayer] = stored || '5'; // default to '5' if nothing is stored
+        }
+        setOffsets(loadedOffsets);
+    };
+
+    loadOffsets();
+    }, []);
+
 
     const changeTimeFormat = async () => {
         const newFormat = is24Hour ? "24h" : "12h";
@@ -93,6 +112,15 @@ export default function Settings() {
     { label: '15 minutes', value: '15' },
     ];
     
+    const changeOffset =  async (prayer: string, newOffset: number) => {
+        /**
+         * Function to set a new offset in minutes for any prayer 
+         */
+        const storageKey = `${prayer}Offset`;
+        await AsyncStorage.setItem(storageKey, newOffset.toString())
+        setOffsets(prev => ({ ...prev, [prayer]: newOffset.toString() }));
+        console.log("changed offset for", prayer, "to", newOffset)
+    }
 
 
     return (
@@ -124,10 +152,9 @@ export default function Settings() {
                             maxHeight={300}
                             labelField="label"
                             valueField="value"
-                            placeholder={prayer}
-                            value={5}
-                            onChange={() => {
-                                
+                            value={offsets[prayer]}
+                            onChange={item => {
+                                changeOffset(prayer, item.value)
                             }}
                             
                         />

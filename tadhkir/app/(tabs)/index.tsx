@@ -299,7 +299,8 @@ const HomePage = () => {
 
             if (alreadyScheduled !== todayDate) {
               console.log("Scheduling")
-                await scheduleAllNotifications(todayDate, prayerData);
+              await scheduleAllNotifications(todayDate, prayerData);
+              console.log("done")
             } else {
               console.log("already scheduled ")
             }
@@ -339,7 +340,7 @@ return (
             const isSunrise = prayer === 'Sunrise';
             const PrayerIcon = prayerIcons[prayerIndex];
 
-            // 🔒 Safety check
+            
             if (!PrayerIcon) return null;
 
             const prayerView = (
