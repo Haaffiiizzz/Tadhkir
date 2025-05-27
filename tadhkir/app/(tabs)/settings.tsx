@@ -130,6 +130,11 @@ export default function Settings() {
     }
 
     const rescheduleNotification = async (prayer: string, newOffset: number) => {
+        const notificationIdentifier = await AsyncStorage.getItem(`${prayer}NotificationID`)
+        if (notificationIdentifier) {
+            await Notifications.cancelScheduledNotificationAsync(notificationIdentifier) // we first cancel old notification and then create a new one
+        }
+
         const todayData = JSON.stringify(await AsyncStorage.getItem(GetDateFormat()))
         const todayTime = todayData.timings[prayer].split(" ")[0]
         await scheduleNotification(prayer, todayTime, newOffset)

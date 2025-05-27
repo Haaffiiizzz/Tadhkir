@@ -16,7 +16,7 @@ export async function scheduleNotification(prayer: string, time: string, offset:
     const triggerDate = getTriggerDate(time, offset);
     console.log("notification scheduled for", triggerDate.getHours(), triggerDate.getMinutes())
     
-    await Notifications.scheduleNotificationAsync({
+    const notificationIdentifier = await Notifications.scheduleNotificationAsync({
         content: {
         title: `Tadhkir`,
         body: `${prayer} is in ${offset} minutes`,
@@ -27,6 +27,8 @@ export async function scheduleNotification(prayer: string, time: string, offset:
             date: triggerDate,
         }
     });
+
+    await AsyncStorage.setItem(`${prayer}NotificationID`, notificationIdentifier)
  
 }
 
