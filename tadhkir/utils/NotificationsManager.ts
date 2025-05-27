@@ -1,6 +1,5 @@
 import * as Notifications from "expo-notifications"
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { prayerStorageMain } from "./setUpPrayerStorage";
 
 const prayers = [
         'Fajr',
@@ -19,7 +18,7 @@ export async function scheduleNotification(prayer: string, time: string, offset:
     
     await Notifications.scheduleNotificationAsync({
         content: {
-        title: `${prayer}`,
+        title: `Tadhkir`,
         body: `${prayer} is in ${offset} minutes`,
         sound: true,
         },
