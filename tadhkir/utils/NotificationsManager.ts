@@ -58,7 +58,7 @@ async function scheduleAllNotifications(todayDate: string, todayData: { timings:
      */
     
     const prayerTimings = todayData.timings
-    prayers.map(async (prayer) => {
+    prayerTimings && prayers.map(async (prayer) => {
 
         let timeString = prayerTimings[prayer].split(" ")[0] // 02:23 i.e taking off cdt or whatver time zone
         console.log("prayer", prayer, "time", timeString)

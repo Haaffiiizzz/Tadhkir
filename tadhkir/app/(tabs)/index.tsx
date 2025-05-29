@@ -291,6 +291,9 @@ const HomePage = () => {
     const prayerColors = ["#38bdf8", "#f97316", "#facc15", "#fb923c", "#f43f5e", "#6366f1"];
 
     useEffect(() => {
+
+        if (!dataLoaded) return;
+        
         (async () => {
             const alreadyScheduled = await AsyncStorage.getItem('NotificationScheduled');
 
@@ -302,7 +305,7 @@ const HomePage = () => {
               console.log("already scheduled ")
             }
         })();
-    }, [])
+    }, [dataLoaded])
 
 
 return (
