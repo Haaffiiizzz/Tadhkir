@@ -2,6 +2,9 @@ import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import { Link, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
+import { getDaysList } from '@/utils/Helper';
+
+
 /**
  * In this page, there will be a link to each day in the month and each link will lead to a
  * page that looks like the landing page except its going to be showing data for the linked date.
@@ -31,28 +34,7 @@ export default function MoreTimes() {
     fetchStorage()
   }, [])
 
-  const getDaysList = function(month: number) {
-    // creating the dates list here which will be mapped to display the links
-    // number of days will depend on current month
-    const thirty = [9, 4, 6, 11] //sept, april, jun, nov
-    let limit = 32 // i want to start indexing at one                                                                                  
-    if (month === 2){
-      limit = 29
-    } else if (thirty.includes(month)) {
-      limit = 31
-    }
 
-    let daysList = []
-
-    for (let i = 1; i < limit; i++){
-      const formattedDay = i < 10 ? `0${i}` : i;
-      const formattedMonth = month < 10 ? `0${month}` : month;
-      const date = `${formattedDay}-${formattedMonth}-${year}`;
-      daysList.push(date)
-    }
-
-    return daysList
-  };
 
   const [daysPerMonth, setDaysPerMonth] = useState<Record<number, string[]>>({});
   const [countPerMonth, setCountPerMonth] = useState<Record<number, number[]>>({});
@@ -61,7 +43,7 @@ export default function MoreTimes() {
     if (monthStorage?.length) { // creating a new dict to store the day number for each month. looks like {1: [1, 2, 3.., 31], 2:[1, 2, 3..., 28]}
       const newDaysPerMonth: Record<number, string[]> = {};
       monthStorage.forEach((month: number) => {
-        const monthList = getDaysList(month);
+        const monthList = getDaysList(month, year);
         newDaysPerMonth[month] = monthList;
       });
       setDaysPerMonth(newDaysPerMonth);

@@ -4,10 +4,10 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
 import scheduleAllNotifications from "../../utils/NotificationsManager"
-import * as SplashScreen from 'expo-splash-screen';
 import {useFonts} from 'expo-font'
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
-import GetDateFormat from '@/utils/GetDateFormat';
+import { GetDateFormat } from '@/utils/Helper';
+import { get12HourTimeString } from '@/utils/Helper';
 
 
 
@@ -149,18 +149,6 @@ const HomePage = () => {
     
     const todayDate = GetDateFormat()
     
-    const getTimeString = (time: string) => {
-        // this function takes in a time string in 24hour format 22:04 and returns the time in a 12 hour format.
-        let timeHour = +time.split(':')[0];
-        let timeMin = time.split(':')[1];
-        if (timeHour > 12) {
-            timeHour = timeHour - 12;
-            time = timeHour + ':' + timeMin + ' PM';
-        } else {
-            time = timeHour + ':' + timeMin + ' AM';
-        }
-        return time
-    }
 
     const completedAllAlert = () => {
            //function to display an alert if all prayers are completed for the day.
@@ -170,8 +158,7 @@ const HomePage = () => {
                  style: 'cancel',
                },
              ]);
-         
-    }
+    };
 
     const handleValueChange = async (prayer: string) => { 
         // to change the true or false value for a prayer when it is clicked and increase or decrease
@@ -228,7 +215,6 @@ const HomePage = () => {
         if (newPrayerCount === 5){
             completedAllAlert()
         }
-      
     
         const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
     
@@ -332,7 +318,7 @@ return (
       {prayerData && prayerData.timings
         ? prayers.map((prayer, prayerIndex) => {
             let time = prayerData['timings'][prayer].split(' ')[0]; // Remove timezone if attached
-            if (timeFormat == '12h') time = getTimeString(time);
+            if (timeFormat == '12h') time = get12HourTimeString(time);
 
             const isCurrentPrayer = prayer === nextPrayer;
             const isSunrise = prayer === 'Sunrise';

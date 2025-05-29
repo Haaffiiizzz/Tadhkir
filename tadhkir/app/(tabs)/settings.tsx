@@ -6,7 +6,7 @@ import { Switch } from 'react-native-switch';
 import * as Notifications from 'expo-notifications';
 import { Dropdown } from 'react-native-element-dropdown';
 import { scheduleNotification } from '@/utils/NotificationsManager';
-import GetDateFormat from '@/utils/GetDateFormat';
+import { GetDateFormat } from '@/utils/Helper';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
