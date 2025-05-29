@@ -13,43 +13,54 @@ export async function scheduleNotification(prayer: string, time: string, offset:
     /**
      * Function to shedule notification for a particular prayer given its name, time and offset(minutes before prayer to send notif)
      */
-    const triggerDate = getTriggerDate(time, offset);
-    console.log("notification scheduled for", triggerDate.getHours(), triggerDate.getMinutes())
-    
+    const [exactTriggerDate, triggerDateWithOffset] = getTriggerDate(time, offset);
+
     const notificationIdentifier = await Notifications.scheduleNotificationAsync({
         content: {
         title: `Tadhkir`,
-        body: `${prayer} is in ${offset} minutes`,
+        body: `${prayer} is in ${offset} minutes!`,
         sound: true,
         },
         trigger: { 
             type: Notifications.SchedulableTriggerInputTypes.DATE,
-            date: triggerDate,
+            date: triggerDateWithOffset,
         }
     });
 
+    await Notifications.scheduleNotificationAsync({
+        content: {
+        title: `Tadhkir`,
+        body: `It's ${prayer} time!`,
+        sound: true,
+        },
+        trigger: { 
+            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            date: exactTriggerDate,
+        }
+    });
+    
     await AsyncStorage.setItem(`${prayer}NotificationID`, notificationIdentifier)
  
 }
 
-const getTriggerDate = (timeStr: string, offset: number): Date => {
+const getTriggerDate = (timeStr: string, offset: number): [Date, Date] => {
     /**
      * Function to get the time/date object for the notification to be triggered at.
      */
     const [hours, minutes] = timeStr.split(':').map(Number);
     const now = new Date();
 
-    let trigger = new Date(
+    const trigger = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate(),
         hours,
         minutes
-    );
+    ); // exact time for the prayer
 
-    trigger = new Date(trigger.getTime() - offset * 60000)
+    const triggerWithOffset = new Date(trigger.getTime() - offset * 60000) //time for the prayer with offset
 
-    return trigger;
+    return [trigger, triggerWithOffset];
 };
 
 async function scheduleAllNotifications(todayDate: string, todayData: { timings: Record<string, string> }){
@@ -61,7 +72,6 @@ async function scheduleAllNotifications(todayDate: string, todayData: { timings:
     prayerTimings && prayers.map(async (prayer) => {
 
         let timeString = prayerTimings[prayer].split(" ")[0] // 02:23 i.e taking off cdt or whatver time zone
-        console.log("prayer", prayer, "time", timeString)
         const storageKey = `${prayer}Offset`;
         const offsetString = await AsyncStorage.getItem(storageKey)
         const offset = Number(offsetString)

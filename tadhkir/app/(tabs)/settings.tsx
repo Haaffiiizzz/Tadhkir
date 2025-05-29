@@ -107,17 +107,24 @@ export default function Settings() {
      * Function to set a new offset in minutes for any prayer 
      */
     const storageKey = `${prayer}Offset`;
+
     await AsyncStorage.setItem(storageKey, newOffset.toString());
     setOffsets((prev) => ({ ...prev, [prayer]: newOffset.toString() }));
-    console.log('changed offset for', prayer, 'to', newOffset);
     //after changing offset, itd also make sense to reschedule the notification for that prayer
     await rescheduleNotification(prayer, newOffset);
   };
 
+
   const rescheduleNotification = async (prayer: string, newOffset: number) => {
+    /**
+     * Function that runs after offset for a prayer is changed. It first cancels the old notification for that prayer, and then creates a new one. 
+     */
+
     const notificationIdentifier = await AsyncStorage.getItem(`${prayer}NotificationID`);
+
     if (notificationIdentifier) {
       await Notifications.cancelScheduledNotificationAsync(notificationIdentifier); // we first cancel old notification and then create a new one
+      
     }
 
     const todayDataStr = await AsyncStorage.getItem(GetDateFormat());
