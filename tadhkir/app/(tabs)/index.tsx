@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef} from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback, Alert, Platform} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback, Alert, Button} from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
@@ -8,7 +8,7 @@ import {useFonts} from 'expo-font'
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
 import { GetDateFormat } from '@/utils/Helper';
 import { get12HourTimeString } from '@/utils/Helper';
-
+import * as Notifications from "expo-notifications";
 
 
 /**
@@ -360,6 +360,13 @@ return (
           })
         : null}
     </Animated.View>
+
+    <Text>
+        🔔 Prayer reminders scheduled for today
+        ✅ All 5 reminders active
+    </Text>
+
+    <Button title="Disable all notifications for today!" onPress={ async () => {await Notifications.cancelAllScheduledNotificationsAsync()}} />
   </ScrollView>
 );
 };
