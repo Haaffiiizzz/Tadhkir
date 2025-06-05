@@ -32,6 +32,7 @@ export async function addMonthToMonths(month){ //function to add a new month to 
 export async function getPrayerTimes(latitude, longitude) {
     //first I'll construct the date format Aladhan API uses. To get a month's data, I need to pass in the year/month.  
 
+    
     const today = new Date()
     const year = today.getFullYear()
     const month = today.getMonth() + 1 // month is indexed starting at 0.
@@ -44,25 +45,29 @@ export async function getPrayerTimes(latitude, longitude) {
 
     // next I'll construct the api url to make the call to using date, inputted latitude and longitude. All queries used can be found on Aladhan documentation.
     const apiUrl = `https://api.aladhan.com/v1/calendar/${formattedDate}?latitude=${latitude}&longitude=${longitude}&method=2&shafaq=general&calendarMethod=HJCoSA`;
-
+    console.log(apiUrl, "apirul")
+    let response;
     try {
-        const response = await fetch(apiUrl);
-
-        if (!response.ok){
-            const defaultResult = require('./defaultResult.json');
-            
-            return defaultResult.data  // this is fall back data I'm using in case something goes wrong with the api connection.
-            //with time, I'll make this another call to a different api instead!
-        }
-
-        const resultJSON = await response.json()
-        const monthPrayerData = resultJSON.data
-        return monthPrayerData
-
+        response = await fetch(apiUrl);
+        console.log("after wait response")
     } catch (error) {
-        const defaultResult = require('./defaultResult.json');
-        return defaultResult.data
+        console.error("DETAILED fetch error:", JSON.stringify(error));
     }
+
+    if (!response.ok){
+        console.log("bad response", response)
+        const defaultResult = require('./defaultResult.json');
+        
+        return defaultResult.data  // this is fall back data I'm using in case something goes wrong with the api connection.
+        //with time, I'll make this another call to a different api instead!
+    }
+    console.log(response)
+    const resultJSON = await response.json()
+    console.log(resultJSON)
+    const monthPrayerData = resultJSON.data
+    return monthPrayerData
+
+    
     
 }
 
@@ -86,13 +91,16 @@ export async function setUpPrayerStorage(monthPrayerData) {
         await AsyncStorage.setItem(date, newDayObject)
         
     });
-
+    console.log("finished inside setup")
 }
 
 export async function prayerStorageMain(latitude, longitude) {
-
+    console.log("sent to getprayertime")
     const monthPrayerData = await getPrayerTimes(latitude, longitude)
+    console.log("finish from getprayertime")
+    console.log(monthPrayerData)
     await setUpPrayerStorage(monthPrayerData)
+    console.log("finie setup storrage")
 }
 
 // export default prayerStorageMain; initializeMonthStorage;

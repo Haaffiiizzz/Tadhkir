@@ -25,8 +25,9 @@ const HomePage = () => {
                 const longitude = await AsyncStorage.getItem("longitude")
                 await addMonthToMonths(month) 
                 await AsyncStorage.setItem('month', month.toString());
-                await prayerStorageMain(latitude, longitude)
-                  
+                console.log("cent to prayerstore")
+                await prayerStorageMain(latitude?.toString(), longitude?.toString())
+                console.log("finiesh from orayee store")
             }
         };
         checkMonth();
