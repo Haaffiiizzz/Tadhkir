@@ -106,34 +106,35 @@ export default function MoreTimes() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
-        <Text style={styles.text}>{today.toLocaleString('default', {month: 'long'})}</Text>
-        <Text>Months so far {monthStorage ? monthStorage.length : 0} PRint: --{monthStorage}--</Text>
 
         {
           Object.keys(countPerMonth).map((month) => {
             const daysList = daysPerMonth[month];
             const daysCounts = countPerMonth[month];
             return (
-              <View style={styles.daysContainer} key={month}>
-                {daysList && daysCounts ? (
-                  daysList.map((day, dayIndex: number) => {
-                    const dayCount = daysCounts[dayIndex] ?? 0;
-                    const backgroundColor = colorDict[dayCount] || "#ccc";
-                    const date =  +day.slice(0, 2) // day is a string of an actuyal date month year so need to slice to get just the day
-                    let link = (date !== todaysDate) ? `../OtherDay?key=${dayIndex + 1}&date=${day}` : "(tabs)/"
+              <React.Fragment key={month}>
+                <Text style = {styles.text}> {new Date(0, month).toLocaleString('default', { month: 'long' })}</Text>
+                <View style={styles.daysContainer}>
+                  {daysList && daysCounts ? (
+                    daysList.map((day, dayIndex: number) => {
+                      const dayCount = daysCounts[dayIndex] ?? 0;
+                      const backgroundColor = colorDict[dayCount] || "#ccc";
+                      const date =  +day.slice(0, 2) // day is a string of an actuyal date month year so need to slice to get just the day
+                      let link = (date !== todaysDate) ? `../OtherDay?key=${dayIndex + 1}&date=${day}` : "(tabs)/"
       
-                    return (
-                      <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
-                        <Link href={link} style={{ width: '100%', textAlign: 'center' }}>
-                          <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
-                        </Link>
-                      </View>
-                    );
-                  })
-                ) : (
-                  <Text style={styles.text}>Loading...</Text>
-                )}
-              </View>
+                      return (
+                        <View style={[styles.daysListsItem, { backgroundColor }]} key={day}>
+                          <Link href={link} style={{ width: '100%', textAlign: 'center' }}>
+                            <Text style={styles.daysListsItemText}>{day.split("-")[0]}</Text>
+                          </Link>
+                        </View>
+                      );
+                    })
+                  ) : (
+                    <Text style={styles.text}>Loading...</Text>
+                  )}
+                </View>
+              </React.Fragment>
             );
           })
         }

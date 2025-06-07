@@ -12,9 +12,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function initializeMonthStorage (month){ //function to set a new storage for all the months we've had so far 
     //it is called from index at the first start of the app or after clearing data. 
+    //it stores a list with only one item for now (the currebnt onth at start of app)
 
     let newMonthStorage = [month];
-    console.log("new month init", newMonthStorage)
     await AsyncStorage.setItem("monthStorage", JSON.stringify(newMonthStorage))
 }
 
@@ -39,23 +39,21 @@ export async function getPrayerTimes(latitude, longitude) {
 
     await AsyncStorage.setItem('year', year.toString())
     await AsyncStorage.setItem('month', month.toString()) // store year and month so we can check in index page if month changed so we get new day
-    console.log("Saved the month from start")
     
     const formattedDate = year + "/" + month
 
     // next I'll construct the api url to make the call to using date, inputted latitude and longitude. All queries used can be found on Aladhan documentation.
     const apiUrl = `https://api.aladhan.com/v1/calendar/${formattedDate}?latitude=${latitude}&longitude=${longitude}&method=2&shafaq=general&calendarMethod=HJCoSA`;
-    console.log(apiUrl, "apirul")
+     
     let response;
     try {
         response = await fetch(apiUrl);
-        console.log("after wait response")
     } catch (error) {
+        const defaultResult = require('./defaultResult.json');
         console.error("DETAILED fetch error:", JSON.stringify(error));
     }
 
     if (!response.ok){
-        console.log("bad response", response)
         const defaultResult = require('./defaultResult.json');
         
         return defaultResult.data  // this is fall back data I'm using in case something goes wrong with the api connection.
@@ -87,20 +85,17 @@ export async function setUpPrayerStorage(monthPrayerData) {
         newDayObject['count'] = count
 
         newDayObject = JSON.stringify(newDayObject)
+        console.log(newDayObject, "\n\n")
 
         await AsyncStorage.setItem(date, newDayObject)
         
     });
-    console.log("finished inside setup")
 }
 
 export async function prayerStorageMain(latitude, longitude) {
-    console.log("sent to getprayertime")
     const monthPrayerData = await getPrayerTimes(latitude, longitude)
-    console.log("finish from getprayertime")
     console.log(monthPrayerData)
     await setUpPrayerStorage(monthPrayerData)
-    console.log("finie setup storrage")
 }
 
 // export default prayerStorageMain; initializeMonthStorage;
