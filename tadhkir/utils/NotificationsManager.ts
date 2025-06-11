@@ -63,7 +63,7 @@ const getTriggerDate = (timeStr: string, offset: number): [Date, Date] => {
     return [trigger, triggerWithOffset];
 };
 
-async function scheduleAllNotifications(todayDate: string, todayData: { timings: Record<string, string> }){
+async function scheduleDayNotifications(todayDate: string, todayData: { timings: Record<string, string> }){
     /**
      * For each prayer in todays data, we will create a notification for it. 
      */
@@ -80,6 +80,15 @@ async function scheduleAllNotifications(todayDate: string, todayData: { timings:
     });
 
     await AsyncStorage.setItem('NotificationScheduled', todayDate)
+}
+
+async function scheduleAllNotifications(todayDate: string, todayData: { timings: Record<string, string> }){
+    /**
+     * In this function, we will schedule notifications for a few days in advance. We can store the latest day scheduled, 
+     * and on entering the app everytime, we can check if the latest day scheduled is enough in advance (e.g 3-5 days in advance).
+     * If its not enough, we can call this function again with how many more days we need to schedule.
+     */
+    scheduleDayNotifications(todayDate, todayData)
 }
 
 export default scheduleAllNotifications;
