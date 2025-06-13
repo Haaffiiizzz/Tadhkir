@@ -6,8 +6,7 @@ import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../..
 import scheduleAllNotifications from "../../utils/NotificationsManager"
 import {useFonts} from 'expo-font'
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
-import { GetDateFormat } from '@/utils/Helper';
-import { get12HourTimeString } from '@/utils/Helper';
+import { GetDateFormat, get12HourTimeString, checkDaysBeforeLatestNotification, daysToSchedule } from '@/utils/Helper';
 import * as Notifications from "expo-notifications";
 import BackgroundFetch from 'react-native-background-fetch'
 
@@ -284,9 +283,11 @@ const HomePage = () => {
         if (!dataLoaded) return;
         
         (async () => {
-            const alreadyScheduled = await AsyncStorage.getItem('NotificationScheduled');
+            const latestDate = await AsyncStorage.getItem('LatestNotificationScheduled') || null;
+            const daysAhead = checkDaysBeforeLatestNotification(todayDate, latestDate)
 
-            if (alreadyScheduled !== todayDate) {
+            if (daysAhead < 3) {
+              const daysToScheduleList = daysToSchedule()
               await scheduleAllNotifications([todayDate]);
             } else {
               console.log("already scheduled ")

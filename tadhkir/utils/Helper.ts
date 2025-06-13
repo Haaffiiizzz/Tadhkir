@@ -51,3 +51,24 @@ export function getDaysList (month: number, year: number) {
 
     return daysList
   };
+
+export function checkDaysBeforeLatestNotification(todayDate: string, latestDate: string){
+  /**
+   * Given the current day and the day latest (furthest) day for which notifications have been set,
+   * this function will check how many advanced days of notification we already have and return it. 
+   */
+  const [day1, month1, year1] = todayDate.split('-').map(Number);
+  const [day2, month2, year2] = latestDate.split('-').map(Number);
+
+  const date1 = new Date(year1, month1 - 1, day1);
+  const date2 = new Date(year2, month2 - 1, day2);
+
+  const diffInMs = date2.getTime() - date1.getTime();
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  return diffInDays > 0 ? diffInDays : 0;
+}
+
+export function daysToSchedule(){
+  
+}
