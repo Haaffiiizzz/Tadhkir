@@ -79,16 +79,24 @@ async function scheduleDayNotifications(todayDate: string, todayData: { timings:
        
     });
 
-    await AsyncStorage.setItem('NotificationScheduled', todayDate)
+    await AsyncStorage.setItem('LatestNotificationScheduled', todayDate)
 }
 
-async function scheduleAllNotifications(todayDate: string, todayData: { timings: Record<string, string> }){
+async function scheduleAllNotifications(dates: Array<string>){
     /**
      * In this function, we will schedule notifications for a few days in advance. We can store the latest day scheduled, 
      * and on entering the app everytime, we can check if the latest day scheduled is enough in advance (e.g 3-5 days in advance).
      * If its not enough, we can call this function again with how many more days we need to schedule.
      */
-    scheduleDayNotifications(todayDate, todayData)
+    dates.forEach(async (date) => {
+            let dayDataStr = await AsyncStorage.getItem(date);
+    
+            if(dayDataStr){
+                const dayData = JSON.parse(dayDataStr);
+                await scheduleDayNotifications(date, dayData);
+            }
+            
+        })  
 }
 
 export default scheduleAllNotifications;

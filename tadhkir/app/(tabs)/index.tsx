@@ -9,6 +9,7 @@ import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-nativ
 import { GetDateFormat } from '@/utils/Helper';
 import { get12HourTimeString } from '@/utils/Helper';
 import * as Notifications from "expo-notifications";
+import BackgroundFetch from 'react-native-background-fetch'
 
 
 /**
@@ -90,7 +91,9 @@ const HomePage = () => {
             await getLatitude();
             await getTimeFormat();
             await getPrayerData();
-            setDataLoaded(true);  // now safe to evaluate redirect
+            setDataLoaded(true);
+            
+            // now safe to evaluate redirect
           };
           loadAllData();
         }, [])
@@ -284,7 +287,7 @@ const HomePage = () => {
             const alreadyScheduled = await AsyncStorage.getItem('NotificationScheduled');
 
             if (alreadyScheduled !== todayDate) {
-              await scheduleAllNotifications(todayDate, prayerData);
+              await scheduleAllNotifications([todayDate]);
             } else {
               console.log("already scheduled ")
             }
