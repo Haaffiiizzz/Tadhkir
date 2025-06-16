@@ -283,12 +283,13 @@ const HomePage = () => {
         if (!dataLoaded) return;
         
         (async () => {
-            const latestDate = await AsyncStorage.getItem('LatestNotificationScheduled') || null;
+            const latestDate = await AsyncStorage.getItem('LatestNotificationScheduled') || "";
             const daysAhead = checkDaysBeforeLatestNotification(todayDate, latestDate)
 
-            if (daysAhead < 3) {
-              const daysToScheduleList = daysToSchedule()
-              await scheduleAllNotifications([todayDate]);
+            if (daysAhead < 4) {
+              const daysToScheduleList = daysToSchedule(daysAhead)
+              await scheduleAllNotifications(daysToScheduleList);
+              console.log("Scheduled all notifications!")
             } else {
               console.log("already scheduled ")
             }

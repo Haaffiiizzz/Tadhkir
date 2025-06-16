@@ -69,6 +69,31 @@ export function checkDaysBeforeLatestNotification(todayDate: string, latestDate:
   return diffInDays > 0 ? diffInDays : 0;
 }
 
-export function daysToSchedule(){
+export function daysToSchedule(daysAdvance: number){
+ /**
+  * Given the days of advance we have and the latest day scheduled, here we can decide how many more days to schedule
+  * and return a list of those days.
+  */
+
+  const daysNeeded = 5 - daysAdvance; // this is additional number of days we need to be scheduled.
   
+  if (daysNeeded <= 0) return [];
+  
+  // Parse latestScheduled date string (format: dd-mm-yyyy)
+  let currentDate = new Date();
+  const newDays: string[] = [];
+  
+  // Schedule additional days starting from the day after latestScheduled
+  for (let i = 0; i < daysNeeded; i++){
+      
+      const currentDay = currentDate.getDate();
+      const currentMonth = currentDate.getMonth() + 1;
+      const formattedDay = currentDay < 10 ? `0${currentDay}` : currentDay;
+      const formattedMonth = currentMonth < 10 ? `0${currentMonth}` : currentMonth;
+      const dateStr = `${formattedDay}-${formattedMonth}-${currentDate.getFullYear()}`;
+      newDays.push(dateStr);
+      currentDate.setDate(currentDate.getDate() + 1); // move to next day
+  }
+  
+  return newDays;
 }

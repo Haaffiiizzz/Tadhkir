@@ -9,11 +9,12 @@ const prayers = [
         'Isha'
 ];
 
-export async function scheduleNotification(prayer: string, time: string, offset: number) {
+export async function scheduleNotification(prayer: string, time: string, offset: number, todayDate: string) {
     /**
      * Function to shedule notification for a particular prayer given its name, time and offset(minutes before prayer to send notif)
      */
-    const [exactTriggerDate, triggerDateWithOffset] = getTriggerDate(time, offset);
+    console.log("entered for")
+    const [exactTriggerDate, triggerDateWithOffset] = getTriggerDate(time, offset, todayDate);
 
     const notificationIdentifier = await Notifications.scheduleNotificationAsync({
         content: {
@@ -40,23 +41,28 @@ export async function scheduleNotification(prayer: string, time: string, offset:
     });
     
     await AsyncStorage.setItem(`${prayer}NotificationID`, notificationIdentifier)
+    console.log(prayer, "done")
+
  
 }
 
-const getTriggerDate = (timeStr: string, offset: number): [Date, Date] => {
+const getTriggerDate = (timeStr: string, offset: number, todayDate: string): [Date, Date] => {
     /**
      * Function to get the time/date object for the notification to be triggered at.
      */
     const [hours, minutes] = timeStr.split(':').map(Number);
-    const now = new Date();
+
+    const [day, month, year] = todayDate.split('-').map(Number);
+    const current = new Date(year, month-1, day);
+
 
     const trigger = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
+        current.getFullYear(),
+        current.getMonth(),
+        current.getDate(),
         hours,
         minutes
-    ); // exact time for the prayer
+    ); // exact time and day for the prayer
 
     const triggerWithOffset = new Date(trigger.getTime() - offset * 60000) //time for the prayer with offset
 
@@ -67,7 +73,7 @@ async function scheduleDayNotifications(todayDate: string, todayData: { timings:
     /**
      * For each prayer in todays data, we will create a notification for it. 
      */
-    
+    console.log("Scheduling for", todayDate)
     const prayerTimings = todayData.timings
     prayerTimings && prayers.map(async (prayer) => {
 
@@ -75,11 +81,13 @@ async function scheduleDayNotifications(todayDate: string, todayData: { timings:
         const storageKey = `${prayer}Offset`;
         const offsetString = await AsyncStorage.getItem(storageKey)
         const offset = Number(offsetString)
-        scheduleNotification(prayer, timeString, offset)
+        scheduleNotification(prayer, timeString, offset, todayDate)
        
     });
 
     await AsyncStorage.setItem('LatestNotificationScheduled', todayDate)
+    console.log("Finished for ", todayDate)
+    
 }
 
 async function scheduleAllNotifications(dates: Array<string>){
