@@ -57,10 +57,10 @@ export function checkDaysBeforeLatestNotification(todayDate: string, latestDate:
    * Given the current day and the day latest (furthest) day for which notifications have been set,
    * this function will check how many advanced days of notification we already have and return it. 
    */
-  const [day1, month1, year1] = todayDate.split('-').map(Number);
-  const [day2, month2, year2] = latestDate.split('-').map(Number);
+    const [day1, month1, year1] = todayDate.split('-').map(Number);
+    const [day2, month2, year2] = latestDate.split('-').map(Number);
 
-  const date1 = new Date(year1, month1 - 1, day1);
+    const date1 = new Date(year1, month1 - 1, day1);
   const date2 = new Date(year2, month2 - 1, day2);
 
   const diffInMs = date2.getTime() - date1.getTime();
@@ -76,6 +76,10 @@ export function daysToSchedule(daysAdvance: number){
   */
 
   const daysNeeded = 5 - daysAdvance; // this is additional number of days we need to be scheduled.
+
+  //problem is, we are counting how many days of advance we already have, and scheduling for the difference but starting again from today instead of from last scheduled date
+  //easy fix will be to always schedule 5 days in advance without calculating
+  //will come back to this. 
   
   if (daysNeeded <= 0) return [];
   
