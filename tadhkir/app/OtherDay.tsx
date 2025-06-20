@@ -56,7 +56,7 @@ export default function PrayerDay() {
                      text: 'Continue',
                      style: 'cancel',
                    },
-                 ]);       
+                 ]);s       
     };
 
     const handleValueChange = async (prayer: string) => { // to change the true or false value for a prayer when the checkbox is clicked and increase or decrease

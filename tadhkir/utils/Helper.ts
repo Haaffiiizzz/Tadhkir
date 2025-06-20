@@ -90,7 +90,7 @@ export function daysToSchedule(daysAdvance: number){
   // Schedule additional days starting from the day after latestScheduled
   for (let i = 0; i < daysNeeded; i++){
       
-      const currentDay = currentDate.getDate();
+      const currentDay = currentDate.getDate(); //should bbe from day after latest schedule if its ahead of current day else current day i.e if da
       const currentMonth = currentDate.getMonth() + 1;
       const formattedDay = currentDay < 10 ? `0${currentDay}` : currentDay;
       const formattedMonth = currentMonth < 10 ? `0${currentMonth}` : currentMonth;

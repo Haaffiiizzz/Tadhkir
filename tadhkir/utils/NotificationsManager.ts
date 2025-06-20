@@ -62,6 +62,8 @@ const getTriggerDate = (timeStr: string, offset: number, todayDate: string): [Da
         current.getDate(),
         hours,
         minutes
+
+
     ); // exact time and day for the prayer
 
     const triggerWithOffset = new Date(trigger.getTime() - offset * 60000) //time for the prayer with offset
