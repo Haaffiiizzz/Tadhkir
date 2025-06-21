@@ -287,7 +287,7 @@ const HomePage = () => {
             const daysAhead = checkDaysBeforeLatestNotification(todayDate, latestDate)
 
             if (daysAhead < 4) {
-              const daysToScheduleList = daysToSchedule(daysAhead)
+              const daysToScheduleList = daysToSchedule(latestDate, daysAhead)
               console.log(daysToScheduleList)
               await scheduleAllNotifications(daysToScheduleList);
               console.log("Scheduled all notifications!")
