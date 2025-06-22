@@ -86,29 +86,31 @@ export function daysToSchedule(latestDate:string, daysAdvance: number){
   // Parse latestScheduled date string (format: dd-mm-yyyy)
   const [latestDay, latestMonth, latestYear] = latestDate.split('-').map(Number);
   const latestScheduledDate = new Date(latestYear, latestMonth - 1, latestDay);
-  let currentDate = new Date();
+  let startDate = new Date();
 
   let daysNeeded = 0;
-  if (currentDate > latestScheduledDate){
+
+  if (startDate > latestScheduledDate){
     daysNeeded = 5;
 
   }else{
     daysNeeded = 5 - daysAdvance;
+    startDate = latestScheduledDate;
   }
   
   if (daysNeeded <= 0) return [];
   const newDays: string[] = [];
   
-  // Schedule additional days starting from the day after latestScheduled
+  // Schedule additional days starting from the day start date i.e either current day(today) or latest scheduled date. 
   for (let i = 0; i < daysNeeded; i++){
       
-      const currentDay = currentDate.getDate(); //should bbe from day after latest schedule if its ahead of current day else current day i.e if da
-      const currentMonth = currentDate.getMonth() + 1;
+      const currentDay = startDate.getDate(); //should bbe from day after latest schedule if its ahead of current day else current day i.e if da
+      const currentMonth = startDate.getMonth() + 1;
       const formattedDay = currentDay < 10 ? `0${currentDay}` : currentDay;
       const formattedMonth = currentMonth < 10 ? `0${currentMonth}` : currentMonth;
-      const dateStr = `${formattedDay}-${formattedMonth}-${currentDate.getFullYear()}`;
+      const dateStr = `${formattedDay}-${formattedMonth}-${startDate.getFullYear()}`;
       newDays.push(dateStr);
-      currentDate.setDate(currentDate.getDate() + 1); // move to next day
+      startDate.setDate(startDate.getDate() + 1); // move to next day
   }
   
   return newDays;
