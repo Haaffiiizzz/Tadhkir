@@ -75,21 +75,16 @@ export function daysToSchedule(latestDate:string, daysAdvance: number){
   * and return a list of those days.
   */
 
-  // const daysNeeded = 5 - daysAdvance; // this is additional number of days we need to be scheduled.
-
-  //problem is, we are counting how many days of advance we already have, and scheduling for the difference but starting again from today instead of from last scheduled date
-  //easy fix will be to always schedule 5 days in advance without calculating
-  //will come back to this. 
-  
-  
   
   // Parse latestScheduled date string (format: dd-mm-yyyy)
   const [latestDay, latestMonth, latestYear] = latestDate.split('-').map(Number);
   const latestScheduledDate = new Date(latestYear, latestMonth - 1, latestDay);
+
   let startDate = new Date();
 
   let daysNeeded = 0;
-
+  // now we need to check if the latest scheduled date is in the past. if it is, then we definitely need to schedule 5 days.
+  // if its in the future, then we need to calculate days needed and start from latest scheduled date. 
   if (startDate > latestScheduledDate){
     daysNeeded = 5;
 
@@ -104,7 +99,7 @@ export function daysToSchedule(latestDate:string, daysAdvance: number){
   // Schedule additional days starting from the day start date i.e either current day(today) or latest scheduled date. 
   for (let i = 0; i < daysNeeded; i++){
       
-      const currentDay = startDate.getDate(); //should bbe from day after latest schedule if its ahead of current day else current day i.e if da
+      const currentDay = startDate.getDate(); 
       const currentMonth = startDate.getMonth() + 1;
       const formattedDay = currentDay < 10 ? `0${currentDay}` : currentDay;
       const formattedMonth = currentMonth < 10 ? `0${currentMonth}` : currentMonth;
