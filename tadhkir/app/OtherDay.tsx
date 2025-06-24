@@ -71,6 +71,7 @@ export default function PrayerDay() {
 
     const addToStreak = async () => {
         streakStorage[date] = true
+        console.log(date)
         await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
     }
 
@@ -92,8 +93,9 @@ export default function PrayerDay() {
         }
 
         if (newPrayerCount === 5){
-            completedAllAlert()
             addToStreak()
+            completedAllAlert()
+            
         }
         else{
             removeFromStreak()

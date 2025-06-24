@@ -27,11 +27,15 @@ export default function MoreTimes() {
 
   const [streakStorage, setStreakStorage] = useState<object | null>(null)
 
-  const getStreakStorage = async () => {
-        let streakStorageIn = await AsyncStorage.getItem("streakStorage")
-        streakStorageIn = JSON.parse(streakStorageIn)
-        setStreakStorage(streakStorageIn)
-    }
+  const getStreakStorageAndCount = async () => {
+    const stored = await AsyncStorage.getItem("streakStorage");
+    const parsed = stored ? JSON.parse(stored) : {};
+
+    setStreakStorage(parsed); // optional, if you still want it in state
+    const current = await calculateCurrentStreak(parsed);
+    setCurrentStreak(current);
+  };
+
 
   const getMaxStreak = async () => {
     let maxStreakIn = await AsyncStorage.getItem("maxStreak")
@@ -39,16 +43,14 @@ export default function MoreTimes() {
     setMaxStreak(maxStreakIn ? +maxStreakIn : 1)
   }
 
-  const getCurrentStreak = async () => {
-    let currentStreakIn = calculateCurrentStreak(streakStorage)
-    
-    setCurrentStreak(currentStreakIn ? +currentStreakIn : 1)
-  }
+  
 
-  useEffect(() => {
-    getMaxStreak()
-    getCurrentStreak()
-    getStreakStorage()}, [])
+  useFocusEffect(
+  React.useCallback(() => {
+    getStreakStorageAndCount();
+    getMaxStreak();
+  }, [])
+);
 
   useEffect(() => {
     const fetchStorage = async () => {

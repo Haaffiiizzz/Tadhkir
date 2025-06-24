@@ -77,20 +77,21 @@ export function daysToSchedule(latestDate:string, daysAdvance: number){
 
   
   // Parse latestScheduled date string (format: dd-mm-yyyy)
-  const [latestDay, latestMonth, latestYear] = latestDate.split('-').map(Number);
-  const latestScheduledDate = new Date(latestYear, latestMonth - 1, latestDay);
+  const [latestDay, latestMonth, latestYear] = latestDate ? latestDate.split('-').map(Number): [null, null, null];
+  const latestScheduledDate = latestDay && latestMonth && latestYear ? new Date(latestYear, latestMonth - 1, latestDay): null;
 
   let startDate = new Date();
 
   let daysNeeded = 0;
   // now we need to check if the latest scheduled date is in the past. if it is, then we definitely need to schedule 5 days.
   // if its in the future, then we need to calculate days needed and start from latest scheduled date. 
-  if (startDate > latestScheduledDate){
+  if (!latestScheduledDate || startDate > latestScheduledDate){
     daysNeeded = 5;
 
   }else{
     daysNeeded = 5 - daysAdvance;
-    startDate = latestScheduledDate;
+    startDate = new Date(latestScheduledDate.getTime());
+
   }
   
   if (daysNeeded <= 0) return [];
