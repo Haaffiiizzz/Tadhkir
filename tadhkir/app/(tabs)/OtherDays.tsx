@@ -88,7 +88,7 @@ export default function MoreTimes() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
-
+        <Text>Current Streak: 5 days</Text>
         {
           Object.keys(countPerMonth).map((month) => {
             const daysList = daysPerMonth[month];
