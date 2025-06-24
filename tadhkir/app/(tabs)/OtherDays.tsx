@@ -3,6 +3,7 @@ import { Link, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import { getDaysList } from '@/utils/Helper';
+import { calculateCurrentStreak } from '@/utils/StreakHelper';
 
 
 /**
@@ -21,7 +22,33 @@ export default function MoreTimes() {
   const todaysDate = today.getDate()
 
   const [monthStorage, setMonthStorage] = useState<Array<any> | null>([]); // list for months data has been gotten for. 
- 
+  const [maxStreak, setMaxStreak] = useState<number | null>()
+  const [currentStreak, setCurrentStreak] = useState<number | null>()
+
+  const [streakStorage, setStreakStorage] = useState<object | null>(null)
+
+  const getStreakStorage = async () => {
+        let streakStorageIn = await AsyncStorage.getItem("streakStorage")
+        streakStorageIn = JSON.parse(streakStorageIn)
+        setStreakStorage(streakStorageIn)
+    }
+
+  const getMaxStreak = async () => {
+    let maxStreakIn = await AsyncStorage.getItem("maxStreak")
+    
+    setMaxStreak(maxStreakIn ? +maxStreakIn : 1)
+  }
+
+  const getCurrentStreak = async () => {
+    let currentStreakIn = calculateCurrentStreak(streakStorage)
+    
+    setCurrentStreak(currentStreakIn ? +currentStreakIn : 1)
+  }
+
+  useEffect(() => {
+    getMaxStreak()
+    getCurrentStreak()
+    getStreakStorage()}, [])
 
   useEffect(() => {
     const fetchStorage = async () => {
@@ -88,7 +115,8 @@ export default function MoreTimes() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
-        <Text>Current Streak: 5 days</Text>
+        <Text>Max Streak: {maxStreak} days</Text>
+        <Text>Current Streak: {currentStreak} days</Text>
         {
           Object.keys(countPerMonth).map((month) => {
             const daysList = daysPerMonth[month];

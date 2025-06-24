@@ -15,8 +15,8 @@ export default function PrayerDay() {
     const [prayerStatus, setPrayerStatus] = useState<any | null>(null);
     const [prayerCount, setPrayerCount] = useState<any | null>(null);
     const [timeFormat, setTimeFormat] = useState<string | null>(null);
-     // New state for current prayer
-
+    const [streakStorage, setStreakStorage] = useState<object | null>(null)
+     
     const getTimeFormat = async () => {
         const storedTimeFormat = await AsyncStorage.getItem('timeformat');
         setTimeFormat(storedTimeFormat);
@@ -42,12 +42,22 @@ export default function PrayerDay() {
     };
 
 
+    const getStreakStorage = async () => {
+        let streakStorageIn = await AsyncStorage.getItem("streakStorage")
+        streakStorageIn = JSON.parse(streakStorageIn)
+        setStreakStorage(streakStorageIn)
+    }
+
     useFocusEffect(
         React.useCallback(() => {
             getPrayerData();
             getTimeFormat();
         }, [])
     );
+
+    useEffect(() => {
+        getStreakStorage()
+    }, [])
 
     const completedAllAlert = () => {
                //function to display an alert if all prayers are completed for the day.
@@ -56,8 +66,18 @@ export default function PrayerDay() {
                      text: 'Continue',
                      style: 'cancel',
                    },
-                 ]);s       
+                 ]);    
     };
+
+    const addToStreak = async () => {
+        streakStorage[date] = true
+        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
+    }
+
+    const removeFromStreak = async () => {
+        streakStorage[date] = false
+        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
+    }
 
     const handleValueChange = async (prayer: string) => { // to change the true or false value for a prayer when the checkbox is clicked and increase or decrease
         // the number of saved prayers.
@@ -73,6 +93,10 @@ export default function PrayerDay() {
 
         if (newPrayerCount === 5){
             completedAllAlert()
+            addToStreak()
+        }
+        else{
+            removeFromStreak()
         }
 
         const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };

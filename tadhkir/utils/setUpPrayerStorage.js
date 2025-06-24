@@ -122,11 +122,18 @@ export async function storeTimeOffset(){
 
 }
 
+export async function setupStreakStorage (){
+    let newObject = {};
+    await AsyncStorage.setItem("streakStorage", JSON.stringify(newObject))
+
+}
+
 export async function prayerStorageMain(latitude, longitude) {
     const monthPrayerData = await getPrayerTimes(latitude, longitude)
     await getAndStoreLocationName(latitude, longitude)
     await storeTimeOffset()
     await setUpPrayerStorage(monthPrayerData)
+    await setupStreakStorage()
 }
 
 // export default prayerStorageMain; initializeMonthStorage;
