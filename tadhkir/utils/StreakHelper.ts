@@ -1,4 +1,4 @@
-export function calculateCurrentStreak (streakStorage){
+export function calculateCurrentStreak (streakStorage: object){
     
     const today = new Date();
     let streak = 0;
@@ -13,7 +13,7 @@ export function calculateCurrentStreak (streakStorage){
 
         const key = `${dd}-${mm}-${yyyy}`; // Format: 'dd-mm-yyyy'
 
-        if (streakStorage[key]) {
+        if (streakStorage[key] == true) {
         streak++;
         } else {
         break;
