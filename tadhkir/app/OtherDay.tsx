@@ -72,11 +72,14 @@ export default function PrayerDay() {
     const addToStreak = async () => {
         streakStorage[date] = true
         console.log(date)
+        console.log(streakStorage)
         await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
     }
 
     const removeFromStreak = async () => {
         streakStorage[date] = false
+        
+        console.log(streakStorage)
         await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
     }
 
