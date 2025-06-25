@@ -36,6 +36,7 @@ const HomePage = () => {
     const [prayerCount, setPrayerCount] = useState< any | null>(null)
     const [nextPrayer, setCurrentPrayer] = useState<string | null>(null);
     const [dataLoaded, setDataLoaded] = useState(false);
+    const [streakStorage, setStreakStorage] = useState<object | null>(null)
 
     const getName = async () => {
         const storedFirstName = await AsyncStorage.getItem('User First Name');
@@ -215,7 +216,11 @@ const HomePage = () => {
         }
 
         if (newPrayerCount === 5){
+            addToStreak()
             completedAllAlert()
+        }
+        else {
+          removeFromStreak()
         }
     
         const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
@@ -297,6 +302,29 @@ const HomePage = () => {
         })();
     }, [dataLoaded])
 
+    const getStreakStorage = async () => {
+        let streakStorageIn = await AsyncStorage.getItem("streakStorage")
+        streakStorageIn = JSON.parse(streakStorageIn)
+        setStreakStorage(streakStorageIn)
+    }
+
+    const addToStreak = async () => {
+        streakStorage[date] = true
+        console.log(date)
+        console.log(streakStorage)
+        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
+    }
+
+    const removeFromStreak = async () => {
+        streakStorage[date] = false
+        
+        console.log(streakStorage)
+        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
+    }
+
+    useEffect(() => {
+            getStreakStorage()
+        }, [])
 
 return (
   <ScrollView

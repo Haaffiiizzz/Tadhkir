@@ -1,24 +1,38 @@
-export function calculateCurrentStreak (streakStorage: object){
-    
-    const today = new Date();
-    let streak = 0;
+export function calculateCurrentStreak(streakStorage: Record<string, boolean>) {
+  const today = new Date();
 
-    for (let i = 0; ; i++) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
+  
+  const formatDate = (date: Date) => {
+    /**
+     * 
+     * Function to convert date object to dd-mm-yyyy format
+    */
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
+  };
 
-        const dd = String(date.getDate()).padStart(2, '0');
-        const mm = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
-        const yyyy = date.getFullYear();
+  let startDate = new Date(today);
+  const todayKey = formatDate(today);
 
-        const key = `${dd}-${mm}-${yyyy}`; // Format: 'dd-mm-yyyy'
+  // If today is not marked true, start from yesterday
+  if (!streakStorage[todayKey]) {
+    startDate.setDate(startDate.getDate() - 1);
+  }
 
-        if (streakStorage[key] == true) {
-        streak++;
-        } else {
-        break;
-        }
+  let streak = 0;
+  for (let i = 0; ; i++) {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() - i);
+    const key = formatDate(date);
+
+    if (streakStorage[key]) {
+      streak++;
+    } else {
+      break;
     }
+  }
 
-    return streak;
+  return streak;
 }
