@@ -125,6 +125,7 @@ export async function storeTimeOffset(){
 export async function setupStreakStorage (){
     let newObject = {};
     await AsyncStorage.setItem("streakStorage", JSON.stringify(newObject))
+    await AsyncStorage.setItem("maxStreak",  "0")
 
 }
 

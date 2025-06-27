@@ -1,7 +1,9 @@
-export function calculateCurrentStreak(streakStorage: Record<string, boolean>) {
-  const today = new Date();
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-  
+export async function calculateCurrentStreak(streakStorage: Record<string, boolean>) {
+  const today = new Date();
+  const maxStreak = Number(await AsyncStorage.getItem("maxStreak"))
+
   const formatDate = (date: Date) => {
     /**
      * 
@@ -34,5 +36,8 @@ export function calculateCurrentStreak(streakStorage: Record<string, boolean>) {
     }
   }
 
+  if (streak > maxStreak){
+    await AsyncStorage.setItem("maxStreak", String(streak))
+  }
   return streak;
 }
