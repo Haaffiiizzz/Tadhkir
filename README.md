@@ -8,7 +8,7 @@
 
 ## ✨ Features
 
-### 1. Location-Based Prayer Times
+### 1. Location-Based Prayer Times 📍
 Once users accept location access, Tadhkir retrieves and stores accurate prayer data on their device. Users can view this data as prayers and their times for each day in the current month.
 
 When a new month starts, the app dynamically fetches prayer times for the new month and stores them, giving users access to two months of data, and continuing in this manner.
@@ -27,7 +27,7 @@ There is also a **Settings page**, which will be discussed later.
 
 ---
 
-### 2. Prayer Completion Tracking
+### 2. Prayer Completion Tracking ✅
 Users can mark any prayer from any day as done simply by clicking on it. This changes its color to green.
 
 Since there are 5 daily prayers, the Monthly Overview Page displays each day's status with a color gradient ranging from red to green, with about 5 divisions in between to indicate progress:
@@ -38,7 +38,7 @@ Since there are 5 daily prayers, the Monthly Overview Page displays each day's s
 
 ---
 
-### 3. Notifications
+### 3. Notifications 🔔
 The app includes a notification feature:
 
 - There will always be **5 days’ worth of notifications** for upcoming prayer times, including the current day.
@@ -47,7 +47,7 @@ The app includes a notification feature:
 
 ---
 
-### 4. Streak Feature
+### 4. Streak Feature 🔥
 Tadhkir features a streak tracker that accurately displays the **current streak**, i.e., the number of consecutive days where all 5 prayers were marked complete.
 
 > **Note:**  
