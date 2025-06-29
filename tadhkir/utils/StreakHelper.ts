@@ -17,7 +17,6 @@ export async function calculateCurrentStreak(streakStorage: Record<string, boole
 
   let startDate = new Date(today);
   const todayKey = formatDate(today);
-  console.log(streakStorage)
   // If today is not marked true, start from yesterday
   if (!streakStorage[todayKey]) {
     startDate.setDate(startDate.getDate() - 1);

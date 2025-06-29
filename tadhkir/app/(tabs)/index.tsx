@@ -174,14 +174,13 @@ const HomePage = () => {
         }, []))
 
     const addToStreak = async () => {
-        streakStorage[date] = true
-        
-        console.log(streakStorage)
-        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
+      streakStorage[todayDate] = true
+      
+      await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
     }
 
     const removeFromStreak = async () => {
-        streakStorage[date] = false
+        streakStorage[todayDate] = false
         
         await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
     }
@@ -241,6 +240,7 @@ const HomePage = () => {
         if (newPrayerCount === 5){
             addToStreak()
             completedAllAlert()
+            
         }
         else {
           removeFromStreak()
