@@ -163,6 +163,29 @@ const HomePage = () => {
              ]);
     };
 
+    const getStreakStorage = async () => {
+        let streakStorageIn = await AsyncStorage.getItem("streakStorage")
+        streakStorageIn = JSON.parse(streakStorageIn)
+        setStreakStorage(streakStorageIn)
+    }
+
+    useFocusEffect(React.useCallback(() => {
+            getStreakStorage()
+        }, []))
+
+    const addToStreak = async () => {
+        streakStorage[date] = true
+        
+        console.log(streakStorage)
+        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
+    }
+
+    const removeFromStreak = async () => {
+        streakStorage[date] = false
+        
+        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
+    }
+
     const handleValueChange = async (prayer: string) => { 
         // to change the true or false value for a prayer when it is clicked and increase or decrease
         // the number of saved prayers.
@@ -302,29 +325,9 @@ const HomePage = () => {
         })();
     }, [dataLoaded])
 
-    const getStreakStorage = async () => {
-        let streakStorageIn = await AsyncStorage.getItem("streakStorage")
-        streakStorageIn = JSON.parse(streakStorageIn)
-        setStreakStorage(streakStorageIn)
-    }
+    
 
-    const addToStreak = async () => {
-        streakStorage[date] = true
-        console.log(date)
-        console.log(streakStorage)
-        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
-    }
-
-    const removeFromStreak = async () => {
-        streakStorage[date] = false
-        
-        console.log(streakStorage)
-        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
-    }
-
-    useEffect(() => {
-            getStreakStorage()
-        }, [])
+    
 
 return (
   <ScrollView
