@@ -61,12 +61,12 @@ export function checkDaysBeforeLatestNotification(todayDate: string, latestDate:
     const [day2, month2, year2] = latestDate.split('-').map(Number);
 
     const date1 = new Date(year1, month1 - 1, day1);
-  const date2 = new Date(year2, month2 - 1, day2);
+    const date2 = new Date(year2, month2 - 1, day2);
 
-  const diffInMs = date2.getTime() - date1.getTime();
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const diffInMs = date2.getTime() - date1.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-  return diffInDays > 0 ? diffInDays : 0;
+    return diffInDays > 0 ? diffInDays : 0;
 }
 
 export function daysToSchedule(latestDate:string, daysAdvance: number){
@@ -91,6 +91,7 @@ export function daysToSchedule(latestDate:string, daysAdvance: number){
   }else{
     daysNeeded = 5 - daysAdvance;
     startDate = new Date(latestScheduledDate.getTime());
+    startDate.setDate(startDate.getDate() + 1);
 
   }
   

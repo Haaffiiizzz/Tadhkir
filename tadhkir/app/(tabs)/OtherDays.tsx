@@ -44,7 +44,6 @@ export default function MoreTimes() {
   }
 
   
-
   useFocusEffect(
   React.useCallback(() => {
     getStreakStorageAndCount();
