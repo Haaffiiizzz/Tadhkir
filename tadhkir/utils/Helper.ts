@@ -55,56 +55,62 @@ export function getDaysList (month: number, year: number) {
     return daysList
   };
 
-export function checkDaysBeforeLatestNotification(todayDate: string, latestDate: string){
+export async function checkDaysBeforeLatestNotification(){
   /**
    * Given the current day and the day latest (furthest) day for which notifications have been set,
    * this function will check how many advanced days of notification we already have and return it. 
    */
-    const [day1, month1, year1] = todayDate.split('-').map(Number);
-    const [day2, month2, year2] = latestDate.split('-').map(Number);
 
-    const date1 = new Date(year1, month1 - 1, day1);
-    const date2 = new Date(year2, month2 - 1, day2);
+    let latestDate = await AsyncStorage.getItem("LatestNotificationScheduled") || "";
+    if (!latestDate){
+      return 0
+    }
 
-    const diffInMs = date2.getTime() - date1.getTime();
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0); //cos if comparing say 10 am of one day to 3pm of another day difference might be more than one day or less if opposite
+    
+    const [latestDay,latestMonth, latestYear] = latestDate.split('-').map(Number);
+
+    const latestDateObject = new Date(latestYear, latestMonth - 1, latestDay);
+    latestDateObject.setHours(0, 0, 0, 0);
+
+    const diffInMs = latestDateObject.getTime() - todayDate.getTime();
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
     return diffInDays > 0 ? diffInDays : 0;
 }
 
-export async function daysToSchedule(latestDate:string, daysAdvance: number = 0){
+export async function daysToSchedule(daysAdvance: number = 0){
  /**
   * Given the days of advance we have and the latest day scheduled, here we can decide how many more days to schedule
   * and return a list of those days.
   */
+  let startDate;
+  let daysNeeded;
 
-  if (daysAdvance === 0){
-    const startDate = new Date()
-    const daysNeeded = 5
+  if (daysAdvance <= 0){
+    startDate = new Date()
+    daysNeeded = 5
   }
+
   else {
-    let latestDateStr = await AsyncStorage.get
-  }
-  // Parse latestScheduled date string (format: dd-mm-yyyy)
-  const [latestDay, latestMonth, latestYear] = latestDate ? latestDate.split('-').map(Number): [null, null, null];
-  const latestScheduledDate = latestDay && latestMonth && latestYear ? new Date(latestYear, latestMonth - 1, latestDay): null;
+    // Parse latestScheduled date string (format: dd-mm-yyyy)
+    let latestDate = await AsyncStorage.getItem("LatestNotificationScheduled") || "";
+    const [latestDay, latestMonth, latestYear] = latestDate ? latestDate.split('-').map(Number): [null, null, null];
+    const latestDateObject = latestDay && latestMonth && latestYear ? new Date(latestYear, latestMonth - 1, latestDay): null;
+    daysNeeded = 5 - daysAdvance
 
-  let startDate = new Date();
-
-  let daysNeeded = 0;
-  // now we need to check if the latest scheduled date is in the past. if it is, then we definitely need to schedule 5 days.
-  // if its in the future, then we need to calculate days needed and start from latest scheduled date. 
-  if (!latestScheduledDate || startDate > latestScheduledDate){
-    daysNeeded = 5;
-
-  }else{
-    daysNeeded = 5 - daysAdvance;
-    startDate = new Date(latestScheduledDate.getTime());
-    startDate.setDate(startDate.getDate() + 1);
-
+    if (!latestDateObject){
+      startDate = new Date()
+    }
+    else {
+      startDate = latestDateObject
+      startDate.setDate(startDate.getDate() + 1)
+    }
+    
   }
   
-  if (daysNeeded <= 0) return [];
+    if (daysNeeded <= 0) return [];
   const newDays: string[] = [];
   
   // Schedule additional days starting from the day start date i.e either current day(today) or latest scheduled date. 

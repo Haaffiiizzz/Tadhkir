@@ -311,11 +311,10 @@ const HomePage = () => {
         if (!dataLoaded) return;
         
         (async () => {
-            const latestDate = await AsyncStorage.getItem('LatestNotificationScheduled') || "";
-            const daysAhead = checkDaysBeforeLatestNotification(todayDate, latestDate)
+            const daysAhead = await checkDaysBeforeLatestNotification()
 
             if (daysAhead < 4) {
-              const daysToScheduleList = daysToSchedule(latestDate, daysAhead)
+              const daysToScheduleList = await daysToSchedule(daysAhead)
               console.log(daysToScheduleList)
               await scheduleAllNotifications(daysToScheduleList);
               console.log("Scheduled all notifications!")

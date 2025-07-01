@@ -98,6 +98,7 @@ async function scheduleAllNotifications(dates: Array<string>){
      * and on entering the app everytime, we can check if the latest day scheduled is enough in advance (e.g 3-5 days in advance).
      * If its not enough, we can call this function again with how many more days we need to schedule.
      */
+    
     dates.forEach(async (date) => {
             let dayDataStr = await AsyncStorage.getItem(date);
     

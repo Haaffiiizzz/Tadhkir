@@ -5,10 +5,11 @@ import React, { useState, useEffect } from 'react';
 import { Switch } from 'react-native-switch';
 import * as Notifications from 'expo-notifications';
 import { Dropdown } from 'react-native-element-dropdown';
-import { scheduleNotification } from '@/utils/NotificationsManager';
-import { GetDateFormat } from '@/utils/Helper';
+import scheduleAllNotifications, { scheduleNotification } from '@/utils/NotificationsManager';
+import { daysToSchedule, GetDateFormat } from '@/utils/Helper';
 import { requestLocation } from '@/utils/LocationHelper';
 import { locationFromSettings } from '@/utils/setUpPrayerStorage';
+import * as Location from 'expo-location';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -145,6 +146,8 @@ export default function Settings() {
       setLocationReady(true)
       if (locationReady){
         await Notifications.cancelAllScheduledNotificationsAsync()
+        const daysToScheduleList = await daysToSchedule()
+        await scheduleAllNotifications(daysToScheduleList)
         
       }
     }
@@ -191,9 +194,17 @@ export default function Settings() {
           title="Automatically get location"
           onPress={async () => {
               const locationData = await requestLocation();
+
               if (locationData) {
                   const [latitude, longitude] = locationData;
-                  await getPrayerFunction(latitude, longitude);
+
+                  const addressArray = await Location.reverseGeocodeAsync({ latitude: Number(latitude), longitude: Number(longitude) });
+                  const savedAddressArray = JSON.parse(await AsyncStorage.getItem("Address"))
+
+                  if (addressArray[0].city != savedAddressArray[0].city){
+                      await getPrayerFunction(latitude, longitude);
+                  } //i.e theres really no need to get new data if the user is still in the same city. 
+                                   
               }
           }}
                 />

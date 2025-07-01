@@ -5,6 +5,7 @@ import {prayerStorageMain} from "../utils/setUpPrayerStorage"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
+import { requestLocation } from '@/utils/LocationHelper';
 
 const userSetup = () => {
     const router = useRouter();
@@ -27,31 +28,6 @@ const userSetup = () => {
         { label: "Abuja, Nigeria", value: { latitude: 9.0765, longitude: 7.3986 } },
     ];
 
-
-    const requestLocation = async () => {
-        try {
-            // Request for location permission
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permission denied', 'Location permission is required!');
-                return;
-            }
-
-            // Get the current location
-            let location = await Location.getCurrentPositionAsync({});
-            Alert.alert(
-                "Location Obtained",
-                `Latitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`
-            );
-            await AsyncStorage.setItem("latitude", location.coords.latitude.toString())
-            await AsyncStorage.setItem("longitude", location.coords.longitude.toString())
-            return [location.coords.latitude, location.coords.longitude];        
-            
-        } catch (error: any) {
-            Alert.alert("Error", error.message);
-        }
-    };
-    
     const getPrayerFunction = async (latitude: number, longitude: number) => {
         if(latitude && longitude){
             await prayerStorageMain(latitude.toString(), longitude.toString());
