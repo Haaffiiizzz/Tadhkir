@@ -2,6 +2,9 @@
  * One file to store small, unrelated helper functions
  */
 
+import { QrCode } from "lucide-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export function GetDateFormat (){
     const today = new Date();
     const year = today.getFullYear();
@@ -69,13 +72,19 @@ export function checkDaysBeforeLatestNotification(todayDate: string, latestDate:
     return diffInDays > 0 ? diffInDays : 0;
 }
 
-export function daysToSchedule(latestDate:string, daysAdvance: number){
+export async function daysToSchedule(latestDate:string, daysAdvance: number = 0){
  /**
   * Given the days of advance we have and the latest day scheduled, here we can decide how many more days to schedule
   * and return a list of those days.
   */
 
-  
+  if (daysAdvance === 0){
+    const startDate = new Date()
+    const daysNeeded = 5
+  }
+  else {
+    let latestDateStr = await AsyncStorage.get
+  }
   // Parse latestScheduled date string (format: dd-mm-yyyy)
   const [latestDay, latestMonth, latestYear] = latestDate ? latestDate.split('-').map(Number): [null, null, null];
   const latestScheduledDate = latestDay && latestMonth && latestYear ? new Date(latestYear, latestMonth - 1, latestDay): null;

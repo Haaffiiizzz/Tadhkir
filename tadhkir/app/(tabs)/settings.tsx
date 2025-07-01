@@ -7,6 +7,8 @@ import * as Notifications from 'expo-notifications';
 import { Dropdown } from 'react-native-element-dropdown';
 import { scheduleNotification } from '@/utils/NotificationsManager';
 import { GetDateFormat } from '@/utils/Helper';
+import { requestLocation } from '@/utils/LocationHelper';
+import { locationFromSettings } from '@/utils/setUpPrayerStorage';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -27,6 +29,7 @@ export default function Settings() {
 
   const [is24Hour, setIs24Hour] = useState(false);
   const [offsets, setOffsets] = useState<Record<string, string>>({});
+  const [locationReady, setLocationReady] = useState(false)
 
   useEffect(() => {
     const loadTimeFormat = async () => {
@@ -132,8 +135,21 @@ export default function Settings() {
 
     const todayData = JSON.parse(todayDataStr);
     const todayTime = todayData.timings[prayer].split(' ')[0];
-    await scheduleNotification(prayer, todayTime, newOffset);
+    const todayDate = GetDateFormat()
+    await scheduleNotification(prayer, todayTime, newOffset, todayDate);
   };
+
+  const getPrayerFunction = async (latitude: number, longitude: number) => {
+    if (latitude && longitude){
+      await locationFromSettings(latitude.toString(), longitude.toString())
+      setLocationReady(true)
+      if (locationReady){
+        await Notifications.cancelAllScheduledNotificationsAsync()
+        
+      }
+    }
+
+  }
 
   return (
     <View style={styles.container}>
@@ -169,6 +185,18 @@ export default function Settings() {
           </View>
         );
       })}
+
+      <Text>Change Location!</Text>
+      <Button
+          title="Automatically get location"
+          onPress={async () => {
+              const locationData = await requestLocation();
+              if (locationData) {
+                  const [latitude, longitude] = locationData;
+                  await getPrayerFunction(latitude, longitude);
+              }
+          }}
+                />
 
       <Button title="Clear All Data" onPress={confirmClearData} />
 
