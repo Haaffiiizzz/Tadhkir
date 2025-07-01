@@ -137,4 +137,12 @@ export async function prayerStorageMain(latitude, longitude) {
     await setupStreakStorage()
 }
 
+export async function locationFromSettings(latitude, longitude){
+    const monthPrayerData = await getPrayerTimes(latitude, longitude)
+    await getAndStoreLocationName(latitude, longitude)
+    await setUpPrayerStorage(monthPrayerData)
+
+
+}
+
 // export default prayerStorageMain; initializeMonthStorage;
