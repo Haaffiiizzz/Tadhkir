@@ -1,4 +1,4 @@
-import { View, Button, StyleSheet, Text, Alert } from 'react-native';
+import { View, Button, StyleSheet, Text, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Updates from 'expo-updates';
 import React, { useState, useEffect } from 'react';
@@ -31,6 +31,24 @@ export default function Settings() {
   const [is24Hour, setIs24Hour] = useState(false);
   const [offsets, setOffsets] = useState<Record<string, string>>({});
   const [locationReady, setLocationReady] = useState(false)
+
+  const [value, setValue] = useState(null);
+
+  const predefinedLocations = [
+      { label: "Cairo, Egypt", value: { latitude: 30.0444, longitude: 31.2357 } },
+      { label: "Riyadh, Saudi Arabia", value: { latitude: 24.7136, longitude: 46.6753 } },
+      { label: "Istanbul, Turkey", value: { latitude: 41.0082, longitude: 28.9784 } },
+      { label: "Jakarta, Indonesia", value: { latitude: -6.2088, longitude: 106.8456 } },
+      { label: "London, UK", value: { latitude: 51.5074, longitude: -0.1278 } },
+      { label: "New York, USA", value: { latitude: 40.7128, longitude: -74.0060 } },
+      { label: "Karachi, Pakistan", value: { latitude: 24.8607, longitude: 67.0011 } },
+      { label: "Lagos, Nigeria", value: { latitude: 6.5244, longitude: 3.3792 } },
+      { label: "Kuala Lumpur, Malaysia", value: { latitude: 3.1390, longitude: 101.6869 } },
+      { label: "Toronto, Canada", value: { latitude: 43.6532, longitude: -79.3832 } },
+      { label: "Winnipeg, Canada", value: { latitude: 49.8951, longitude: -97.1384 } },
+      { label: "Edmonton, Canada", value: { latitude: 53.5461, longitude: -113.4938 } },
+      { label: "Abuja, Nigeria", value: { latitude: 9.0765, longitude: 7.3986 } },
+  ];
 
   useEffect(() => {
     const loadTimeFormat = async () => {
@@ -155,19 +173,27 @@ export default function Settings() {
   }
 
   return (
-    <View style={styles.container}>
-      <Switch
-        onValueChange={changeTimeFormat}
-        value={is24Hour}
-        activeText={'12h'}
-        inActiveText={'24h'}
-        circleSize={40}
-        switchLeftPx={8}
-        switchRightPx={8}
-      />
-      <Text style={styles.text}>Toggle to change time format!</Text>
+    <ScrollView style={styles.container} contentContainerStyle={ {justifyContent: 'center', alignItems: 'center'}}>
+      <View style = {styles.settingSection}>
+        
+        <Text style={styles.sectionHeader}>Toggle to change time format!</Text>
+        <Switch
+          onValueChange={changeTimeFormat}
+          value={is24Hour}
+          activeText={'12h'}
+          inActiveText={'24h'}
+          circleSize={40}
+          switchLeftPx={8}
+          switchRightPx={8}
+        />
+      </View>
 
-      {prayers.map((prayer) => {
+
+      <View style = {styles.settingSection}>
+
+        <Text style={styles.sectionHeader}>Adjust Notification Offset!</Text>
+
+        {prayers.map((prayer) => {
         return (
           <View key={prayer}>
             <Text style={[styles.label, { color: 'blue' }]}>{prayer}</Text>
@@ -188,27 +214,52 @@ export default function Settings() {
           </View>
         );
       })}
+      </View>
 
-      <Text>Change Location!</Text>
-      <Button
-          title="Automatically get location"
-          onPress={async () => {
-              const locationData = await requestLocation();
 
-              if (locationData) {
-                  const [latitude, longitude] = locationData;
+      <View style={styles.settingSection}>
+          <Text style={styles.sectionHeader}>Change Location!</Text>
 
-                  const addressArray = await Location.reverseGeocodeAsync({ latitude: Number(latitude), longitude: Number(longitude) });
-                  const savedAddressArray = JSON.parse(await AsyncStorage.getItem("Address"))
+          <Button
+              title="Automatically get location"
+              onPress={async () => {
+                  const locationData = await requestLocation();
 
-                  // if (addressArray[0].city != savedAddressArray[0].city){
-                  //     await getPrayerFunction(latitude, longitude);
-                  // } //i.e theres really no need to get new data if the user is still in the same city. 
-                  //uncommment above after testting 
-                  await getPrayerFunction(latitude, longitude);               
-              }
-          }}
-                />
+                  if (locationData) {
+                      const [latitude, longitude] = locationData;
+
+                      const newAddressArray = await Location.reverseGeocodeAsync({ latitude: Number(latitude), longitude: Number(longitude) });
+                      
+                      const savedAddressItem = await AsyncStorage.getItem("Address");
+                      const savedAddressArray = savedAddressItem ? JSON.parse(savedAddressItem) : null;
+
+                      if (newAddressArray[0].city != savedAddressArray[0].city){
+                          await getPrayerFunction(latitude, longitude);
+                      } //i.e theres really no need to get new data if the user is still in the same city. 
+                          
+                  }
+              }}
+          />
+
+          <Dropdown //use on  confirm selection 
+              style={styles.dropdown}
+              data={predefinedLocations}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              maxHeight={300}
+              onChange={async (item) => {
+                  const latitude = item.value.latitude
+                  const longitude = item.value.longitude
+                  setValue(item.label)
+                  await getPrayerFunction(latitude, longitude)
+              }}
+              placeholder={value ? value : "Please make a selection!"}
+              labelField="label"
+              valueField="value"
+              value= {value}
+                          
+          />
+      </View>
 
       <Button title="Clear All Data" onPress={confirmClearData} />
 
@@ -218,16 +269,15 @@ export default function Settings() {
           sendNotif('Testing Notifications!');
         }}
       />
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 100,
     flex: 1,
     backgroundColor: '#25292e',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   text: {
     margin: 10,
@@ -259,4 +309,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     fontSize: 14,
   },
+
+  settingSection: {
+    borderWidth: 1,
+    borderColor: '#444',
+    borderRadius: 8,
+    backgroundColor: '#2f3338',
+    marginVertical: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '95%',
+    padding: 12, 
+  },
+
+  sectionHeader: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#ddd',
+    marginBottom: 8,
+}
+
+
 });

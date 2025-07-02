@@ -31,7 +31,9 @@ const userSetup = () => {
     const getPrayerFunction = async (latitude: number, longitude: number) => {
         if(latitude && longitude){
             await prayerStorageMain(latitude.toString(), longitude.toString());
+            
             setLocationReady(true);
+            
         }
     }
 
@@ -49,6 +51,7 @@ const userSetup = () => {
                         }
                     }}
                 />
+                
                 <Text>Or select manually below</Text>
                 <Dropdown //use on  confirm selection 
                     style={styles.dropdown}
