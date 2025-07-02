@@ -1,4 +1,4 @@
-import { View, Button, StyleSheet, Text, Alert, ScrollView } from 'react-native';
+import { View, Button, StyleSheet, Text, Alert, ScrollView, Appearance } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Updates from 'expo-updates';
 import React, { useState, useEffect } from 'react';
@@ -84,6 +84,11 @@ export default function Settings() {
     setIs24Hour(!is24Hour);
   };
 
+  const toggleLightMode = async () => {
+    const newScheme = Appearance.getColorScheme() === "light" ? "dark" : "light" // if it was light before make it dark else make it light
+    Appearance.setColorScheme(newScheme)
+  }
+
   const confirmClearData = () => {
     Alert.alert('Confirm', 'Are you sure you want to clear all data?', [
       {
@@ -148,6 +153,7 @@ export default function Settings() {
       await Notifications.cancelScheduledNotificationAsync(notificationIdentifier); // we first cancel old notification and then create a new one
       
     }
+    
 
     const todayDataStr = await AsyncStorage.getItem(GetDateFormat());
     if (!todayDataStr) return;
@@ -174,8 +180,22 @@ export default function Settings() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={ {justifyContent: 'center', alignItems: 'center'}}>
-      <View style = {styles.settingSection}>
-        
+      
+    <View style = {styles.settingSection}>    
+        <Text style={styles.sectionHeader}>Toggle Light Mode!</Text>
+        <Switch
+          onValueChange={toggleLightMode}
+          value= {Appearance.getColorScheme() == "dark" ? true : false}
+          activeText={'Light Mode'}
+          inActiveText={'Dark Mode'}
+          circleSize={40}
+          switchLeftPx={8}
+          switchRightPx={8}
+          switchWidthMultiplier={3}
+        />
+      </View>
+
+      <View style = {styles.settingSection}>    
         <Text style={styles.sectionHeader}>Toggle to change time format!</Text>
         <Switch
           onValueChange={changeTimeFormat}

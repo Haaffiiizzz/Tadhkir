@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef} from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback, Alert, Button} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Animated, TouchableWithoutFeedback, Alert, Button, Appearance} from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {prayerStorageMain, initializeMonthStorage, addMonthToMonths} from "../../utils/setUpPrayerStorage"
@@ -8,7 +8,8 @@ import {useFonts} from 'expo-font'
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
 import { GetDateFormat, get12HourTimeString, checkDaysBeforeLatestNotification, daysToSchedule } from '@/utils/Helper';
 import * as Notifications from "expo-notifications";
-import BackgroundFetch from 'react-native-background-fetch'
+import BackgroundFetch from 'react-native-background-fetch';
+
 
 
 /**
@@ -37,6 +38,7 @@ const HomePage = () => {
     const [nextPrayer, setCurrentPrayer] = useState<string | null>(null);
     const [dataLoaded, setDataLoaded] = useState(false);
     const [streakStorage, setStreakStorage] = useState<object | null>(null)
+    
 
     const getName = async () => {
         const storedFirstName = await AsyncStorage.getItem('User First Name');
@@ -402,20 +404,20 @@ return (
         ✅ All 5 reminders active
     </Text>
 
-    <Button title="Disable all notifications for today!" onPress={ async () => {await Notifications.cancelAllScheduledNotificationsAsync()}} />
+    {/* <Button title="Disable all notifications for today!" onPress={ async () => {await Notifications.cancelAllScheduledNotificationsAsync()}} /> */}
   </ScrollView>
 );
 };
-
+const colorScheme = Appearance.getColorScheme();
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#25292e',
+        backgroundColor: colorScheme === "dark" ? "#25292e" : "#f9f9f9",
         flexDirection: "column",
         paddingTop: "20%"
     },
     header: {
-        color: '#fff',
+        color: colorScheme === "dark" ? '#fff': "#222",
         fontSize: 35,
         fontWeight: 'bold',
         alignSelf: 'center',  
@@ -425,7 +427,7 @@ const styles = StyleSheet.create({
         
     },
     smallHeader: {
-        color: '#fff',
+        color: colorScheme === "dark" ? '#fff': "#222",
         fontSize: 25,
         fontWeight: 'bold',
         alignSelf: 'center',
