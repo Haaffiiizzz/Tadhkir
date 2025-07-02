@@ -88,7 +88,9 @@ export async function setUpPrayerStorage(monthPrayerData) {
 }
 
 export async function getAndStoreLocationName(latitude, longitude){
-    // function to get the human understandabl location info using latitude and longitude
+    // function to get the human understandabl location info using latitude and longitude; also store longitude and latitude
+    await AsyncStorage.setItem("latitude", latitude)
+    await AsyncStorage.setItem("longitude", longitude)
     const addressArray = await Location.reverseGeocodeAsync({ latitude: Number(latitude), longitude: Number(longitude) });
     await AsyncStorage.setItem("Address", JSON.stringify(addressArray))
 

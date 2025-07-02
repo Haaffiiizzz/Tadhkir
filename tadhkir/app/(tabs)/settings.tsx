@@ -201,10 +201,11 @@ export default function Settings() {
                   const addressArray = await Location.reverseGeocodeAsync({ latitude: Number(latitude), longitude: Number(longitude) });
                   const savedAddressArray = JSON.parse(await AsyncStorage.getItem("Address"))
 
-                  if (addressArray[0].city != savedAddressArray[0].city){
-                      await getPrayerFunction(latitude, longitude);
-                  } //i.e theres really no need to get new data if the user is still in the same city. 
-                                   
+                  // if (addressArray[0].city != savedAddressArray[0].city){
+                  //     await getPrayerFunction(latitude, longitude);
+                  // } //i.e theres really no need to get new data if the user is still in the same city. 
+                  //uncommment above after testting 
+                  await getPrayerFunction(latitude, longitude);               
               }
           }}
                 />
