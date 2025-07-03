@@ -408,6 +408,7 @@ return (
   </ScrollView>
 );
 };
+
 const colorScheme = Appearance.getColorScheme();
 const styles = StyleSheet.create({
     container: {

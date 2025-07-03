@@ -31,7 +31,7 @@ export default function Settings() {
   const [is24Hour, setIs24Hour] = useState(false);
   const [offsets, setOffsets] = useState<Record<string, string>>({});
   const [locationReady, setLocationReady] = useState(false)
-
+  const [lightScheme, setLightScheme] = useState(Appearance.getColorScheme() || "dark")
   const [value, setValue] = useState(null);
 
   const predefinedLocations = [
@@ -87,6 +87,9 @@ export default function Settings() {
   const toggleLightMode = async () => {
     const newScheme = Appearance.getColorScheme() === "light" ? "dark" : "light" // if it was light before make it dark else make it light
     Appearance.setColorScheme(newScheme)
+    setLightScheme(newScheme
+      
+    )
   }
 
   const confirmClearData = () => {
@@ -185,9 +188,9 @@ export default function Settings() {
         <Text style={styles.sectionHeader}>Toggle Light Mode!</Text>
         <Switch
           onValueChange={toggleLightMode}
-          value= {Appearance.getColorScheme() == "dark" ? true : false}
-          activeText={'Light Mode'}
-          inActiveText={'Dark Mode'}
+          value= {lightScheme == "dark" ? false: true}
+          activeText={'Dark Mode'}
+          inActiveText={'Light Mode'}
           circleSize={40}
           switchLeftPx={8}
           switchRightPx={8}
