@@ -9,6 +9,7 @@ import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-nativ
 import { GetDateFormat, get12HourTimeString, checkDaysBeforeLatestNotification, daysToSchedule } from '@/utils/Helper';
 import * as Notifications from "expo-notifications";
 import BackgroundFetch from 'react-native-background-fetch';
+import { useTheme } from '../contexts/ThemeContext';
 
 
 
@@ -38,6 +39,7 @@ const HomePage = () => {
     const [nextPrayer, setCurrentPrayer] = useState<string | null>(null);
     const [dataLoaded, setDataLoaded] = useState(false);
     const [streakStorage, setStreakStorage] = useState<object | null>(null)
+    const {colors, theme} = useTheme()
     
 
     const getName = async () => {
@@ -326,9 +328,65 @@ const HomePage = () => {
         })();
     }, [dataLoaded])
 
-    
-
-    
+    //styling 
+  const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    flexDirection: "column",
+    paddingTop: "20%",
+  },
+  header: {
+    color: colors.text,
+    fontSize: 35,
+    fontWeight: "bold",
+    alignSelf: "center",
+    marginTop: 20,
+  },
+  smallHeader: {
+    color: colors.text,
+    fontSize: 25,
+    fontWeight: "bold",
+    alignSelf: "center",
+    marginTop: 20,
+    textAlign: "center",
+  },
+  salahItem: {
+    backgroundColor: colors.salahItem,
+    margin: 10,
+    height: 100,
+    width: 350,
+    borderRadius: 10,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 22,
+    marginRight: 22,
+  },
+  salahText: {
+    color: colors.salahText,
+    fontSize: 25,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  salahTime: {
+    color: colors.salahText,
+    fontSize: 35,
+    fontFamily: "DS-DIGII",
+  },
+  nextPrayerHighlight: {
+    borderWidth: 4,
+    borderColor: colors.nextPrayerBorder,
+  },
+  donePrayer: {
+    backgroundColor: colors.donePrayer,
+  },
+  iconWrapper: {
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});    
 
 return (
   <ScrollView
@@ -409,76 +467,5 @@ return (
 );
 };
 
-const colorScheme = Appearance.getColorScheme();
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colorScheme === "dark" ? "#25292e" : "#f9f9f9",
-        flexDirection: "column",
-        paddingTop: "20%"
-    },
-    header: {
-        color: colorScheme === "dark" ? '#fff': "#222",
-        fontSize: 35,
-        fontWeight: 'bold',
-        alignSelf: 'center',  
-        marginTop: 20  
-    },
-    infoView: {
-        
-    },
-    smallHeader: {
-        color: colorScheme === "dark" ? '#fff': "#222",
-        fontSize: 25,
-        fontWeight: 'bold',
-        alignSelf: 'center',
-        marginTop: 20,
-        textAlign:'center',        
-    },
-    
-    salahView: {
-        flexDirection: 'column',
-        marginTop: 50,
-        marginBottom: 50
-    },
 
-    salahItem: {
-        backgroundColor: '#50584e',
-        margin: 10,
-        height: 100,
-        width: 350,
-        borderRadius: 10,
-        padding: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 22,
-        marginRight: 22,
-    },
-    salahText: {
-        color: '#e0eaff',
-        fontSize: 25,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    salahTime: {
-        color: '#e0eaff',
-        fontSize: 35,
-        fontFamily: 'DS-DIGII',
-    },
-
-    // Highlight for the current prayer (if not yet marked as done)
-    nextPrayerHighlight: {
-        borderWidth: 4,
-        borderColor: '#fff',
-    },
-    donePrayer: {
-        backgroundColor: "#06d6a0" // lght green
-    },
-    iconWrapper: {
-        borderRadius: 50,
-        alignItems: 'center',
-        justifyContent: 'center',
-  },
-   
-});
 export default HomePage;

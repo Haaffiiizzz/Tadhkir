@@ -1,8 +1,10 @@
 import { Tabs } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { ThemeProvider } from '../contexts/ThemeContext';
 
 export default function TabLayout() {
   return (
+    <ThemeProvider>
     <Tabs
     screenOptions={{
       tabBarActiveTintColor: '#ffd33d',
@@ -51,5 +53,6 @@ export default function TabLayout() {
       />
 
     </Tabs>
+    </ThemeProvider>
   );
 }
