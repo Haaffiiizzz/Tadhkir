@@ -16,7 +16,7 @@ export async function scheduleNotification(prayer: string, time: string, offset:
     console.log("entered for")
     const [exactTriggerDate, triggerDateWithOffset] = getTriggerDate(time, offset, todayDate);
 
-    const notificationIdentifier = await Notifications.scheduleNotificationAsync({
+    const offsetNotificationIdentifier = await Notifications.scheduleNotificationAsync({
         content: {
         title: `Tadhkir`,
         body: `${prayer} is in ${offset} minutes!`,
@@ -28,7 +28,7 @@ export async function scheduleNotification(prayer: string, time: string, offset:
         }
     });
 
-    await Notifications.scheduleNotificationAsync({
+    const mainNotificationIdentifier = await Notifications.scheduleNotificationAsync({
         content: {
         title: `Tadhkir`,
         body: `It's ${prayer} time!`,
@@ -40,7 +40,10 @@ export async function scheduleNotification(prayer: string, time: string, offset:
         }
     });
     
-    await AsyncStorage.setItem(`${prayer}NotificationID`, notificationIdentifier)
+    // we need to store the id for both the offset notification and the main one so we can retrieve and cancel the notifications later on 
+
+    await AsyncStorage.setItem(`${todayDate}${prayer}OffsetNotificationID`, offsetNotificationIdentifier)
+    await AsyncStorage.setItem(`${todayDate}${prayer}MainNotificationID`, mainNotificationIdentifier)
     console.log(prayer, "done")
 
  

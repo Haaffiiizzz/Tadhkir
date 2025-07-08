@@ -102,6 +102,7 @@ export async function daysToSchedule(daysAdvance: number = 0){
 
     if (!latestDateObject){
       startDate = new Date()
+      
     }
     else {
       startDate = latestDateObject
@@ -110,7 +111,7 @@ export async function daysToSchedule(daysAdvance: number = 0){
     
   }
   
-    if (daysNeeded <= 0) return [];
+  if (daysNeeded <= 0) return [];
   const newDays: string[] = [];
   
   // Schedule additional days starting from the day start date i.e either current day(today) or latest scheduled date. 
@@ -124,6 +125,7 @@ export async function daysToSchedule(daysAdvance: number = 0){
       newDays.push(dateStr);
       startDate.setDate(startDate.getDate() + 1); // move to next day
   }
-  
+  // we are going to store this list of days so we can retrieve and use to cancel notifications later
+  await AsyncStorage.setItem("NewNotificationDaysList", JSON.stringify(newDays))
   return newDays;
 }
