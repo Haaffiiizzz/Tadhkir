@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Alert } f
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get12HourTimeString } from '@/utils/Helper';
+import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
+import {useFonts} from 'expo-font';
+import { useTheme } from './contexts/ThemeContext';
 
 // this page basically mirrors the index page except it displays prayer time for the day selected in moreTimes page i.e shows prayers for a particular selected day. 
 //thnere's a whole lot going on here but prayerDay is the json for the daily prayers and whether they have been prayed or not
@@ -10,12 +13,16 @@ import { get12HourTimeString } from '@/utils/Helper';
 
 export default function PrayerDay() {
     
+    const [fontsLoaded, fontError] = useFonts({
+            "DS-DIGII" : require('../assets/fonts/DS-DIGIB.ttf')
+        })
     const { date } = useLocalSearchParams();
     const [prayerData, setPrayerData] = useState<any | null>(null);
     const [prayerStatus, setPrayerStatus] = useState<any | null>(null);
     const [prayerCount, setPrayerCount] = useState<any | null>(null);
     const [timeFormat, setTimeFormat] = useState<string | null>(null);
     const [streakStorage, setStreakStorage] = useState<object | null>(null)
+    const {colors, theme} = useTheme()
      
     const getTimeFormat = async () => {
         const storedTimeFormat = await AsyncStorage.getItem('timeformat');
@@ -123,6 +130,75 @@ export default function PrayerDay() {
         'Maghrib',
         'Isha'
     ];
+    const prayerIcons = [Sunrise, Sun, SunMedium, Clock, Sunset, Moon];
+    const prayerColors = ["#38bdf8", "#f97316", "#facc15", "#fb923c", "#f43f5e", "#6366f1"];
+
+    //styling 
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1,
+        backgroundColor: colors.background,
+        flexDirection: "column",
+        paddingTop: "20%",
+      },
+      header: {
+        color: colors.text,
+        fontSize: 35,
+        fontWeight: "bold",
+        alignSelf: "center",
+        marginTop: 20,
+      },
+      smallHeader: {
+        color: colors.text,
+        fontSize: 25,
+        fontWeight: "bold",
+        alignSelf: "center",
+        marginTop: 20,
+        textAlign: "center",
+      },
+      salahItem: {
+        backgroundColor: colors.salahItem,
+        margin: 10,
+        height: 100,
+        width: 350,
+        borderRadius: 10,
+        padding: 10,
+        justifyContent: "center",
+        alignItems: "center",
+        marginLeft: 22,
+        marginRight: 22,
+      },
+      salahText: {
+        color: colors.salahText,
+        fontSize: 25,
+        fontWeight: "bold",
+        marginBottom: 5,
+      },
+      salahTime: {
+        color: colors.salahText,
+        fontSize: 35,
+        fontFamily: "DS-DIGII",
+      },
+      nextPrayerHighlight: {
+        borderWidth: 4,
+        borderColor: colors.nextPrayerBorder,
+      },
+      donePrayer: {
+        backgroundColor: colors.donePrayer,
+      },
+      iconWrapper: {
+        borderRadius: 50,
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      countText: {
+        color: '#fff',
+        fontSize: 25,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        marginTop: 20,
+    },
+    });    
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -130,15 +206,18 @@ export default function PrayerDay() {
             <Text style={styles.header}>{date.slice(0, 5)}</Text>
             <Text style={styles.countText}> Total Prayed: {prayerCount}</Text>
 
-            <View style={styles.salahView}>
+            <View style={styles.salahItem}>
             {/* code down is to map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
             {prayerData && prayerData.timings ? 
-                prayers.map(prayer => {
+                prayers.map((prayer, prayerIndex) => {
                     let time = prayerData['timings'][prayer].split(' ')[0]; // Remove timezone if attached
                     if (timeFormat == "12h")
                         time = get12HourTimeString(time);
 
                     const isSunrise = prayer === "Sunrise";
+                    
+                    const PrayerIcon = prayerIcons[prayerIndex];
+                    if (!PrayerIcon) return null;
 
                     const prayerView = (
                         <View 
@@ -148,6 +227,9 @@ export default function PrayerDay() {
                                 prayerStatus[prayer] && styles.donePrayer
                             ]}
                         >
+                            <View style={styles.iconWrapper}>
+                                <PrayerIcon color={prayerColors[prayerIndex]} />
+                            </View>
                             <Text style={styles.salahText}>{prayer}</Text>
                             <Text style={styles.salahTime}>{String(time)}</Text>
                         </View>
@@ -171,61 +253,3 @@ export default function PrayerDay() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#25292e',
-        flexDirection: "column",        
-    },
-
-    header: {
-        color: '#fff',
-        fontSize: 30,
-        fontWeight: 'bold',
-        alignSelf: 'center',
-        marginTop: 20
-    },
-
-    salahView: {
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        marginTop: 60
-
-    },
-
-    countText: {
-        color: '#fff',
-        fontSize: 25,
-        fontWeight: 'bold',
-        alignSelf: 'center',
-        marginTop: 20,
-    },
-
-    salahItem: {
-        backgroundColor: '#50584e',
-        margin: 10,
-        height: 85,
-        width: 350,
-        borderRadius: 10,
-        padding: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 22,
-        marginRight: 22,
-    },
-    salahText: {
-        color: '#fff',
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    salahTime: {
-        color: '#fff',
-        fontSize: 35,
-        fontFamily: 'DS-DIGII',
-    },
-
-    donePrayer: {
-        backgroundColor: "#06d6a0" // light green
-    }
-});

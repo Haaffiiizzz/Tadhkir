@@ -53,6 +53,10 @@ export default function TabLayout() {
       />
 
     </Tabs>
+    <Tabs.Screen
+      name="OtherDay"
+      options={{ title: 'Other Day' }}
+    />
     </ThemeProvider>
   );
 }

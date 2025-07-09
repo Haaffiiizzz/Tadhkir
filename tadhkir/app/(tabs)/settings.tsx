@@ -144,6 +144,7 @@ export default function Settings() {
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}
     >
+
       <View style={[styles.settingSection, {backgroundColor: colors.sectionBackground, borderColor: colors.sectionBorder}]}>
         <Text style={[styles.sectionHeader, {color: colors.text}]}>Toggle Light Mode!</Text>
         <Switch

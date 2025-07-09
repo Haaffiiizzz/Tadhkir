@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import { getDaysList } from '@/utils/Helper';
 import { calculateCurrentStreak } from '@/utils/StreakHelper';
+import { useTheme } from '../contexts/ThemeContext';
 
 
 /**
@@ -26,6 +27,7 @@ export default function MoreTimes() {
   const [currentStreak, setCurrentStreak] = useState<number | null>()
 
   const [streakStorage, setStreakStorage] = useState<object | null>(null)
+  const {colors, theme} = useTheme()
 
   const getStreakStorageAndCount = async () => {
     const stored = await AsyncStorage.getItem("streakStorage");
@@ -113,6 +115,74 @@ export default function MoreTimes() {
     5: "#0f0"
   } //colors from red to green to show prayer statuses
 
+  //styling 
+  const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: "center",
+    flexDirection: "row"
+  },
+
+  scrollContainer: {
+    flex: 1,
+    width: '100%',
+    
+  },
+
+  daysContainer: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    rowGap: 15,
+    columnGap: 10,
+    padding: 10,
+    // borderColor: "blue", 
+    // borderWidth: 2, // Added visible border for the days container as well
+    justifyContent: "center",
+    width: "90%"
+  },
+
+  text: {
+    color: colors.text,
+    fontSize: 24,
+    marginVertical: 20,
+    alignSelf: 'center',
+  },
+
+  button: {
+    fontSize: 20,
+    textDecorationLine: 'underline',
+    color: colors.text,
+  },
+
+  daysListsItem: {
+    fontWeight: 'bold',
+    backgroundColor: '#50584e',
+    padding: 10,
+    alignItems: 'center',
+    width: 50,
+    borderRadius: 10,
+    color: '#fff',
+    fontSize: 16,
+    justifyContent: 'center',
+    // Added drop shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+
+  daysListsItemText: {
+    color: colors.text,
+    fontSize: 16,
+    alignSelf: 'center',
+  },
+});
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
@@ -155,69 +225,3 @@ export default function MoreTimes() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#25292e',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: "center",
-    flexDirection: "row"
-  },
-
-  scrollContainer: {
-    flex: 1,
-    width: '100%',
-    
-  },
-
-  daysContainer: {
-    flex: 1,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    rowGap: 15,
-    columnGap: 10,
-    padding: 10,
-    // borderColor: "blue", 
-    // borderWidth: 2, // Added visible border for the days container as well
-    justifyContent: "center",
-    width: "90%"
-  },
-
-  text: {
-    color: '#fff',
-    fontSize: 24,
-    marginVertical: 20,
-    alignSelf: 'center',
-  },
-
-  button: {
-    fontSize: 20,
-    textDecorationLine: 'underline',
-    color: '#fff',
-  },
-
-  daysListsItem: {
-    fontWeight: 'bold',
-    backgroundColor: '#50584e',
-    padding: 10,
-    alignItems: 'center',
-    width: 50,
-    borderRadius: 10,
-    color: '#fff',
-    fontSize: 16,
-    justifyContent: 'center',
-    // Added drop shadow
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-
-  daysListsItemText: {
-    color: '#fff',
-    fontSize: 16,
-    alignSelf: 'center',
-  },
-});

@@ -144,7 +144,6 @@ export async function reschedulePrayerWithNewOffset(prayer: string, newOffset: n
         console.log("done rescheduling after offset")
 
 
-
     })
 
 }
