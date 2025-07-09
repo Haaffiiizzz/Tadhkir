@@ -4,7 +4,7 @@ import { ThemeProvider } from '../contexts/ThemeContext';
 
 export default function TabLayout() {
   return (
-    <ThemeProvider>
+    
     <Tabs
     screenOptions={{
       tabBarActiveTintColor: '#ffd33d',
@@ -53,10 +53,5 @@ export default function TabLayout() {
       />
 
     </Tabs>
-    <Tabs.Screen
-      name="OtherDay"
-      options={{ title: 'Other Day' }}
-    />
-    </ThemeProvider>
   );
 }
