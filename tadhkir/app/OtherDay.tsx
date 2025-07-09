@@ -192,12 +192,18 @@ export default function PrayerDay() {
         justifyContent: "center",
       },
       countText: {
-        color: '#fff',
+        color: colors.text,
         fontSize: 25,
         fontWeight: 'bold',
         alignSelf: 'center',
         marginTop: 20,
-    },
+      },
+      salahView: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        marginTop: 60
+
+      },
     });    
 
     return (
@@ -206,7 +212,7 @@ export default function PrayerDay() {
             <Text style={styles.header}>{date.slice(0, 5)}</Text>
             <Text style={styles.countText}> Total Prayed: {prayerCount}</Text>
 
-            <View style={styles.salahItem}>
+            <View style={styles.salahView}>
             {/* code down is to map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}
             {prayerData && prayerData.timings ? 
                 prayers.map((prayer, prayerIndex) => {
