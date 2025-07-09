@@ -113,4 +113,40 @@ async function scheduleAllNotifications(dates: Array<string>){
         })  
 }
 
+export async function reschedulePrayerWithNewOffset(prayer: string, newOffset: number){
+    /**
+     * When a prayer's offset setting is changed, we need to cancel the old scheduled notifications
+     * and make new ones for that specific prayer in all the previously scheduled days. 
+     */
+
+    const previousDaysStr = await AsyncStorage.getItem("NewNotificationDaysList")
+    const previousDaysList = previousDaysStr ? JSON.parse(previousDaysStr) : [] // this is now the list of days we already scheduled. 
+
+    previousDaysList.forEach(async (day: string) => {
+        const offsetID = await AsyncStorage.getItem(`${day}${prayer}OffsetNotificationID`);
+        const mainID = await AsyncStorage.getItem(`${day}${prayer}MainNotificationID`);
+
+        if (offsetID){
+            await Notifications.cancelScheduledNotificationAsync(offsetID)
+        }
+
+        if (mainID){
+            await Notifications.cancelScheduledNotificationAsync(mainID)
+        }
+
+        //after cancelling the days previous notifications, we need to get the prayer data and then schedule new notifications 
+        const dayDataStr = await AsyncStorage.getItem(day)
+        
+        const dayData = dayDataStr ? JSON.parse(dayDataStr) : {}
+        const dayTiming = dayData.timings[prayer].split(' ')[0]
+
+        await scheduleNotification(prayer, dayTiming, newOffset, day);
+        console.log("done rescheduling after offset")
+
+
+
+    })
+
+}
+
 export default scheduleAllNotifications;

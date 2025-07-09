@@ -7,8 +7,8 @@ import * as Notifications from 'expo-notifications';
 import { Dropdown } from 'react-native-element-dropdown';
 import * as Location from 'expo-location';
 
-import scheduleAllNotifications, { scheduleNotification } from '@/utils/NotificationsManager';
-import { daysToSchedule, GetDateFormat } from '@/utils/Helper';
+import scheduleAllNotifications, { reschedulePrayerWithNewOffset} from '@/utils/NotificationsManager';
+import { daysToSchedule} from '@/utils/Helper';
 import { requestLocation } from '@/utils/LocationHelper';
 import { locationFromSettings } from '@/utils/setUpPrayerStorage';
 
@@ -109,22 +109,22 @@ export default function Settings() {
   const changeOffset = async (prayer: string, newOffset: number) => {
     await AsyncStorage.setItem(`${prayer}Offset`, newOffset.toString());
     setOffsets((prev) => ({ ...prev, [prayer]: newOffset.toString() }));
-    await rescheduleNotification(prayer, newOffset);
+    await reschedulePrayerWithNewOffset(prayer, newOffset);
   };
 
-  const rescheduleNotification = async (prayer: string, newOffset: number) => {
-    const notifId = await AsyncStorage.getItem(`${prayer}NotificationID`);
-    if (notifId) await Notifications.cancelScheduledNotificationAsync(notifId);
+  // const rescheduleNotification = async (prayer: string, newOffset: number) => {
+  //   const notifId = await AsyncStorage.getItem(`${prayer}NotificationID`);
+  //   if (notifId) await Notifications.cancelScheduledNotificationAsync(notifId);
 
-    const todayDataStr = await AsyncStorage.getItem(GetDateFormat());
-    if (!todayDataStr) return;
+  //   const todayDataStr = await AsyncStorage.getItem(GetDateFormat());
+  //   if (!todayDataStr) return;
 
-    const todayData = JSON.parse(todayDataStr);
-    const todayTime = todayData.timings[prayer].split(' ')[0];
-    const todayDate = GetDateFormat();
+  //   const todayData = JSON.parse(todayDataStr);
+  //   const todayTime = todayData.timings[prayer].split(' ')[0];
+  //   const todayDate = GetDateFormat();
 
-    await scheduleNotification(prayer, todayTime, newOffset, todayDate);
-  };
+  //   await scheduleNotification(prayer, todayTime, newOffset, todayDate);
+  // };
 
   const getPrayerFunction = async (latitude: number, longitude: number) => {
     if (!latitude || !longitude) return;
