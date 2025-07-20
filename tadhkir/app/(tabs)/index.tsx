@@ -8,7 +8,6 @@ import {useFonts} from 'expo-font'
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
 import { GetDateFormat, get12HourTimeString, checkDaysBeforeLatestNotification, daysToSchedule } from '@/utils/Helper';
 import * as Notifications from "expo-notifications";
-import BackgroundFetch from 'react-native-background-fetch';
 import { useTheme } from '../contexts/ThemeContext';
 
 
@@ -22,6 +21,63 @@ import { useTheme } from '../contexts/ThemeContext';
  * Else, it'll redirect to the required pages to get these data.
  * 
  */
+import BackgroundFetch from "react-native-background-fetch";
+
+interface AppState {
+  events: { taskId: string; timestamp: string }[];
+}
+
+class App extends React.Component<{}, AppState> {
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      events: []
+    };
+  }
+
+  componentDidMount() {
+    // Initialize BackgroundFetch ONLY ONCE when component mounts.
+    this.initBackgroundFetch();
+  }
+
+  async initBackgroundFetch() {
+    // BackgroundFetch event handler.
+    const onEvent = async (taskId: string) => {
+      console.log('[BackgroundFetch] task: ', taskId);
+      // Do your background work...
+      await this.addEvent(taskId);
+      // IMPORTANT:  You must signal to the OS that your task is complete.
+      BackgroundFetch.finish(taskId);
+    }
+
+    // Timeout callback is executed when your Task has exceeded its allowed running-time.
+    // You must stop what you're doing immediately BackgroundFetch.finish(taskId)
+    const onTimeout = async (taskId: string) => {
+      console.warn('[BackgroundFetch] TIMEOUT task: ', taskId);
+      BackgroundFetch.finish(taskId);
+    }
+
+    // Initialize BackgroundFetch only once when component mounts.
+    let status = await BackgroundFetch.configure({minimumFetchInterval: 15}, onEvent, onTimeout);
+
+    console.log('[BackgroundFetch] configure status: ', status);
+  }
+
+  // Add a BackgroundFetch event to <FlatList>
+  addEvent(taskId: string): Promise<void> {
+    // Simulate a possibly long-running asynchronous task with a Promise.
+    return new Promise<void>((resolve, reject) => {
+      this.setState(state => ({
+        events: [...state.events, {
+          taskId: taskId,
+          timestamp: (new Date()).toString()
+        }]
+      }));
+      resolve();
+    });
+  }
+    }
+
 
 const HomePage = () => {
     const [fontsLoaded, fontError] = useFonts({
