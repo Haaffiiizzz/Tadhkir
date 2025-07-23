@@ -101,8 +101,10 @@ export default function Settings() {
 
   const sendNotif = (text: string) => {
     Notifications.scheduleNotificationAsync({
-      content: { title: 'Tadhkir', body: text },
-      trigger: null,
+      content: { title: 'Tadhkir', body: text, sound: 'adhan.wav', },
+       trigger: {
+    type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+    seconds: 2,}
     });
   };
 
@@ -133,11 +135,21 @@ export default function Settings() {
     setLocationReady(true);
 
     if (locationReady) {
+      
+      await displayAlert("Location Changed Successfully")
       await Notifications.cancelAllScheduledNotificationsAsync();
       const daysList = await daysToSchedule();
       await scheduleAllNotifications(daysList);
     }
   };
+
+  const displayAlert = async (displayText: string) => {
+    Alert.alert(
+      displayText
+    )
+  }
+
+
 
   return (
     <ScrollView
@@ -211,6 +223,7 @@ export default function Settings() {
                 newAddressArray?.[0]?.city !== savedAddressArray?.[0]?.city
               ) {
                 await getPrayerFunction(latitude, longitude);
+
               }
             }
           }}
