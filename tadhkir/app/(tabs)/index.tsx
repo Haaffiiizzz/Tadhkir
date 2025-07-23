@@ -23,61 +23,6 @@ import { useTheme } from '../contexts/ThemeContext';
  */
 import BackgroundFetch from "react-native-background-fetch";
 
-interface AppState {
-  events: { taskId: string; timestamp: string }[];
-}
-
-class App extends React.Component<{}, AppState> {
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      events: []
-    };
-  }
-
-  componentDidMount() {
-    // Initialize BackgroundFetch ONLY ONCE when component mounts.
-    this.initBackgroundFetch();
-  }
-
-  async initBackgroundFetch() {
-    // BackgroundFetch event handler.
-    const onEvent = async (taskId: string) => {
-      console.log('[BackgroundFetch] task: ', taskId);
-      // Do your background work...
-      await this.addEvent(taskId);
-      // IMPORTANT:  You must signal to the OS that your task is complete.
-      BackgroundFetch.finish(taskId);
-    }
-
-    // Timeout callback is executed when your Task has exceeded its allowed running-time.
-    // You must stop what you're doing immediately BackgroundFetch.finish(taskId)
-    const onTimeout = async (taskId: string) => {
-      console.warn('[BackgroundFetch] TIMEOUT task: ', taskId);
-      BackgroundFetch.finish(taskId);
-    }
-
-    // Initialize BackgroundFetch only once when component mounts.
-    let status = await BackgroundFetch.configure({minimumFetchInterval: 15}, onEvent, onTimeout);
-
-    console.log('[BackgroundFetch] configure status: ', status);
-  }
-
-  // Add a BackgroundFetch event to <FlatList>
-  addEvent(taskId: string): Promise<void> {
-    // Simulate a possibly long-running asynchronous task with a Promise.
-    return new Promise<void>((resolve, reject) => {
-      this.setState(state => ({
-        events: [...state.events, {
-          taskId: taskId,
-          timestamp: (new Date()).toString()
-        }]
-      }));
-      resolve();
-    });
-  }
-    }
-
 
 const HomePage = () => {
     const [fontsLoaded, fontError] = useFonts({
@@ -210,6 +155,32 @@ const HomePage = () => {
         checkMonth();
     }, [month]);
     
+    //going to add background task below here once we've gotten all data needed
+    // useEffect(() => {
+    //   const initBackgroundFetch = async () => {
+    //     const onEvent = async (taskId: string) => {
+    //       console.log('[BackgroundFetch] task:', taskId);
+    //       // Do your background work here
+    //       BackgroundFetch.finish(taskId);
+    //     };
+
+    //     const onTimeout = async (taskId: string) => {
+    //       console.warn('[BackgroundFetch] TIMEOUT task:', taskId);
+    //       BackgroundFetch.finish(taskId);
+    //     };
+
+    //     const status = await BackgroundFetch.configure(
+    //       { minimumFetchInterval: 15 }, // in minutes
+    //       onEvent,
+    //       onTimeout
+    //     );
+
+    //     console.log('[BackgroundFetch] configure status:', status);
+    //   };
+
+    //   initBackgroundFetch();
+    // }, []);
+
     const todayDate = GetDateFormat()
     
 

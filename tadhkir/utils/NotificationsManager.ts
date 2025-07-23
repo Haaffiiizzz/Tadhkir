@@ -32,7 +32,7 @@ export async function scheduleNotification(prayer: string, time: string, offset:
         content: {
         title: `Tadhkir`,
         body: `It's ${prayer} time!`,
-        sound: true,
+        sound: 'adhan.wav',
         },
         trigger: { 
             type: Notifications.SchedulableTriggerInputTypes.DATE,
