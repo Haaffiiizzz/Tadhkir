@@ -41,6 +41,7 @@ const HomePage = () => {
     const [dataLoaded, setDataLoaded] = useState(false);
     const [streakStorage, setStreakStorage] = useState<object | null>(null)
     const {colors, theme} = useTheme()
+    const [NotificationPermission, setNotificationPermision] = useState< any | null>(null);
     
 
     const getName = async () => {
@@ -156,30 +157,52 @@ const HomePage = () => {
     }, [month]);
     
     //going to add background task below here once we've gotten all data needed
-    // useEffect(() => {
-    //   const initBackgroundFetch = async () => {
-    //     const onEvent = async (taskId: string) => {
-    //       console.log('[BackgroundFetch] task:', taskId);
-    //       // Do your background work here
-    //       BackgroundFetch.finish(taskId);
-    //     };
+    useEffect(() => {
+      const initBackgroundFetch = async () => {
+        const onEvent = async (taskId: string) => {
+          console.log('[BackgroundFetch] task:', taskId);
+          // Do your background work here
+          BackgroundFetch.finish(taskId);
+        };
 
-    //     const onTimeout = async (taskId: string) => {
-    //       console.warn('[BackgroundFetch] TIMEOUT task:', taskId);
-    //       BackgroundFetch.finish(taskId);
-    //     };
+        const onTimeout = async (taskId: string) => {
+          console.warn('[BackgroundFetch] TIMEOUT task:', taskId);
+          BackgroundFetch.finish(taskId);
+        };
 
-    //     const status = await BackgroundFetch.configure(
-    //       { minimumFetchInterval: 15 }, // in minutes
-    //       onEvent,
-    //       onTimeout
-    //     );
+        const status = await BackgroundFetch.configure(
+          { minimumFetchInterval: 15 }, // in minutes
+          onEvent,
+          onTimeout
+        );
 
-    //     console.log('[BackgroundFetch] configure status:', status);
-    //   };
+        console.log('[BackgroundFetch] configure status:', status);
+      };
 
-    //   initBackgroundFetch();
-    // }, []);
+      initBackgroundFetch();
+    }, []);
+
+
+    
+    useEffect(() => {
+      /**
+       * We need to make sure we get permissions to send notifications on the start of the app. 
+       * ANd then schedule notifications. 
+       */
+      const registerForNotifications = async () => {
+        const { status } = await Notifications.getPermissionsAsync();
+        if (status !== 'granted') {
+          const { status: newStatus } = await Notifications.requestPermissionsAsync();
+          if (newStatus !== 'granted') {
+            console.warn('Notification permissions not granted!');
+          }
+        }
+        setNotificationPermision(status)
+      };
+
+      registerForNotifications();
+    }, []);
+
 
     const todayDate = GetDateFormat()
     
@@ -339,7 +362,7 @@ const HomePage = () => {
 
     useEffect(() => {
 
-        if (!dataLoaded) return;
+        if (!dataLoaded || NotificationPermission !== "granted") return;
         
         (async () => {
             const daysAhead = await checkDaysBeforeLatestNotification()
@@ -353,7 +376,7 @@ const HomePage = () => {
               console.log("already scheduled ")
             }
         })();
-    }, [dataLoaded])
+    }, [dataLoaded, NotificationPermission])
 
     //styling 
   const styles = StyleSheet.create({
