@@ -61,7 +61,7 @@ const HomePage = () => {
 
     const getLatitude = async () => {
         const storedLatitude = await AsyncStorage.getItem('latitude');
-        setLatitude(storedLatitude);
+        setLatitude(storedLatitude)
     };
 
     const getTimeFormat = async () => {
@@ -69,6 +69,7 @@ const HomePage = () => {
         setTimeFormat(storedTimeFormat);
     }
 
+    //RETRIEVING PRAYER DATA
     const getPrayerData = async () => {
         try {
             let storedPrayerData = await AsyncStorage.getItem(todayDate);
