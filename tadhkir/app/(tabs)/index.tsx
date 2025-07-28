@@ -109,7 +109,8 @@ const HomePage = () => {
     
     // here I am checking if name or location has not been stored.
     //if they haven't, then we redirect to the neccessary pages to get those info
-
+    
+    //CHECK IF NAME AND LOCATION ALREADY STORED
     useEffect(() => {
         let timer: ReturnType<typeof setTimeout>;
       
@@ -157,31 +158,31 @@ const HomePage = () => {
         checkMonth();
     }, [month]);
     
-    //going to add background task below here once we've gotten all data needed
-    useEffect(() => {
-      const initBackgroundFetch = async () => {
-        const onEvent = async (taskId: string) => {
-          console.log('[BackgroundFetch] task:', taskId);
-          // Do your background work here
-          BackgroundFetch.finish(taskId);
-        };
+    // //going to add background task below here once we've gotten all data needed
+    // useEffect(() => {
+    //   const initBackgroundFetch = async () => {
+    //     const onEvent = async (taskId: string) => {
+    //       console.log('[BackgroundFetch] task:', taskId);
+    //       // Do your background work here
+    //       BackgroundFetch.finish(taskId);
+    //     };
 
-        const onTimeout = async (taskId: string) => {
-          console.warn('[BackgroundFetch] TIMEOUT task:', taskId);
-          BackgroundFetch.finish(taskId);
-        };
+    //     const onTimeout = async (taskId: string) => {
+    //       console.warn('[BackgroundFetch] TIMEOUT task:', taskId);
+    //       BackgroundFetch.finish(taskId);
+    //     };
 
-        const status = await BackgroundFetch.configure(
-          { minimumFetchInterval: 15 }, // in minutes
-          onEvent,
-          onTimeout
-        );
+    //     const status = await BackgroundFetch.configure(
+    //       { minimumFetchInterval: 15 }, // in minutes
+    //       onEvent,
+    //       onTimeout
+    //     );
 
-        console.log('[BackgroundFetch] configure status:', status);
-      };
+    //     console.log('[BackgroundFetch] configure status:', status);
+    //   };
 
-      initBackgroundFetch();
-    }, []);
+    //   initBackgroundFetch();
+    // }, []);
 
 
     

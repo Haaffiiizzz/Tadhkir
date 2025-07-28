@@ -9,12 +9,12 @@ const prayers = [
         'Isha'
 ];
 
-export async function scheduleNotification(prayer: string, time: string, offset: number, todayDate: string) {
+export async function scheduleNotification(prayer: string, time: string, offset: number, prayerDate: string) {
     /**
      * Function to shedule notification for a particular prayer given its name, time and offset(minutes before prayer to send notif)
      */
     console.log("entered for")
-    const [exactTriggerDate, triggerDateWithOffset] = getTriggerDate(time, offset, todayDate);
+    const [exactTriggerDate, triggerDateWithOffset] = getTriggerDate(time, offset, prayerDate);
 
     const offsetNotificationIdentifier = await Notifications.scheduleNotificationAsync({
         content: {
@@ -27,6 +27,7 @@ export async function scheduleNotification(prayer: string, time: string, offset:
             date: triggerDateWithOffset,
         }
     });
+    console.log("offset notification set", offsetNotificationIdentifier)
 
     const mainNotificationIdentifier = await Notifications.scheduleNotificationAsync({
         content: {
@@ -42,20 +43,20 @@ export async function scheduleNotification(prayer: string, time: string, offset:
     
     // we need to store the id for both the offset notification and the main one so we can retrieve and cancel the notifications later on 
 
-    await AsyncStorage.setItem(`${todayDate}${prayer}OffsetNotificationID`, offsetNotificationIdentifier)
-    await AsyncStorage.setItem(`${todayDate}${prayer}MainNotificationID`, mainNotificationIdentifier)
+    await AsyncStorage.setItem(`${prayerDate}${prayer}OffsetNotificationID`, offsetNotificationIdentifier)
+    await AsyncStorage.setItem(`${prayerDate}${prayer}MainNotificationID`, mainNotificationIdentifier)
     console.log(prayer, "done")
 
  
 }
 
-const getTriggerDate = (timeStr: string, offset: number, todayDate: string): [Date, Date] => {
+const getTriggerDate = (timeStr: string, offset: number, prayerDate: string): [Date, Date] => {
     /**
      * Function to get the time/date object for the notification to be triggered at.
      */
     const [hours, minutes] = timeStr.split(':').map(Number);
 
-    const [day, month, year] = todayDate.split('-').map(Number);
+    const [day, month, year] = prayerDate.split('-').map(Number);
     const current = new Date(year, month-1, day);
 
 
@@ -74,24 +75,24 @@ const getTriggerDate = (timeStr: string, offset: number, todayDate: string): [Da
     return [trigger, triggerWithOffset];
 };
 
-async function scheduleDayNotifications(todayDate: string, todayData: { timings: Record<string, string> }){
+async function scheduleDayNotifications(dayDate: string, dayData: { timings: Record<string, string> }){
     /**
      * For each prayer in todays data, we will create a notification for it. 
      */
-    console.log("Scheduling for", todayDate)
-    const prayerTimings = todayData.timings
+    console.log("Scheduling for", dayDate)
+    const prayerTimings = dayData.timings
     prayerTimings && prayers.map(async (prayer) => {
 
         let timeString = prayerTimings[prayer].split(" ")[0] // 02:23 i.e taking off cdt or whatver time zone
         const storageKey = `${prayer}Offset`;
         const offsetString = await AsyncStorage.getItem(storageKey)
         const offset = Number(offsetString)
-        scheduleNotification(prayer, timeString, offset, todayDate)
+        scheduleNotification(prayer, timeString, offset, dayDate)
        
     });
 
-    await AsyncStorage.setItem('LatestNotificationScheduled', todayDate)
-    console.log("Finished for ", todayDate)
+    await AsyncStorage.setItem('LatestNotificationScheduled', dayDate)
+    console.log("Finished for ", dayDate)
     
 }
 

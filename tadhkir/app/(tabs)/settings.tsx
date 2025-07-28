@@ -7,12 +7,13 @@ import * as Notifications from 'expo-notifications';
 import { Dropdown } from 'react-native-element-dropdown';
 import * as Location from 'expo-location';
 
-import scheduleAllNotifications, { reschedulePrayerWithNewOffset} from '@/utils/NotificationsManager';
+import scheduleAllNotifications, { reschedulePrayerWithNewOffset, scheduleNotification} from '@/utils/NotificationsManager';
 import { daysToSchedule} from '@/utils/Helper';
 import { requestLocation } from '@/utils/LocationHelper';
 import { locationFromSettings } from '@/utils/setUpPrayerStorage';
 
 import { useTheme } from '../contexts/ThemeContext';
+
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -254,6 +255,18 @@ export default function Settings() {
           sendNotif('Testing Notifications!');
         }}
       />
+
+      {/* <Button
+        title="Tet Notification with offset"
+        onPress={ async () => {
+          console.log("pressed")
+          await scheduleNotification("test",  "1:50", 1, "29-07-2025")
+          console.log("schededdede")
+
+        }}
+        
+      /> */}
+        
     </ScrollView>
   );
 }
