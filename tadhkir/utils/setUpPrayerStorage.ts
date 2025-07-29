@@ -30,15 +30,20 @@ export async function addMonthToMonths(month){ //function to add a new month to 
     await AsyncStorage.setItem("monthStorage", JSON.stringify(monthStorage));
 }
 
-export async function getPrayerTimes(latitude, longitude) {
+export async function getPrayerTimes(latitude, longitude, passedMonth: Number = 0) {
     //first I'll construct the date format Aladhan API uses. To get a month's data, I need to pass in the year/month.  
-
     const today = new Date()
     const year = today.getFullYear()
-    const month = today.getMonth() + 1 // month is indexed starting at 0.
+    let month = passedMonth; 
 
-    await AsyncStorage.setItem('year', year.toString())
-    await AsyncStorage.setItem('month', month.toString()) // store year and month so we can check in index page if month changed so we get new day
+    if (passedMonth === 0){
+        
+        month = today.getMonth() + 1 // month is indexed starting at 0.
+    }
+    
+
+    await AsyncStorage.setItem('currentYear', year.toString())
+    await AsyncStorage.setItem('currentMonth', month.toString()) // store year and month so we can check in index page if month changed so we get new day
     
     const formattedDate = year + "/" + month
 
