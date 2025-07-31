@@ -24,5 +24,4 @@ export async function GetNewMonthData(newMonth: Number){
     const monthData = await getPrayerTimes(latitude, longitude, newMonth);
     await setUpPrayerStorage(monthData);
 
-    
 }

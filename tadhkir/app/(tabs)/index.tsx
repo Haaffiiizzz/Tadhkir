@@ -22,6 +22,7 @@ import { useTheme } from '../contexts/ThemeContext';
  * 
  */
 import BackgroundFetch from "react-native-background-fetch";
+import { CheckMonth } from '@/utils/IndexHelpers';
 
 
 const HomePage = () => {
@@ -143,19 +144,11 @@ const HomePage = () => {
     const month = today.getMonth() + 1;
 
     useEffect(() => {
-        // incase we enter a new month, we need to get new month data from the api. 
-        //Notice this means having new dicts for new days i.e old data is still available.
-        const checkMonth = async () => {
-            const savedMonth = await AsyncStorage.getItem('month');
-            if (month.toString() && month.toString()!== savedMonth) {
-                const latitude = await AsyncStorage.getItem("latitude")
-                const longitude = await AsyncStorage.getItem("longitude")
-                await addMonthToMonths(month) 
-                await AsyncStorage.setItem('month', month.toString());
-                await prayerStorageMain(latitude?.toString(), longitude?.toString())
-            }
-        };
-        checkMonth();
+        (async () => {
+            // incase we enter a new month, we need to get new month data from the api. 
+            //Notice this means having new dicts for new days i.e old data is still available.
+            await CheckMonth();
+        })();
     }, [month]);
     
     // //going to add background task below here once we've gotten all data needed
