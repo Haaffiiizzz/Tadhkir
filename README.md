@@ -54,6 +54,3 @@ Tadhkir features a streak tracker that accurately displays the **current streak*
 > There are some issues calculating the **max streak** due to concerns about efficiency, which will be addressed later.
 
 ---
-
-## 📋 Next Steps
-Feel free to share more details about the Settings page, discuss improvements, or get help with optimizing performance (e.g., the max streak calculation).
