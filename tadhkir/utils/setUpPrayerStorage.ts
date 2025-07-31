@@ -88,6 +88,7 @@ export async function setUpPrayerStorage(monthPrayerData) {
 
         newDayObject = JSON.stringify(newDayObject)
         await AsyncStorage.setItem(date, newDayObject)
+        console.log("saved successfully")
         
     });
 }

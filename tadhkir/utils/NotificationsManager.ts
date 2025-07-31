@@ -110,6 +110,9 @@ async function scheduleAllNotifications(dates: Array<string>){
                 const dayData = JSON.parse(dayDataStr);
                 await scheduleDayNotifications(date, dayData);
             }
+            else{
+                console.log("false")
+            }
             
         })  
 }
