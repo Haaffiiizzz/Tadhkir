@@ -20,10 +20,7 @@ export async function GetNewMonthData(newMonth: Number){
     const longitude = await AsyncStorage.getItem("longitude")
 
     await addMonthToMonths(newMonth);
-    console.log(newMonth, "this is new month")
     const monthData = await getPrayerTimes(latitude, longitude, newMonth);
-    console.log(monthData)
     await setUpPrayerStorage(monthData);
-    console.log("gotten succesfully")
 
 }

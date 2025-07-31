@@ -86,9 +86,7 @@ export async function setUpPrayerStorage(monthPrayerData) {
         newDayObject['status'] = dayStatus
         newDayObject['count'] = count
 
-        newDayObject = JSON.stringify(newDayObject)
-        await AsyncStorage.setItem(date, newDayObject)
-        console.log("saved successfully")
+        await AsyncStorage.setItem(date, JSON.stringify(newDayObject))
         
     });
 }

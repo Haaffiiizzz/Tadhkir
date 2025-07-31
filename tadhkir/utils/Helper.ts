@@ -121,12 +121,10 @@ export async function daysToSchedule(daysAdvance: number = 0){
 
       const thisMonth = startDate.getMonth() + 1;
       if (thisMonth !== currentDataMonth) {
-        await GetNewMonthData(thisMonth + 1); // Fetch data for new month
+        await GetNewMonthData(thisMonth); // Fetch data for new month
         currentDataMonth = thisMonth;
       }
-      else{
-        console.log("here")
-      }
+      
       
       const currentDay = startDate.getDate(); 
       const currentMonth = startDate.getMonth() + 1;
