@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Alert } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { get12HourTimeString } from '@/utils/Helper';
+import { convertDateToDateObject, get12HourTimeString } from '@/utils/Helper';
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
 import {useFonts} from 'expo-font';
 import { useTheme } from './contexts/ThemeContext';
@@ -17,6 +17,7 @@ export default function PrayerDay() {
             "DS-DIGII" : require('../assets/fonts/DS-DIGIB.ttf')
         })
     const { date } = useLocalSearchParams();
+    const dateObject = convertDateToDateObject(date);
     const [prayerData, setPrayerData] = useState<any | null>(null);
     const [prayerStatus, setPrayerStatus] = useState<any | null>(null);
     const [prayerCount, setPrayerCount] = useState<any | null>(null);
@@ -197,16 +198,20 @@ export default function PrayerDay() {
       salahView: {
         flexDirection: 'column',
         justifyContent: 'space-between',
-        marginTop: 60
-
+        marginTop: 20
       },
     });    
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
             
-            <Text style={styles.header}>{date.slice(0, 5)}</Text>
-            <Text style={styles.countText}> Total Prayed: {prayerCount}</Text>
+            {dateObject && (
+                    <Text style={[styles.smallHeader]}>
+                      🗓️ {dateObject.toLocaleString('default', { weekday: 'long' })},{" "}
+                      {dateObject.toLocaleString('default', { month: 'long' })} {date.split("-")[0]}, {date.split("-")[2]}
+                    </Text>
+                  )}
+
 
             <View style={styles.salahView}>
             {/* code down is to map to display only timings in prayers list as api comes with extra timings like sunset, imsak etc */}

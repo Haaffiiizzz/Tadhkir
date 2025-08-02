@@ -1,11 +1,10 @@
-import { Text, View, StyleSheet, ScrollView, Button } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Button,} from 'react-native';
 import { Link, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import { getDaysList } from '@/utils/Helper';
-import { calculateCurrentStreak, calculateMaxStreak } from '@/utils/StreakHelper';
+import { calculateCurrentStreak, calculateMaxStreak, getWeeklyStreakData } from '@/utils/StreakHelper';
 import { useTheme } from '../contexts/ThemeContext';
-
 
 /**
  * In this page, there will be a link to each day in the month and each link will lead to a
@@ -28,13 +27,14 @@ export default function MoreTimes() {
 
   const [streakStorage, setStreakStorage] = useState<object | null>(null)
   const {colors, theme} = useTheme()
+  
+
 
   const getStreakStorageAndCount = async () => {
     const stored = await AsyncStorage.getItem("streakStorage");
     const parsed = stored ? JSON.parse(stored) : {};
 
     setStreakStorage(parsed); // optional, if you still want it in state
-
     const current = await calculateCurrentStreak(parsed); // FROM STREAKHELPER.TSX
     setCurrentStreak(current);
     const max = await calculateMaxStreak(parsed);
@@ -87,9 +87,6 @@ export default function MoreTimes() {
           monthList.map(async (day: string) => {
             
             let dayData = await AsyncStorage.getItem(day);
-            if (day.split("-")[0] === "03" && day.split("-")[1] == "08"){
-              console.log(dayData)
-            }
             dayData = dayData ? JSON.parse(dayData) : null;
             return dayData && typeof dayData === 'object' && 'count' in dayData
               ? (dayData as { count: number }).count
@@ -183,6 +180,7 @@ export default function MoreTimes() {
   },
 });
 
+  
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
@@ -220,8 +218,9 @@ export default function MoreTimes() {
             );
           })
         }
-          
+      
       </ScrollView>
+      
     </View>
   );
 }

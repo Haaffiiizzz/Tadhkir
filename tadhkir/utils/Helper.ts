@@ -138,3 +138,18 @@ export async function daysToSchedule(daysAdvance: number = 0){
   await AsyncStorage.setItem("NewNotificationDaysList", JSON.stringify(newDays))
   return newDays;
 }
+
+export function convertDateStringToDateObject(dateStr: string): Date {
+  const [dd, mm, yyyy] = dateStr.split('-').map(Number);
+  return new Date(yyyy, mm - 1, dd);
+}
+
+export function convertDateObjectToString(date: Date) {
+    /**
+     * Function to convert date object to dd-mm-yyyy format
+     */
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
+  };

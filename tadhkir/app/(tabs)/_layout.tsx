@@ -52,6 +52,15 @@ export default function TabLayout() {
         }} 
       />
 
+      <Tabs.Screen 
+        name="Chart" 
+        options={{ 
+          title: 'Chart',
+          headerShown: false,
+    
+        }} 
+      />
+
     </Tabs>
   );
 }
