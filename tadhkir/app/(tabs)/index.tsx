@@ -9,7 +9,8 @@ import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-nativ
 import { GetDateFormat, get12HourTimeString, checkDaysBeforeLatestNotification, daysToSchedule } from '@/utils/Helper';
 import * as Notifications from "expo-notifications";
 import { useTheme } from '../contexts/ThemeContext';
-
+import BackgroundFetch from "react-native-background-fetch";
+import { CheckMonth, GetBasicUserData, handleValueChange } from '@/utils/IndexHelpers';
 
 
 /**
@@ -21,11 +22,10 @@ import { useTheme } from '../contexts/ThemeContext';
  * Else, it'll redirect to the required pages to get these data.
  * 
  */
-import BackgroundFetch from "react-native-background-fetch";
-import { CheckMonth } from '@/utils/IndexHelpers';
 
 
 const HomePage = () => {
+    AsyncStorage.getItem("03-08-2025").then(value => console.log("from index", value))
     const [fontsLoaded, fontError] = useFonts({
         "DS-DIGII" : require('../../assets/fonts/DS-DIGIB.ttf')
     })
@@ -45,62 +45,22 @@ const HomePage = () => {
     const [NotificationPermission, setNotificationPermision] = useState< any | null>(null);
     
 
-    const getName = async () => {
-        const storedFirstName = await AsyncStorage.getItem('User First Name');
-        setFirstName(storedFirstName);
-    };
-
-    const getCity = async () => {
-        const storedCity = await AsyncStorage.getItem('city');
-        setCity(storedCity);
-    };
-
-    const getRegion = async () => {
-        const storedRegion = await AsyncStorage.getItem('region');
-        setRegion(storedRegion);
-    };
-
-    const getLatitude = async () => {
-        const storedLatitude = await AsyncStorage.getItem('latitude');
-        setLatitude(storedLatitude)
-    };
-
-    const getTimeFormat = async () => {
-        const storedTimeFormat = await AsyncStorage.getItem('timeformat');
-        setTimeFormat(storedTimeFormat);
+    const getBasicData = async() => {
+      const [storedFirstName, storedCity, storedRegion, storedLatitude, storedTimeFormat] = await GetBasicUserData()
+      setFirstName(storedFirstName);
+      setCity(storedCity);
+      setRegion(storedRegion);
+      setLatitude(storedLatitude);
+      setTimeFormat(storedTimeFormat);
     }
 
-    //RETRIEVING PRAYER DATA
-    const getPrayerData = async () => {
-        try {
-            let storedPrayerData = await AsyncStorage.getItem(todayDate);
-            
-            if (storedPrayerData) {
-                storedPrayerData = JSON.parse(storedPrayerData)
-                setPrayerData(storedPrayerData);
-                if (storedPrayerData){
-                    setPrayerStatus(storedPrayerData.status)
-                    setPrayerCount(storedPrayerData.count)
-                }
-            }
-        } catch (error) {
-            console.error('Error retrieving prayer data:', error);
-            setPrayerData(null);
-        }
-    };
 
     // first we try to get data we need. Name, location, timeformat, prayerData (We try to get these from storage)
     useFocusEffect(
         React.useCallback(() => {
           const loadAllData = async () => {
-            await getName();
-            await getCity();
-            await getRegion();
-            await getLatitude();
-            await getTimeFormat();
-            await getPrayerData();
+            await getBasicData();
             setDataLoaded(true);
-            
             // now safe to evaluate redirect
           };
           loadAllData();
@@ -177,7 +137,36 @@ const HomePage = () => {
     //   initBackgroundFetch();
     // }, []);
 
+     //RETRIEVING PRAYER DATA
+    const getPrayerData = async () => {
+        try {
+            let storedPrayerData = await AsyncStorage.getItem(todayDate);
+            
+            if (storedPrayerData) {
+                storedPrayerData = JSON.parse(storedPrayerData)
+                setPrayerData(storedPrayerData);
+                if (storedPrayerData){
+                    setPrayerStatus(storedPrayerData.status)
+                    setPrayerCount(storedPrayerData.count)
+                }
+            }
+        } catch (error) {
+            console.error('Error retrieving prayer data:', error);
+            setPrayerData(null);
+        }
+    };
 
+    useFocusEffect(
+        React.useCallback(() => {
+          const loadAllData = async () => {
+            await getPrayerData();
+            
+            
+            // now safe to evaluate redirect
+          };
+          loadAllData();
+        }, [])
+      );
     
     useEffect(() => {
       /**
@@ -201,17 +190,6 @@ const HomePage = () => {
 
     const todayDate = GetDateFormat()
     
-
-    const completedAllAlert = () => {
-           //function to display an alert if all prayers are completed for the day.
-           Alert.alert('MashaAllah', 'Congrats! 🎉 You completed all prayers!! 🥳', [
-               {
-                 text: 'Continue',
-                 style: 'cancel',
-               },
-             ]);
-    };
-
     const getStreakStorage = async () => {
         let streakStorageIn = await AsyncStorage.getItem("streakStorage")
         streakStorageIn = JSON.parse(streakStorageIn)
@@ -221,89 +199,7 @@ const HomePage = () => {
     useFocusEffect(React.useCallback(() => {
             getStreakStorage()
         }, []))
-
-    const addToStreak = async () => {
-      streakStorage[todayDate] = true
-      
-      await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
-    }
-
-    const removeFromStreak = async () => {
-        streakStorage[todayDate] = false
-        
-        await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
-    }
-
-    const handleValueChange = async (prayer: string) => { 
-        // to change the true or false value for a prayer when it is clicked and increase or decrease
-        // the number of saved prayers.
-    
-        // first we need to check if a prayer time has reached. if it hasn't, we want to display an 
-        //are you sure to mark the prayer as prayed. we can always unmark a prayer regardless of time.
-    
-        const confirmMarking = () => {
-            return new Promise<boolean>((resolve) => {
-                Alert.alert(
-                    "Confirm",
-                    "Are you sure you want to mark prayer as done? It's not yet the prayer time!",
-                    [
-                        {
-                            text: "Yes",
-                            onPress: () => resolve(true)
-                        },
-                        {
-                            text: "No",
-                            onPress: () => resolve(false)
-                        }
-                    ]
-                );
-            });
-        };
-    
-        if (!prayerStatus[prayer]){ //if it was unmarked we need to check if time has reached
-            const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
-    
-            const time = prayerData.timings[prayer].split(' ')[0];
-            const [hour, minute] = time.split(':').map(Number);
-            const prayerTime = hour * 60 + minute;
-    
-            if (currentTime < prayerTime){ // time hasnt reached prayer time
-                const userConfirmed = await confirmMarking();
-                if (!userConfirmed) {
-                    return;
-                }
-            }
-        }
-    
-        const newValue = !prayerStatus[prayer];  // true/false
-        const newPrayerStatus = { ...prayerStatus, [prayer]: newValue };
-        let newPrayerCount = prayerCount
-    
-        if (newValue === true){// if it was false before and after clicking we changed to true, then increase the prayer count else decrease
-            newPrayerCount += 1
-        } else {
-            newPrayerCount -= 1
-        }
-
-        if (newPrayerCount === 5){
-            addToStreak()
-            completedAllAlert()
-            
-        }
-        else {
-          removeFromStreak()
-        }
-    
-        const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
-    
-        await AsyncStorage.setItem(todayDate, JSON.stringify(newPrayerData));
-        
-        setPrayerData(newPrayerData);
-        setPrayerStatus(newPrayerStatus);
-        setPrayerCount(newPrayerCount);
-    };   
-    
+   
 
     const determineCurrentPrayer = () => {
             if (!prayerData) return;
@@ -492,7 +388,17 @@ return (
             return (
               <TouchableWithoutFeedback
                 key={prayer}
-                onPress={async () => await handleValueChange(prayer)}
+                onPress={async () => await handleValueChange(
+                  prayer,
+                  prayerStatus,
+                  prayerCount,
+                  prayerData,
+                  todayDate,
+                  streakStorage || {},
+                  setPrayerData,
+                  setPrayerStatus,
+                  setPrayerCount,
+                )}
                 delayLongPress={500}
               >
                 {prayerView}

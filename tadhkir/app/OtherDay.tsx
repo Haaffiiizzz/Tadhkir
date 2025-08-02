@@ -114,6 +114,7 @@ export default function PrayerDay() {
         const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
 
         await AsyncStorage.setItem(date, JSON.stringify(newPrayerData));
+        console.log("newData vbeing stored and date", date, newPrayerData)
         
         setPrayerData(newPrayerData);
         setPrayerStatus(newPrayerStatus);

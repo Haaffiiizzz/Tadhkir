@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Button } from 'react-native';
 import { Link, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
@@ -21,6 +21,7 @@ export default function MoreTimes() {
   const year = today.getFullYear()
   const month = today.getMonth() + 1
   const todaysDate = today.getDate()
+  AsyncStorage.getItem("03-08-2025").then(value => console.log("fiisij", value))
 
   const [monthStorage, setMonthStorage] = useState<Array<any> | null>([]); // list for months data has been gotten for. 
   const [maxStreak, setMaxStreak] = useState<number | null>()
@@ -89,7 +90,11 @@ export default function MoreTimes() {
         const monthList = days[month];
         const countsArray = await Promise.all(
           monthList.map(async (day: string) => {
+            
             let dayData = await AsyncStorage.getItem(day);
+            if (day.split("-")[0] === "03" && day.split("-")[1] == "08"){
+              console.log(dayData)
+            }
             dayData = dayData ? JSON.parse(dayData) : null;
             return dayData && typeof dayData === 'object' && 'count' in dayData
               ? (dayData as { count: number }).count
@@ -214,12 +219,18 @@ export default function MoreTimes() {
                   ) : (
                     <Text style={styles.text}>Loading...</Text>
                   )}
+                
                 </View>
               </React.Fragment>
             );
           })
         }
-        
+        <Button
+          title='Click to Log Data'
+          onPress={() => {
+            console.log()
+          }}/>
+          
       </ScrollView>
     </View>
   );
