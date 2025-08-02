@@ -25,7 +25,7 @@ import { CheckMonth, GetBasicUserData, handleValueChange } from '@/utils/IndexHe
 
 
 const HomePage = () => {
-    AsyncStorage.getItem("03-08-2025").then(value => console.log("from index", value))
+  //FIRST SET CONSTANTS
     const [fontsLoaded, fontError] = useFonts({
         "DS-DIGII" : require('../../assets/fonts/DS-DIGIB.ttf')
     })
@@ -46,6 +46,9 @@ const HomePage = () => {
     
 
     const getBasicData = async() => {
+      /**
+       * This function calls GetBasicUserData in IndexHelper.tsx to get user data if saved. 
+       */
       const [storedFirstName, storedCity, storedRegion, storedLatitude, storedTimeFormat] = await GetBasicUserData()
       setFirstName(storedFirstName);
       setCity(storedCity);
@@ -55,7 +58,7 @@ const HomePage = () => {
     }
 
 
-    // first we try to get data we need. Name, location, timeformat, prayerData (We try to get these from storage)
+    //USE-EFFECT TO CALL USER DATA FUNCTION 
     useFocusEffect(
         React.useCallback(() => {
           const loadAllData = async () => {
@@ -71,7 +74,7 @@ const HomePage = () => {
     // here I am checking if name or location has not been stored.
     //if they haven't, then we redirect to the neccessary pages to get those info
     
-    //CHECK IF NAME AND LOCATION ALREADY STORED
+    //CHECK IF NAME AND LOCATION ALREADY STORED ELSE REDIRECT TO NAME/LOCATION PAGES
     useEffect(() => {
         let timer: ReturnType<typeof setTimeout>;
       
@@ -82,7 +85,7 @@ const HomePage = () => {
       
           if (!firstName) {
             if (!monthStorage) {
-              await initializeMonthStorage(month);
+              await initializeMonthStorage(month); //FROM SETUPUSERSTORAGE
             }
             timer = setTimeout(() => {
               router.push('../GetUserInfo');
@@ -107,7 +110,7 @@ const HomePage = () => {
         (async () => {
             // incase we enter a new month, we need to get new month data from the api. 
             //Notice this means having new dicts for new days i.e old data is still available.
-            await CheckMonth();
+            await CheckMonth(); //FROM INDEXHELPER.TSX
         })();
     }, [month]);
     
@@ -137,7 +140,7 @@ const HomePage = () => {
     //   initBackgroundFetch();
     // }, []);
 
-     //RETRIEVING PRAYER DATA
+    //RETRIEVING PRAYER DATA
     const getPrayerData = async () => {
         try {
             let storedPrayerData = await AsyncStorage.getItem(todayDate);
@@ -156,18 +159,18 @@ const HomePage = () => {
         }
     };
 
+    //USEEFFECT TO LOAD PRAYER DATA FOR THE DAY
     useFocusEffect(
         React.useCallback(() => {
           const loadAllData = async () => {
             await getPrayerData();
             
-            
-            // now safe to evaluate redirect
           };
           loadAllData();
         }, [])
       );
     
+    //REQUEST NOTIFICATION PERMISSION
     useEffect(() => {
       /**
        * We need to make sure we get permissions to send notifications on the start of the app. 
@@ -200,7 +203,7 @@ const HomePage = () => {
             getStreakStorage()
         }, []))
    
-
+    //FUNCTION TO DETERMINE UPCOMING PRAYER
     const determineCurrentPrayer = () => {
             if (!prayerData) return;
     
@@ -251,6 +254,7 @@ const HomePage = () => {
     const prayerIcons = [Sunrise, Sun, SunMedium, Clock, Sunset, Moon];
     const prayerColors = ["#38bdf8", "#f97316", "#facc15", "#fb923c", "#f43f5e", "#6366f1"];
 
+    //SCHEDULING NOTIFICATIONS
     useEffect(() => {
 
         if (!dataLoaded || NotificationPermission !== "granted") return;

@@ -78,15 +78,11 @@ export default function PrayerDay() {
 
     const addToStreak = async () => {
         streakStorage[date] = true
-        console.log(date)
-        console.log(streakStorage)
         await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
     }
 
     const removeFromStreak = async () => {
         streakStorage[date] = false
-        
-        console.log(streakStorage)
         await AsyncStorage.setItem("streakStorage", JSON.stringify(streakStorage));
     }
 
@@ -114,7 +110,6 @@ export default function PrayerDay() {
         const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
 
         await AsyncStorage.setItem(date, JSON.stringify(newPrayerData));
-        console.log("newData vbeing stored and date", date, newPrayerData)
         
         setPrayerData(newPrayerData);
         setPrayerStatus(newPrayerStatus);

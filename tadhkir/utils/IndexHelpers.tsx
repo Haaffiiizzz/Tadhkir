@@ -2,6 +2,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { addMonthToMonths, getPrayerTimes, setUpPrayerStorage } from "./setUpPrayerStorage";
 import { Alert } from "react-native";
 
+
+export async function GetBasicUserData(){
+    /**
+     * This function retrieves and returns user's Name, City, Region, Latitude and Time Format. 
+     */
+    
+    const storedFirstName = await AsyncStorage.getItem('User First Name');
+    const storedCity = await AsyncStorage.getItem('city');
+    const storedRegion = await AsyncStorage.getItem('region');
+    const storedLatitude = await AsyncStorage.getItem('latitude');
+    const storedTimeFormat = await AsyncStorage.getItem('timeformat');
+
+    return [storedFirstName, storedCity, storedRegion, storedLatitude, storedTimeFormat]
+}
+
 export async function CheckMonth() {
     /**
      * THis function compares the current month with the last saved month. If it is different, it attemps to get the data
@@ -27,19 +42,6 @@ export async function GetNewMonthData(newMonth: Number){
 
 }
 
-export async function GetBasicUserData(){
-    /**
-     * This function retrieves and returns user's Name, City, Region, Latitude and Time Format. 
-     */
-    
-    const storedFirstName = await AsyncStorage.getItem('User First Name');
-    const storedCity = await AsyncStorage.getItem('city');
-    const storedRegion = await AsyncStorage.getItem('region');
-    const storedLatitude = await AsyncStorage.getItem('latitude');
-    const storedTimeFormat = await AsyncStorage.getItem('timeformat');
-
-    return [storedFirstName, storedCity, storedRegion, storedLatitude, storedTimeFormat]
-}
 
 const completedAllAlert = () => {
            //function to display an alert if all prayers are completed for the day.
@@ -105,10 +107,7 @@ export const handleValueChange = async (prayer: string, prayerStatus: Record<str
     }
 
     const newPrayerData = { ...prayerData, status: newPrayerStatus, count: newPrayerCount };
-    console.log(newPrayerData)
-    console.log("before", await AsyncStorage.getItem(todayDate))
     await AsyncStorage.setItem(todayDate, JSON.stringify(newPrayerData));
-    console.log("aFTER", await AsyncStorage.getItem(todayDate))
 
     setPrayerData(newPrayerData);
     setPrayerStatus(newPrayerStatus);

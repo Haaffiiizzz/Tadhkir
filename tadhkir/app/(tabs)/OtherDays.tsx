@@ -3,7 +3,7 @@ import { Link, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import { getDaysList } from '@/utils/Helper';
-import { calculateCurrentStreak } from '@/utils/StreakHelper';
+import { calculateCurrentStreak, calculateMaxStreak } from '@/utils/StreakHelper';
 import { useTheme } from '../contexts/ThemeContext';
 
 
@@ -21,7 +21,6 @@ export default function MoreTimes() {
   const year = today.getFullYear()
   const month = today.getMonth() + 1
   const todaysDate = today.getDate()
-  AsyncStorage.getItem("03-08-2025").then(value => console.log("fiisij", value))
 
   const [monthStorage, setMonthStorage] = useState<Array<any> | null>([]); // list for months data has been gotten for. 
   const [maxStreak, setMaxStreak] = useState<number | null>()
@@ -35,22 +34,18 @@ export default function MoreTimes() {
     const parsed = stored ? JSON.parse(stored) : {};
 
     setStreakStorage(parsed); // optional, if you still want it in state
-    const current = await calculateCurrentStreak(parsed);
+
+    const current = await calculateCurrentStreak(parsed); // FROM STREAKHELPER.TSX
     setCurrentStreak(current);
+    const max = await calculateMaxStreak(parsed);
+    setMaxStreak(max);
   };
 
-
-  const getMaxStreak = async () => {
-    let maxStreakIn = await AsyncStorage.getItem("maxStreak")
-    
-    setMaxStreak(maxStreakIn ? +maxStreakIn : 1)
-  }
 
   
   useFocusEffect(
   React.useCallback(() => {
     getStreakStorageAndCount();
-    getMaxStreak();
   }, [])
 );
 
@@ -225,11 +220,6 @@ export default function MoreTimes() {
             );
           })
         }
-        <Button
-          title='Click to Log Data'
-          onPress={() => {
-            console.log()
-          }}/>
           
       </ScrollView>
     </View>
