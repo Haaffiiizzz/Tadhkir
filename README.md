@@ -50,7 +50,5 @@ The app includes a notification feature:
 ### 4. Streak Feature 🔥
 Tadhkir features a streak tracker that accurately displays the **current streak**, i.e., the number of consecutive days where all 5 prayers were marked complete.
 
-> **Note:**  
-> There are some issues calculating the **max streak** due to concerns about efficiency, which will be addressed later.
 
 ---
