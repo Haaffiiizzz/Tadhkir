@@ -31,9 +31,9 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen 
-        name="OtherDays" 
+        name="Calendar" 
         options={{ 
-          title: 'Other Days',
+          title: 'Calendar',
           headerShown: false,
           tabBarIcon: ({color, focused}) => (
             <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} color = {color} size= {24} />
@@ -53,9 +53,9 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen 
-        name="Chart" 
+        name="MoreTimings" 
         options={{ 
-          title: 'Chart',
+          title: 'More Timings',
           headerShown: false,
     
         }} 

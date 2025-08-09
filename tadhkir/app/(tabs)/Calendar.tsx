@@ -15,7 +15,7 @@ import { useTheme } from '../contexts/ThemeContext';
 // need to add other months feature next
 ///need to add year to month storage
 
-export default function MoreTimes() {
+export default function Calendar() {
   const today = new Date()
   const year = today.getFullYear()
   const month = today.getMonth() + 1
