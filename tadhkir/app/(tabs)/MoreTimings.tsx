@@ -31,15 +31,58 @@ export default function MoreTimings() {
     }
   }, [monthStorage]);
 
+  const [daysData, setDaysData] = useState<Record<string, string | null>>({});
+
+  useEffect(() => {
+    const fetchDaysData = async () => {
+      const allDays = Object.values(daysPerMonth).flat();
+      const entries: [string, string | null][] = await Promise.all(
+        allDays.map(async (day) => [day, await AsyncStorage.getItem(day)])
+      );
+      setDaysData(Object.fromEntries(entries));
+    };
+    if (Object.keys(daysPerMonth).length > 0) {
+      fetchDaysData();
+    }
+  }, [daysPerMonth]);
+
   return (
     <ScrollView style={styles.container}>
       {Object.entries(daysPerMonth).map(([month, days]) => (
         <View key={month} style={styles.monthContainer}>
           <Text style={styles.monthTitle}>Month: {month}</Text>
           {days.map((day) => (
-            <Text key={day} style={styles.dayText}>
-              Day: {day}
-            </Text>
+            
+            <View key={day} style={styles.dayContainer}>
+              <Text style={styles.dayText}>
+                {day} 
+              </Text>
+
+              { daysData && (
+                <View>
+                  <Text>
+                    Fajr: {(JSON.parse(daysData[day])["timings"]["Fajr"])}
+                  </Text>
+                  <Text>
+                    Sunrise: {(JSON.parse(daysData[day])["timings"]["Sunrise"])}
+                  </Text>
+                  <Text>
+                    Dhuhr: {(JSON.parse(daysData[day])["timings"]["Dhuhr"])}
+                  </Text>
+                  <Text>
+                    Asr: {(JSON.parse(daysData[day])["timings"]["Asr"])}
+                  </Text>
+                  <Text>
+                    Maghrib: {(JSON.parse(daysData[day])["timings"]["Maghrib"])}
+                  </Text>
+                  <Text>
+                    Isha: {(JSON.parse(daysData[day])["timings"]["Isha"])}
+                  </Text>
+                  </View>
+              )}
+              
+
+            </View>
           ))}
         </View>
       ))}
@@ -76,4 +119,19 @@ const styles = StyleSheet.create({
     color: '#555',
     paddingVertical: 2,
   },
+  
+  dayContainer: {
+    borderRadius: 12,
+    backgroundColor: '#999',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
+    alignItems: "center",
+    marginBottom: 24,
+    padding: 16,
+    width: "100%"
+    
+  }
 });
