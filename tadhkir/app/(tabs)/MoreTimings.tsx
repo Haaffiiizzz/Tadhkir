@@ -48,9 +48,11 @@ export default function MoreTimings() {
 
   return (
     <ScrollView style={styles.container}>
-      {Object.entries(daysPerMonth).map(([month, days]) => (
+      {Object.entries(daysPerMonth).map(([month, days]) => {
+        const monthName = new Date(year, Number(month) - 1).toLocaleString('default', { month: 'long' });
+        return (
         <View key={month} style={styles.monthContainer}>
-          <Text style={styles.monthTitle}>Month: {month}</Text>
+          <Text style={styles.monthTitle}>{monthName}</Text>
           {days.map((day) => (
             
             <View key={day} style={styles.dayContainer}>
@@ -60,22 +62,22 @@ export default function MoreTimings() {
 
               { daysData && (
                 <View>
-                  <Text>
+                  <Text style={styles.prayerText}>
                     Fajr: {(JSON.parse(daysData[day])["timings"]["Fajr"])}
                   </Text>
-                  <Text>
+                  <Text style={styles.prayerText}>
                     Sunrise: {(JSON.parse(daysData[day])["timings"]["Sunrise"])}
                   </Text>
-                  <Text>
+                  <Text style={styles.prayerText}>
                     Dhuhr: {(JSON.parse(daysData[day])["timings"]["Dhuhr"])}
                   </Text>
-                  <Text>
+                  <Text style={styles.prayerText}>
                     Asr: {(JSON.parse(daysData[day])["timings"]["Asr"])}
                   </Text>
-                  <Text>
+                  <Text style={styles.prayerText}>
                     Maghrib: {(JSON.parse(daysData[day])["timings"]["Maghrib"])}
                   </Text>
-                  <Text>
+                  <Text style={styles.prayerText}>
                     Isha: {(JSON.parse(daysData[day])["timings"]["Isha"])}
                   </Text>
                   </View>
@@ -84,8 +86,9 @@ export default function MoreTimings() {
 
             </View>
           ))}
-        </View>
-      ))}
+        </View>)
+        
+      })}
     </ScrollView>
   );
 }
@@ -105,33 +108,38 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
-    alignItems: "center"
+    alignItems: "center",
   },
   monthTitle: {
     fontWeight: 'bold',
-    fontSize: 18,
-    marginBottom: 8,
-    color: '#333',
+    fontSize: 20,
+    marginBottom: 12,
+    color: '#222',
+    textTransform: 'uppercase',
   },
-  dayText: {
-    marginLeft: 12,
-    fontSize: 16,
-    color: '#555',
-    paddingVertical: 2,
-  },
-  
   dayContainer: {
     borderRadius: 12,
-    backgroundColor: '#999',
+    backgroundColor: '#F1F5F9',
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
-    alignItems: "center",
-    marginBottom: 24,
+    alignItems: "flex-start",
+    marginBottom: 20,
     padding: 16,
-    width: "100%"
-    
-  }
+    width: "100%",
+  },
+  dayText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: '#1E293B',
+    marginBottom: 8,
+  },
+  prayerText: {
+    fontSize: 15,
+    color: '#334155',
+    marginBottom: 6,
+    lineHeight: 22,
+  },
 });
