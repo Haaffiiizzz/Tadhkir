@@ -1,8 +1,10 @@
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDaysList } from '@/utils/Helper';
 import { useTheme } from '../contexts/ThemeContext';
+import { get12HourTimeString } from '@/utils/Helper';
+import {useFocusEffect } from 'expo-router';
 
 export default function MoreTimings() {
   const [monthStorage, setMonthStorage] = useState<Array<any> | null>([]);
@@ -10,6 +12,9 @@ export default function MoreTimings() {
   const {colors, theme} = useTheme()
 
   useEffect(() => {
+    /**
+     * This function retrieves the list of months stored e.g [1, 2, 3...]
+     */
     const fetchStorage = async () => {
       const storedValue = await AsyncStorage.getItem("monthStorage");
       if (storedValue) {
@@ -47,6 +52,17 @@ export default function MoreTimings() {
       fetchDaysData();
     }
   }, [daysPerMonth]);
+
+  
+  const [timeFormat, setTimeFormat] = useState<string | null>(null);
+
+  useFocusEffect( React.useCallback(() => {
+    const getTimeFormat = async () => {
+      const timeformat = await AsyncStorage.getItem("timeformat");
+      setTimeFormat(timeformat);
+    };
+    getTimeFormat();
+  }, []));
 
   const styles = StyleSheet.create({
   container: {
@@ -135,26 +151,22 @@ export default function MoreTimings() {
               if (!parsed?.timings) {
                 return <Text style={styles.prayerText}>Timings not found.</Text>;
               }
+
+              const prayers = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"];
+
               return (
                 <View>
-                  <Text style={styles.prayerText}>
-                    Fajr: {parsed.timings.Fajr ? parsed.timings.Fajr.split(" ")[0] : "N/A"}
-                  </Text>
-                  <Text style={styles.prayerText}>
-                    Sunrise: {parsed.timings.Sunrise ? parsed.timings.Sunrise.split(" ")[0] : "N/A"}
-                  </Text>
-                  <Text style={styles.prayerText}>
-                    Dhuhr: {parsed.timings.Dhuhr ? parsed.timings.Dhuhr.split(" ")[0] : "N/A"}
-                  </Text>
-                  <Text style={styles.prayerText}>
-                    Asr: {parsed.timings.Asr ? parsed.timings.Asr.split(" ")[0] : "N/A"}
-                  </Text>
-                  <Text style={styles.prayerText}>
-                    Maghrib: {parsed.timings.Maghrib ? parsed.timings.Maghrib.split(" ")[0] : "N/A"}
-                  </Text>
-                  <Text style={styles.prayerText}>
-                    Isha: {parsed.timings.Isha ? parsed.timings.Isha.split(" ")[0] : "N/A"}
-                  </Text>
+                  {prayers.map((prayer) => (
+                    <Text key={prayer} style={styles.prayerText}>
+                      {prayer}: {
+                        parsed.timings[prayer]
+                          ? (timeFormat === "12h"
+                              ? get12HourTimeString(parsed.timings[prayer].split(" ")[0])
+                              : parsed.timings[prayer].split(" ")[0])
+                          : "N/A"
+                      }
+                    </Text>
+                  ))}
                 </View>
               );
               })()}

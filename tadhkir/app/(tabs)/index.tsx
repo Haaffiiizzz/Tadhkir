@@ -62,7 +62,7 @@ const HomePage = () => {
     useFocusEffect(
         React.useCallback(() => {
           const loadAllData = async () => {
-            await getBasicData();
+            await getBasicData(); //from '@/utils/IndexHelpers'
             setDataLoaded(true);
             // now safe to evaluate redirect
           };
