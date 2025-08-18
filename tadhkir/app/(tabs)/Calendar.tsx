@@ -120,7 +120,8 @@ export default function Calendar() {
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: "center",
-    flexDirection: "row"
+    flexDirection: "row",
+    paddingTop: 50,
   },
 
   scrollContainer: {

@@ -17,10 +17,13 @@ export const themes = {
     salahText: '#222222',
     donePrayer: '#06d6a0',
     border: '#e0e0e0',
-    nextPrayerBorder: '#fff',
+    nextPrayerBorder: '#0e0d0dff',
     sectionBackground: '#ffffff',
     sectionBorder: '#dddddd',
+    accent: '#3B82F6',
+    subText: '#555555',
   },
+  
   dark: {
     background: '#25292e',
     text: '#ffffff',
@@ -32,6 +35,8 @@ export const themes = {
     nextPrayerBorder: '#fff',
     sectionBackground: '#2f3338',
     sectionBorder: '#444444',
+    accent: '#60A5FA', 
+    subText: '#cbd5e1',
   },
 };
 

@@ -2,10 +2,12 @@ import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDaysList } from '@/utils/Helper';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function MoreTimings() {
   const [monthStorage, setMonthStorage] = useState<Array<any> | null>([]);
   const year = new Date().getFullYear();
+  const {colors, theme} = useTheme()
 
   useEffect(() => {
     const fetchStorage = async () => {
@@ -46,6 +48,65 @@ export default function MoreTimings() {
     }
   }, [daysPerMonth]);
 
+  const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    backgroundColor: colors.background, // light neutral
+    paddingTop: 50,
+  },
+  
+  monthContainer: {
+    marginBottom: 28,
+    padding: 16,
+    alignItems: "center",
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  monthTitle: {
+    fontWeight: "700",
+    fontSize: 22,
+    marginBottom: 16,
+    color: colors.text, 
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+
+  dayContainer: {
+    borderRadius: 12,
+    backgroundColor: colors.sectionBackground,
+    shadowColor: "#000",
+    shadowOpacity: 0.03,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 3,
+    elevation: 1,
+    alignItems: "flex-start",
+    marginBottom: 16,
+    padding: 16,
+    width: "100%",
+    borderLeftWidth: 4,
+    borderColor: colors.sectionBorder,
+    borderLeftColor: colors.accent, // ✅ now from theme
+  },
+  dayText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text, // ✅ consistent
+    marginBottom: 10,
+  },
+  prayerText: {
+    fontSize: 15,
+    color: colors.subText, // ✅ softer secondary color
+    marginBottom: 8,
+    lineHeight: 22,
+  },
+});
+
+
   return (
     <ScrollView style={styles.container}>
       {Object.entries(daysPerMonth).map(([month, days]) => {
@@ -57,33 +118,46 @@ export default function MoreTimings() {
             
             <View key={day} style={styles.dayContainer}>
               <Text style={styles.dayText}>
-                {day} 
+                {monthName} {day.split("-")[0]} 
               </Text>
 
-              { daysData && (
+              {daysData && (() => {
+              const raw = daysData[day];
+              if (!raw) {
+                return <Text style={styles.prayerText}>No data available.</Text>;
+              }
+              let parsed;
+              try {
+                parsed = JSON.parse(raw);
+              } catch (e) {
+                return <Text style={styles.prayerText}>Invalid data format.</Text>;
+              }
+              if (!parsed?.timings) {
+                return <Text style={styles.prayerText}>Timings not found.</Text>;
+              }
+              return (
                 <View>
                   <Text style={styles.prayerText}>
-                    Fajr: {(JSON.parse(daysData[day])["timings"]["Fajr"])}
+                    Fajr: {parsed.timings.Fajr ? parsed.timings.Fajr.split(" ")[0] : "N/A"}
                   </Text>
                   <Text style={styles.prayerText}>
-                    Sunrise: {(JSON.parse(daysData[day])["timings"]["Sunrise"])}
+                    Sunrise: {parsed.timings.Sunrise ? parsed.timings.Sunrise.split(" ")[0] : "N/A"}
                   </Text>
                   <Text style={styles.prayerText}>
-                    Dhuhr: {(JSON.parse(daysData[day])["timings"]["Dhuhr"])}
+                    Dhuhr: {parsed.timings.Dhuhr ? parsed.timings.Dhuhr.split(" ")[0] : "N/A"}
                   </Text>
                   <Text style={styles.prayerText}>
-                    Asr: {(JSON.parse(daysData[day])["timings"]["Asr"])}
+                    Asr: {parsed.timings.Asr ? parsed.timings.Asr.split(" ")[0] : "N/A"}
                   </Text>
                   <Text style={styles.prayerText}>
-                    Maghrib: {(JSON.parse(daysData[day])["timings"]["Maghrib"])}
+                    Maghrib: {parsed.timings.Maghrib ? parsed.timings.Maghrib.split(" ")[0] : "N/A"}
                   </Text>
                   <Text style={styles.prayerText}>
-                    Isha: {(JSON.parse(daysData[day])["timings"]["Isha"])}
+                    Isha: {parsed.timings.Isha ? parsed.timings.Isha.split(" ")[0] : "N/A"}
                   </Text>
-                  </View>
-              )}
-              
-
+                </View>
+              );
+              })()}
             </View>
           ))}
         </View>)
@@ -93,53 +167,3 @@ export default function MoreTimings() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: '#F9F9F9',
-  },
-  monthContainer: {
-    marginBottom: 24,
-    padding: 16,
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
-    alignItems: "center",
-  },
-  monthTitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 12,
-    color: '#222',
-    textTransform: 'uppercase',
-  },
-  dayContainer: {
-    borderRadius: 12,
-    backgroundColor: '#F1F5F9',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
-    alignItems: "flex-start",
-    marginBottom: 20,
-    padding: 16,
-    width: "100%",
-  },
-  dayText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: '#1E293B',
-    marginBottom: 8,
-  },
-  prayerText: {
-    fontSize: 15,
-    color: '#334155',
-    marginBottom: 6,
-    lineHeight: 22,
-  },
-});
