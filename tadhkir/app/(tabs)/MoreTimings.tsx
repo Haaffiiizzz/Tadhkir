@@ -83,6 +83,7 @@ export default function MoreTimings() {
     shadowRadius: 6,
     elevation: 3,
   },
+
   monthTitle: {
     fontWeight: "700",
     fontSize: 22,
@@ -108,8 +109,9 @@ export default function MoreTimings() {
     borderColor: colors.sectionBorder,
     borderLeftColor: colors.accent, // ✅ now from theme
   },
+
   dayText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "600",
     color: colors.text, // ✅ consistent
     marginBottom: 10,

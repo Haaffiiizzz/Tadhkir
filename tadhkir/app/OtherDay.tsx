@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Alert } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { convertDateToDateObject, get12HourTimeString } from '@/utils/Helper';
+import { convertDateStringToDateObject, get12HourTimeString } from '@/utils/Helper';
 import { Sunrise, Sun, SunMedium, Clock, Sunset, Moon } from "lucide-react-native";
 import {useFonts} from 'expo-font';
 import { useTheme } from './contexts/ThemeContext';
@@ -17,7 +17,7 @@ export default function PrayerDay() {
             "DS-DIGII" : require('../assets/fonts/DS-DIGIB.ttf')
         })
     const { date } = useLocalSearchParams();
-    const dateObject = convertDateToDateObject(date);
+    const dateObject = convertDateStringToDateObject(date);
     const [prayerData, setPrayerData] = useState<any | null>(null);
     const [prayerStatus, setPrayerStatus] = useState<any | null>(null);
     const [prayerCount, setPrayerCount] = useState<any | null>(null);

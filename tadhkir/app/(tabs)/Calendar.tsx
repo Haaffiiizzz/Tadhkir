@@ -179,14 +179,40 @@ export default function Calendar() {
     fontSize: 16,
     alignSelf: 'center',
   },
+
+  streakText: {
+    fontSize: 24,          
+    fontWeight: "700",     
+    color: "#933",  
+    textAlign: "center",
+    marginVertical: 12,
+    letterSpacing: 1,
+  },
+
+  streakLabel: {
+    fontSize: 24,
+    fontWeight: "500",
+    color: colors.subText,
+    textAlign: "center",
+    marginBottom: 4,
+  },
 });
 
   
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle =  {{alignItems: "center"}}>
-        <Text>Max Streak: {maxStreak} days</Text>
-        <Text>Current Streak: {currentStreak} days</Text>
+
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.streakLabel}>Max Streak</Text>
+          <Text style={styles.streakText}>🔥 {maxStreak} Days</Text>
+        </View>
+
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.streakLabel}>Current Streak</Text>
+          <Text style={styles.streakText}>🔥 {currentStreak} Days</Text>
+        </View>
+        
         {
           Object.keys(countPerMonth).map((month) => {
             const daysList = daysPerMonth[month];

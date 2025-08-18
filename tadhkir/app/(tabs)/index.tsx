@@ -412,12 +412,6 @@ return (
         : null}
     </Animated.View>
 
-    <Text>
-        🔔 Prayer reminders scheduled for today
-        ✅ All 5 reminders active
-    </Text>
-
-    {/* <Button title="Disable all notifications for today!" onPress={ async () => {await Notifications.cancelAllScheduledNotificationsAsync()}} /> */}
   </ScrollView>
 );
 };
