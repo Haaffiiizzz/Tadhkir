@@ -114,31 +114,42 @@ const HomePage = () => {
         })();
     }, [month]);
     
-    // //going to add background task below here once we've gotten all data needed
-    // useEffect(() => {
-    //   const initBackgroundFetch = async () => {
-    //     const onEvent = async (taskId: string) => {
-    //       console.log('[BackgroundFetch] task:', taskId);
-    //       // Do your background work here
-    //       BackgroundFetch.finish(taskId);
-    //     };
+    //going to add background task below here once we've gotten all data needed
+    useEffect(() => {
+      const initBackgroundFetch = async () => {
+        const onEvent = async (taskId: string) => {
+          console.log('[BackgroundFetch] task:', taskId);
+          // Do your background work here
+          const daysAhead = await checkDaysBeforeLatestNotification()
 
-    //     const onTimeout = async (taskId: string) => {
-    //       console.warn('[BackgroundFetch] TIMEOUT task:', taskId);
-    //       BackgroundFetch.finish(taskId);
-    //     };
+          if (daysAhead < 4) {
+            const daysToScheduleList = await daysToSchedule(daysAhead)
+            await scheduleAllNotifications(daysToScheduleList);
+          }
+          BackgroundFetch.finish(taskId);
+        };
 
-    //     const status = await BackgroundFetch.configure(
-    //       { minimumFetchInterval: 15 }, // in minutes
-    //       onEvent,
-    //       onTimeout
-    //     );
+        const onTimeout = async (taskId: string) => {
+          console.warn('[BackgroundFetch] TIMEOUT task:', taskId);
+          BackgroundFetch.finish(taskId);
+        };
 
-    //     console.log('[BackgroundFetch] configure status:', status);
-    //   };
+        const status = await BackgroundFetch.configure(
+          { minimumFetchInterval: 15 }, // in minutes
+          onEvent,
+          onTimeout
+        );
 
-    //   initBackgroundFetch();
-    // }, []);
+        if (status === BackgroundFetch.STATUS_AVAILABLE) {
+  BackgroundFetch.start();
+}
+
+
+        console.log('[BackgroundFetch] configure status:', status);
+      };
+
+      initBackgroundFetch();
+    }, []);
 
     //RETRIEVING PRAYER DATA
     const getPrayerData = async () => {
