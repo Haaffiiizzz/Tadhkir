@@ -120,12 +120,14 @@ const HomePage = () => {
         const onEvent = async (taskId: string) => {
           console.log('[BackgroundFetch] task:', taskId);
           // Do your background work here
+          await CheckMonth()
           const daysAhead = await checkDaysBeforeLatestNotification()
 
           if (daysAhead < 4) {
             const daysToScheduleList = await daysToSchedule(daysAhead)
             await scheduleAllNotifications(daysToScheduleList);
           }
+          console.log("did backdground task")
           BackgroundFetch.finish(taskId);
         };
 
@@ -141,10 +143,8 @@ const HomePage = () => {
         );
 
         if (status === BackgroundFetch.STATUS_AVAILABLE) {
-  BackgroundFetch.start();
-}
-
-
+          BackgroundFetch.start();
+        }
         console.log('[BackgroundFetch] configure status:', status);
       };
 
@@ -175,7 +175,6 @@ const HomePage = () => {
         React.useCallback(() => {
           const loadAllData = async () => {
             await getPrayerData();
-            
           };
           loadAllData();
         }, [])

@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDaysList } from '@/utils/Helper';
 import { useTheme } from '../contexts/ThemeContext';
@@ -38,6 +38,64 @@ export default function MoreTimings() {
     }
   }, [monthStorage]);
 
+  /// ---- refs (same)
+  const scrollRef = useRef<ScrollView>(null);
+  const monthOffsetsRef = useRef<Record<string, number>>({});
+  const dayOffsetsRef = useRef<Record<string, number>>({});  // will store "month:day" -> y
+  const didScrollRef = useRef(false);
+
+  // reset when data changes
+  useEffect(() => {
+    monthOffsetsRef.current = {};
+    dayOffsetsRef.current = {};
+    didScrollRef.current = false;
+  }, [daysPerMonth]);
+
+  // current date parts
+  const today = new Date();
+  const d = today.getDate();
+  const m = today.getMonth() + 1;
+  const y = today.getFullYear();
+  const pad2 = (n:number) => String(n).padStart(2, "0");
+
+  // days in CURRENT month only
+  const monthDays = daysPerMonth?.[m] ?? [];
+
+  // resolve the key that exists in your data
+  const targetKey = React.useMemo(() => {
+    const set = new Set(monthDays);
+    const candidates = [
+      `${d}-${m}-${y}`,
+      `${pad2(d)}-${pad2(m)}-${y}`,
+      `${d}-${m}`,
+      `${pad2(d)}-${pad2(m)}`
+    ];
+    return candidates.find(k => set.has(k));
+  }, [monthDays, d, m, y]);
+
+  // optional: choose next upcoming in current month if exact not found
+  const fallbackKey = React.useMemo(() => {
+    if (!monthDays.length) return undefined;
+    const parse = (k:string) => {
+      const [dd, mm] = k.split("-").map(Number);
+      return { dd, mm };
+    };
+    const candidates = monthDays
+      .map(k => ({ k, ...parse(k) }))
+      .filter(x => x.mm === m)  // stay in current month
+      .sort((a,b) => a.dd - b.dd);
+    const next = candidates.find(x => x.dd >= d) ?? candidates[candidates.length - 1];
+    return next?.k;
+  }, [monthDays, m, d]);
+
+  const keyToScroll = targetKey ?? fallbackKey;
+
+  // composite key that includes the current month
+  const targetCompositeKey = keyToScroll ? `${m}:${keyToScroll}` : undefined;
+
+  const topPadding = 50;
+
+
   const [daysData, setDaysData] = useState<Record<string, string | null>>({});
 
   useEffect(() => {
@@ -63,6 +121,25 @@ export default function MoreTimings() {
     };
     getTimeFormat();
   }, []));
+
+  //code below is for scrolling to current day automatically
+
+  
+
+  useEffect(() => {
+  const t = setTimeout(() => {
+    if (didScrollRef.current || !targetCompositeKey) return;
+    const yOffset = dayOffsetsRef.current[targetCompositeKey];
+    if (scrollRef.current != null && yOffset != null) {
+      didScrollRef.current = true;
+      scrollRef.current.scrollTo({ y: Math.max(yOffset - topPadding, 0), animated: true });
+    }
+  }, 300);
+  return () => clearTimeout(t);
+}, [daysPerMonth, targetCompositeKey]);
+
+
+
 
   const styles = StyleSheet.create({
   container: {
@@ -126,51 +203,80 @@ export default function MoreTimings() {
 
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView ref={scrollRef} style={styles.container}>
       {Object.entries(daysPerMonth).map(([month, days]) => {
         const monthName = new Date(year, Number(month) - 1).toLocaleString('default', { month: 'long' });
+
         return (
-        <View key={month} style={styles.monthContainer}>
+
+        <View key={month} 
+        style={styles.monthContainer}
+        onLayout={(e) => {
+            monthOffsetsRef.current[month] = e.nativeEvent.layout.y;
+          }}>
+
           <Text style={styles.monthTitle}>{monthName}</Text>
+
           {days.map((day) => (
-            
-            <View key={day} style={styles.dayContainer}>
-              <Text style={styles.dayText}>
-                {monthName} {day.split("-")[0]} 
-              </Text>
+            <View key={`${month}:${day}`} 
+            style={styles.dayContainer} 
+            // immediate scroll when the day's row lays out
+            onLayout={(e) => {
+            const monthY = monthOffsetsRef.current[month] ?? 0;
+            const dayY = e.nativeEvent.layout.y;
+            const absoluteY = monthY + dayY;
 
-              {daysData && (() => {
-              const raw = daysData[day];
-              if (!raw) {
-                return <Text style={styles.prayerText}>No data available.</Text>;
-              }
-              let parsed;
-              try {
-                parsed = JSON.parse(raw);
-              } catch (e) {
-                return <Text style={styles.prayerText}>Invalid data format.</Text>;
-              }
-              if (!parsed?.timings) {
-                return <Text style={styles.prayerText}>Timings not found.</Text>;
-              }
+            const composite = `${month}:${day}`;   // <— namespace with month
+            dayOffsetsRef.current[composite] = absoluteY;
 
-              const prayers = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"];
+            if (!didScrollRef.current && targetCompositeKey && composite === targetCompositeKey && scrollRef.current) {
+              didScrollRef.current = true;
+              scrollRef.current.scrollTo({
+                y: Math.max(absoluteY - topPadding, 0),
+                animated: true,
+              });
+            }
+          }}
 
-              return (
-                <View>
-                  {prayers.map((prayer) => (
-                    <Text key={prayer} style={styles.prayerText}>
-                      {prayer}: {
-                        parsed.timings[prayer]
-                          ? (timeFormat === "12h"
-                              ? get12HourTimeString(parsed.timings[prayer].split(" ")[0])
-                              : parsed.timings[prayer].split(" ")[0])
-                          : "N/A"
-                      }
-                    </Text>
-                  ))}
-                </View>
-              );
+
+
+            >
+                <Text style={styles.dayText}>
+                  {monthName} {day.split("-")[0]} 
+                </Text>
+
+                {daysData && (() => {
+                const raw = daysData[day];
+                if (!raw) {
+                  return <Text style={styles.prayerText}>No data available.</Text>;
+                }
+                let parsed;
+                try {
+                  parsed = JSON.parse(raw);
+                } catch (e) {
+                  return <Text style={styles.prayerText}>Invalid data format.</Text>;
+                }
+                if (!parsed?.timings) {
+                  return <Text style={styles.prayerText}>Timings not found.</Text>;
+                }
+
+                const prayers = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"];
+
+                return (
+                  <View>
+                    {prayers.map((prayer) => (
+                      <Text key={prayer} style={styles.prayerText}>
+                        {prayer}: {
+                          parsed.timings[prayer]
+                            ? (timeFormat === "12h"
+                                ? get12HourTimeString(parsed.timings[prayer].split(" ")[0])
+                                : parsed.timings[prayer].split(" ")[0])
+                            : "N/A"
+                        }
+                      </Text>
+                    ))}
+                  </View>
+                );
               })()}
             </View>
           ))}
