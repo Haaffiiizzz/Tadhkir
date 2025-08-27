@@ -128,6 +128,14 @@ const HomePage = () => {
             await scheduleAllNotifications(daysToScheduleList);
           }
           console.log("did backdground task")
+            // Schedule a test notification whenever the background task is run
+            await Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Background Task Triggered",
+              body: "This is a test notification from the background fetch.",
+            },
+            trigger: null, // triggers immediately
+            });
           BackgroundFetch.finish(taskId);
         };
 
