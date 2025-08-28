@@ -153,3 +153,10 @@ export function convertDateObjectToString(date: Date) {
     const yyyy = date.getFullYear();
     return `${dd}-${mm}-${yyyy}`;
   };
+
+export function FiveDaysDateObject() {
+  const date = new Date();
+  date.setDate(date.getDate() + 5);
+  date.setHours(12, 0, 0, 0);
+  return date;
+}

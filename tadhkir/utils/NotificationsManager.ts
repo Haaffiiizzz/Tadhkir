@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications"
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FiveDaysDateObject } from "./Helper";
 
 const prayers = [
         'Fajr',
@@ -114,7 +115,27 @@ async function scheduleAllNotifications(dates: Array<string>){
                 console.log("false")
             }
             
-        })  
+    })
+
+    //code below cancels previous (if any) notification prompting user to open app to continue recieving notifications
+    const OpenAppNotificationID = await AsyncStorage.getItem("OpenAppNotificationID")
+    if (OpenAppNotificationID) {await Notifications.cancelScheduledNotificationAsync(OpenAppNotificationID)}
+
+    const OpenAppDateObject = FiveDaysDateObject() //from helpers.tsx  
+    const newOpenAppNotificationID = await Notifications.scheduleNotificationAsync({
+        content: {
+        title: `Tadhkir`,
+        body: `Open the app to continue receiving notifications!`,
+        sound: true,
+        },
+        trigger: { 
+            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            date: OpenAppDateObject,
+        }
+    });
+
+    await AsyncStorage.setItem("OpenAppNotificationID", newOpenAppNotificationID)
+
 }
 
 export async function reschedulePrayerWithNewOffset(prayer: string, newOffset: number){
