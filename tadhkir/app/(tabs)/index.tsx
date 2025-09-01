@@ -114,50 +114,50 @@ const HomePage = () => {
         })();
     }, [month]);
     
-    //going to add background task below here once we've gotten all data needed
-    useEffect(() => {
-      const initBackgroundFetch = async () => {
-        const onEvent = async (taskId: string) => {
-          console.log('[BackgroundFetch] task:', taskId);
-          // Do your background work here
-          await CheckMonth()
-          const daysAhead = await checkDaysBeforeLatestNotification()
+    // //going to add background task below here once we've gotten all data needed
+    // useEffect(() => {
+    //   const initBackgroundFetch = async () => {
+    //     const onEvent = async (taskId: string) => {
+    //       console.log('[BackgroundFetch] task:', taskId);
+    //       // Do your background work here
+    //       await CheckMonth()
+    //       const daysAhead = await checkDaysBeforeLatestNotification()
 
-          if (daysAhead < 4) {
-            const daysToScheduleList = await daysToSchedule(daysAhead)
-            await scheduleAllNotifications(daysToScheduleList);
-          }
-          console.log("did backdground task")
-            // Schedule a test notification whenever the background task is run
-            await Notifications.scheduleNotificationAsync({
-            content: {
-              title: "Background Task Triggered",
-              body: "This is a test notification from the background fetch.",
-            },
-            trigger: null, // triggers immediately
-            });
-          BackgroundFetch.finish(taskId);
-        };
+    //       if (daysAhead < 4) {
+    //         const daysToScheduleList = await daysToSchedule(daysAhead)
+    //         await scheduleAllNotifications(daysToScheduleList);
+    //       }
+    //       console.log("did backdground task")
+    //         // Schedule a test notification whenever the background task is run
+    //         await Notifications.scheduleNotificationAsync({
+    //         content: {
+    //           title: "Background Task Triggered",
+    //           body: "This is a test notification from the background fetch.",
+    //         },
+    //         trigger: null, // triggers immediately
+    //         });
+    //       BackgroundFetch.finish(taskId);
+    //     };
 
-        const onTimeout = async (taskId: string) => {
-          console.warn('[BackgroundFetch] TIMEOUT task:', taskId);
-          BackgroundFetch.finish(taskId);
-        };
+    //     const onTimeout = async (taskId: string) => {
+    //       console.warn('[BackgroundFetch] TIMEOUT task:', taskId);
+    //       BackgroundFetch.finish(taskId);
+    //     };
 
-        const status = await BackgroundFetch.configure(
-          { minimumFetchInterval: 15 }, // in minutes
-          onEvent,
-          onTimeout
-        );
+    //     const status = await BackgroundFetch.configure(
+    //       { minimumFetchInterval: 15 }, // in minutes
+    //       onEvent,
+    //       onTimeout
+    //     );
 
-        if (status === BackgroundFetch.STATUS_AVAILABLE) {
-          BackgroundFetch.start();
-        }
-        console.log('[BackgroundFetch] configure status:', status);
-      };
+    //     if (status === BackgroundFetch.STATUS_AVAILABLE) {
+    //       BackgroundFetch.start();
+    //     }
+    //     console.log('[BackgroundFetch] configure status:', status);
+    //   };
 
-      initBackgroundFetch();
-    }, []);
+    //   initBackgroundFetch();
+    // }, []);
 
     //RETRIEVING PRAYER DATA
     const getPrayerData = async () => {
